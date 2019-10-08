@@ -1,0 +1,10 @@
+<div class="flex-grow-1 d-flex flex-column border">
+  <nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let chatroom of chatrooms$ | async"
+        (click)="onChatroomSelected(chatroom.id)"
+        [active]="(selectedChatroomId$ | async) === chatroom.id"> {{link}} 
+      <app-chat-tab [chatName]="chatroom.name" [newMessageCount]="chatroom.newMessageCount" (chatClosed)="onChatClosed(chatroom.id)"></app-chat-tab>
+    </a>
+  </nav>
+  <app-chatroom [id]="selectedChatroomId$ | async"></app-chatroom>
+</div>

@@ -1,0 +1,23 @@
+<div class="d-flex flex-column justify-content-center align-items-center">
+  <h2>Invite friends to {{chatroomName}}</h2>
+  <mat-form-field>
+    <mat-select placeholder="Select friends to invite" [formControl]="selection" multiple>
+      <mat-option *ngFor="let friend of friends" [value]="friend.id">{{friend.userName}}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="selection.invalid">You must select at least one friend</mat-error>
+  </mat-form-field>
+  <div class="d-flex flex-row w-50 mt-4 justify-content-center">
+    <button mat-raised-button (click)="onInvite()" [disabled]="selection.invalid" class="w-50">Invite</button>
+    <button mat-raised-button (click)="onClose()" class="w-50 ml-2">Cancel</button>
+  </div>
+</div>
+<mat-chip-list>
+  <mat-chip><div class="d-flex justify-content-center align-items-center">
+    <mat-icon>home</mat-icon>
+    <mat-icon>home</mat-icon>
+    <mat-icon>home</mat-icon>
+    <mat-icon>home</mat-icon>
+  </div></mat-chip>
+  <mat-chip><mat-icon>home</mat-icon></mat-chip>
+  <mat-chip><mat-icon>home</mat-icon></mat-chip>
+</mat-chip-list>

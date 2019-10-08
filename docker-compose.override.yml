@@ -1,0 +1,110 @@
+version: '3.4'
+
+services:
+  auth.service:
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        ConnectionString: Server=mysql; Database=auth_db; Uid=auth; Pwd=12345;
+        AngularSpaClientUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6001
+        PublicOriginUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+        RegistrationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/registration
+        PasswordResetUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/password-reset
+    extra_hosts:
+        - "${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1"
+
+  users.service:
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        ConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
+        EventBusConnection: rabbitmq
+        EventBusUserName: rabbitmq
+        EventBusPassword: "12345"
+        EventBusQueueName: users.service
+        SendGridUser: ${SEND_GRID_USER}
+        SendGridKey: ${SEND_GRID_KEY}
+        AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+        EmailConfirmationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/email-confirmation
+
+  registration.app:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+
+  angularspa.app:
+    environment:
+        ASPNETCORE_ENVIRONMENT: Development
+        AngularSpaDevClient: http://angularspa.development.app:4200
+        UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+        ChatsApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+        AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+        ClientId: AngularSpaClient
+    depends_on:
+      - angularspa.development.app
+
+  angularspa.development.app:
+    build: 
+      context: .
+      dockerfile: Web/AngularSPA.Development/Dockerfile
+    volumes:
+      - ./Web/AngularSPA/Client:/usr/src/app
+    ports:
+      - '4200:4200'
+      - '9876:9876'
+    environment:
+      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+      ChatsApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+      AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+      ClientId: AngularSpaClient
+
+  users.apigw:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      AuthServiceUrl: http://auth.service
+    volumes:
+      - ./ApiGateways/Users/apigw:/app/configuration
+
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq 
+      RABBITMQ_DEFAULT_PASS: "12345"
+
+  nginx:
+    ports:
+      - "5101:5101"
+      - "5102:5102"
+      - "6001:6001"
+      - "6002:6002"
+    volumes:
+      - './docker-compose/nginx/config/nginx.dev.conf:/etc/nginx/nginx.conf'
+
+  eureka:
+    ports:
+      - "8761:8761"
+    volumes:
+      - ./docker-compose/eureka/config:/tmp/config
+      - ./docker-compose/eureka/logs:/tmp/logs
+  
+  mysql:
+    ports:
+      - "3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: "12345"
+    volumes:
+      - ./docker-compose/mysql/scripts:/docker-entrypoint-initdb.d
+      - ./docker-compose/mysql/data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p12345"]
+      interval: 10s
+      timeout: 60s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+        - mysql
+    ports:
+        - "8081:80"
+    environment:
+        MYSQL_USERNAME: root
+        MYSQL_ROOT_PASSWORD: "12345"
+        PMA_HOST: mysql

@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+  auth.service:
+    build: 
+      context: .
+      dockerfile: Services/Auth/Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+      - users.service
+
+  users.service:
+    build: 
+      context: .
+      dockerfile: Services/Users/Users.API/Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+
+  registration.app:
+    build: 
+      context: .
+      dockerfile: Web/Registration/Dockerfile
+
+  angularspa.app:
+    build: 
+      context: .
+      dockerfile: Web/AngularSPA/Dockerfile
+
+  users.apigw:
+    build:
+      context: .
+      dockerfile: ApiGateways/OcelotApiGw/Dockerfile
+    depends_on:
+      - users.service
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  mysql:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+
+  nginx:
+    image: nginx
+    restart: always
+    depends_on:
+      - auth.service
+      - users.apigw
+      - registration.app
+      - angularspa.app
+
+  eureka:
+    build: 
+      context: ./eureka
+    restart: always
+
+  healthchecksui:
+    image: xabarilcoding/healthchecksui

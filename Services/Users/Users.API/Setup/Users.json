@@ -1,0 +1,3 @@
+[
+	{ "userName": "alice", "email": "alice@alice.com", "password": "SuperSecretPassword123!!!", "roles": [ "user", "moderator" ] }
+]

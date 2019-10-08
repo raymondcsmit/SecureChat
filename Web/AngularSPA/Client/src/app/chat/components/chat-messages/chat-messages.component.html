@@ -1,0 +1,12 @@
+<div class="d-flex flex-column h-100">
+  <div class="h-75 scrollable">
+    <mat-list>
+      <mat-list-item *ngFor="let message of messages$ | async; trackBy: trackByMessages">
+        <app-message [message]="message" [author]="getAuthor(message) | async" [myId]="(authUser$ | async).id"></app-message>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="h-25  border-top">
+      <app-chat-message-compose (messageSubmitted)="onMessageSubmitted($event)"></app-chat-message-compose>
+  </div>
+</div>

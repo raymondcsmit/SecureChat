@@ -1,0 +1,7 @@
+<div class="d-flex justify-content-between arrange-items-center">
+    <span [matBadge]="newMessageCount" [matBadge]="newMessageCount" matBadgePosition="above before" [matBadgeHidden]="isBadgeHidden">{{chatName}}</span>
+    <div #closeButtonDiv *ngIf="isCloseShown" class="close-button">
+        <mat-icon>close</mat-icon>
+    </div>   
+    <div class="dummy-div" (mouseover)="onMouseOver()" (mouseout)="onMouseOut()" (click)="onClick($event)"></div>
+</div>

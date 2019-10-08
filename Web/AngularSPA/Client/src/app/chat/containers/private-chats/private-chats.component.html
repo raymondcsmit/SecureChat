@@ -1,0 +1,12 @@
+<div class="flex-grow-1 d-flex flex-column border">
+  <div class="flex-grow-1 d-flex flex-column border">
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link *ngFor="let chat of privateChats$ | async"
+          (click)="onPrivateChatSelected(chat.id)"
+          [active]="(selectedPrivateChatId$ | async) === chat.id"> {{link}} 
+        <app-chat-tab [chatName]="getChatName(chat) | async" [newMessageCount]="chat.newMessageCount" (chatClosed)="onChatClosed(chat.id)"></app-chat-tab>
+      </a>
+    </nav>
+    <app-private-chat [id]="selectedPrivateChat$ | async"></app-private-chat>
+  </div>
+</div>

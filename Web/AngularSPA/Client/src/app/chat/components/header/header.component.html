@@ -1,0 +1,8 @@
+<mat-toolbar color="primary">
+    <mat-toolbar-row>
+            <span href="/" class="p-2">SecureChat</span>
+            <span [routerLink]="" class="p-2">{{user.userName}}</span>
+            <span class="flex-fill"></span>
+            <span [routerLink]="" (click)="onSignOut($event)">Sign Out</span>
+    </mat-toolbar-row>
+</mat-toolbar>

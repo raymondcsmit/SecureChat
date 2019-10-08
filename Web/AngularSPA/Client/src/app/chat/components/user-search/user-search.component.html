@@ -1,0 +1,22 @@
+<form class="d-flex flex-column justify-content-center align-items-center w-50" [formGroup]="searchForm">
+  <mat-form-field class="w-100">
+    <input matInput placeholder="Username" formControlName="userName">
+  </mat-form-field>
+  <mat-form-field class="w-100">
+    <input matInput placeholder="Email" formControlName="email">
+  </mat-form-field>
+  <mat-error *ngIf="hasError()">
+    <div>
+      You must fill out at least one field
+    </div>
+  </mat-error>
+  <mat-error *ngIf="hasError('email')">
+    <div *ngIf="hasError('email', email)">
+      Email is invalid
+    </div>
+  </mat-error>
+  <div class="d-flex flex-row justify-content-center mt-4 w-100">
+    <button mat-raised-button type="button" [disabled]="!searchForm.valid" class="w-50" (click)="onSearch()">Search</button>
+    <button mat-raised-button class="w-50 ml-2" routerLink="../">Return to chat</button>
+  </div>
+</form>

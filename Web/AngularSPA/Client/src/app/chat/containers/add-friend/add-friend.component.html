@@ -1,0 +1,8 @@
+<div class="d-flex flex-column align-items-center w-100">
+    <h1 class="mb-4">Add a Friend</h1>
+    <app-user-search (search)="onSearch($event)"></app-user-search>
+    <div class="d-flex flex-row justify-content-center mt-4 w-100">
+        <button mat-raised-button class="w-50 ml-2" routerLink="../">Return to chat</button>
+    </div>
+    <app-user-search-result [searchResult]="searchResult$ | async" [actions]="actions" (action)="onAction($event)"></app-user-search-result>
+</div>

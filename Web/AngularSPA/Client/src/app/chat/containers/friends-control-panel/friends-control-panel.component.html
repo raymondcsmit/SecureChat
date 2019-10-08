@@ -1,0 +1,28 @@
+<div class="d-flex flex-column align-items-center w-100">
+    <mat-icon>people</mat-icon>
+    <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
+    <div class="d-flex align-items-center justify-content-center clickable" routerLink="./add-friend">
+        <!-- <mat-icon class="mr-2">person_add</mat-icon> -->
+        <span>Add a friend</span>
+    </div>
+    <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
+    <mat-accordion displayMode="flat" class="scrollable flex-grow-1 w-100">
+        <mat-expansion-panel *ngFor="let user of (friends | async)">
+            <mat-expansion-panel-header>
+                <mat-panel-title class="d-flex align-items-center">
+                    <span [style.color]="user.isOnline ? 'black' : 'gray'">{{user.userName}}</span>
+                    <span *ngIf="user.isOnline" class="dot ml-2"></span>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="d-flex align-items-center justify-content-center clickable" (click)="onCreatePrivateChat(user.id)">
+                <mat-icon class="mr-2">message</mat-icon>
+                <span>Start chat</span>
+            </div>
+            <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
+            <div class="d-flex align-items-center clickable justify-content-center" (click)="onRemoveFriend(user.id, user.userName)">
+                <mat-icon class="mr-2">clear</mat-icon>
+                <span>Remove</span>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>
