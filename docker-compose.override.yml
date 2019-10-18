@@ -75,14 +75,14 @@ services:
       - "6001:6001"
       - "6002:6002"
     volumes:
-      - './docker-compose/nginx/config/nginx.dev.conf:/etc/nginx/nginx.conf'
+      - './Infrastructure/nginx/config/nginx.dev.conf:/etc/nginx/nginx.conf'
 
   eureka:
     ports:
       - "8761:8761"
     volumes:
-      - ./docker-compose/eureka/config:/tmp/config
-      - ./docker-compose/eureka/logs:/tmp/logs
+      - ./Infrastructure/eureka/config:/tmp/config
+      - ./Infrastructure/eureka/logs:/tmp/logs
   
   mysql:
     ports:
@@ -90,8 +90,8 @@ services:
     environment:
         MYSQL_ROOT_PASSWORD: "12345"
     volumes:
-      - ./docker-compose/mysql/scripts:/docker-entrypoint-initdb.d
-      - ./docker-compose/mysql/data:/var/lib/mysql
+      - ./Infrastructure/mysql/scripts:/docker-entrypoint-initdb.d
+      - ./Infrastructure/mysql/data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p12345"]
       interval: 10s
