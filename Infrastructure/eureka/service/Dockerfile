@@ -4,6 +4,7 @@ EXPOSE 8761
 FROM java:8 AS build
 WORKDIR /src
 COPY . .
+RUN ls -l
 RUN ./mvnw clean package
 
 FROM build AS final

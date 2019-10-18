@@ -30,8 +30,7 @@ services:
 
   users.apigw:
     build:
-      context: .
-      dockerfile: ApiGateways/OcelotApiGw/Dockerfile
+      context: ./ApiGateways/OcelotApiGw
     depends_on:
       - users.service
 
@@ -54,7 +53,7 @@ services:
 
   eureka:
     build: 
-      context: ./eureka
+      context: ./Infrastructure/eureka/service
     restart: always
 
   healthchecksui:
