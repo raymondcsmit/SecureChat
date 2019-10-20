@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Users.API.Models
 {
-    public class User : IdentityUser, IAuditableModel
+    public class User : IdentityUser, IAuditable
     {
-        public DateTime CreatedAt { get; set; }
-        public DateTime LastModified { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset ModifiedAt { get; set; }
     }
 }

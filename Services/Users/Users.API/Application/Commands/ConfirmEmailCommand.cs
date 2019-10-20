@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Users.API.Application.Commands
 {
     public class ConfirmEmailCommand : INotification
     {
-        [Required]
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
         [Required]
-        public string Token { get; private set; }
+        public string Token { get; set; }
     }
 }

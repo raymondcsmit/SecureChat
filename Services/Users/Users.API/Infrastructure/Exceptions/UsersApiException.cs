@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Users.API.Infrastructure.Exceptions
 {
@@ -26,6 +27,13 @@ namespace Users.API.Infrastructure.Exceptions
         {
             ErrorCode = errorCode;
             if (errors != null) Errors = errors;
+        }
+
+        public UsersApiException(string message, IEnumerable<IdentityError> errors, int errorCode = 400)
+            : base(message)
+        {
+            ErrorCode = errorCode;
+            if (errors != null) Errors = errors.Select(e => e.Description);
         }
     }
 }

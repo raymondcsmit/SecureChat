@@ -18,5 +18,11 @@ namespace Users.FunctionalTests.Extensions
             var contentString = await message.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(contentString);
         }
+
+        public static async Task<object> DeserializeAsync(this HttpResponseMessage message)
+        {
+            var contentString = await message.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject(contentString);
+        }
     }
 }

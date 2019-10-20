@@ -12,8 +12,7 @@ namespace Users.API.Application.Commands
         [Required]
         public string Token { get; set; }
 
-        [Required]
-        public string UserName { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

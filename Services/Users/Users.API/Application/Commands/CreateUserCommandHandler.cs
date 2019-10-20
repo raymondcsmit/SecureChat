@@ -42,7 +42,7 @@ namespace Users.API.Application.Commands
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
-                throw new UsersApiException("User could not be created", result.Errors.Select(e => e.Description));
+                throw new UsersApiException("User could not be created", result.Errors);
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);

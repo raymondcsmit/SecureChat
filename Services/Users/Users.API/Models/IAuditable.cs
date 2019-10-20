@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace Users.API.Models
 {
-    public interface IAuditableModel
+    public interface IAuditable
     {
-        DateTime CreatedAt { get; set; }
-        DateTime LastModified { get; set; }
+        DateTimeOffset CreatedAt { get; set; }
+        DateTimeOffset ModifiedAt { get; set; }
     }
 }

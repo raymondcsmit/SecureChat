@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,8 +55,9 @@ namespace Users.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("{userName}/reset-password", Name = nameof(ResetPasswordAsync))]
-        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordCommand resetPasswordCommand)
+        public async Task<IActionResult> ResetPasswordAsync([FromRoute] string userName, [FromBody] ResetPasswordCommand resetPasswordCommand)
         {
+            resetPasswordCommand.UserName = userName;
             await _mediator.Publish(resetPasswordCommand);
 
             return Ok();
@@ -63,13 +65,14 @@ namespace Users.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("{id}/complete-password-reset", Name = nameof(CompletePasswordResetAsync))]
-        public async Task<IActionResult> CompletePasswordResetAsync(CompletePasswordResetCommand completePasswordResetCommand)
+        public async Task<IActionResult> CompletePasswordResetAsync([FromRoute] string id, [FromBody] CompletePasswordResetCommand completePasswordResetCommand)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ErrorResponse(ModelState));
             }
 
+            completePasswordResetCommand.Id = id;
             await _mediator.Publish(completePasswordResetCommand);
 
             return Ok();
@@ -77,13 +80,14 @@ namespace Users.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("{id}/confirm-email", Name = nameof(ConfirmEmailAsync))]
-        public async Task<IActionResult> ConfirmEmailAsync(ConfirmEmailCommand confirmEmailCommand)
+        public async Task<IActionResult> ConfirmEmailAsync([FromRoute] string id, [FromBody] ConfirmEmailCommand confirmEmailCommand)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ErrorResponse(ModelState));
             }
 
+            confirmEmailCommand.Id = id;
             await _mediator.Publish(confirmEmailCommand);
 
             return Ok();

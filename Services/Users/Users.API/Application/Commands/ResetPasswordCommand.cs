@@ -9,10 +9,9 @@ namespace Users.API.Application.Commands
 {
     public class ResetPasswordCommand : INotification
     {
-        [Required]
-        public string UserName { get; private set; }
+        public string UserName { get; set; }
 
         [Required]
-        public string CompletionUrl { get; private set; }
+        public string CompletionUrl { get; set; }
     }
 }

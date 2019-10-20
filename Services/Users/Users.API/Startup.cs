@@ -101,7 +101,7 @@ namespace Users.API
                 .AddCheck("db-check", new MySqlConnectionHealthCheck(Configuration["ConnectionString"]));
 
             services.AddAutoMapper(config => 
-                    config.AddProfile(new AutoMapperConfig()), 
+                    config.AddProfile(new AutoMapperConfig(new [] {typeof(Startup).Assembly})),
                     typeof(Startup).Assembly);
 
             services.AddEmailSender(Configuration, HostingEnvironment);

@@ -21,10 +21,6 @@ namespace Users.API.Infrastructure.Filters
 
         public void OnException(ExceptionContext context)
         {
-            _logger.LogError(new EventId(context.Exception.HResult),
-                context.Exception,
-                context.Exception.Message);
-
             if (context.Exception is UsersApiException e)
             {
                 if (e.ErrorCode == 404)
@@ -39,6 +35,10 @@ namespace Users.API.Infrastructure.Filters
             }
             else
             {
+                _logger.LogError(new EventId(context.Exception.HResult),
+                    context.Exception,
+                    context.Exception.Message);
+
                 var message = _env.IsDevelopment() ? context.Exception.Message : "An error has occured.";
 
                 context.Result = new ObjectResult(new ErrorResponse(new[] { message }))

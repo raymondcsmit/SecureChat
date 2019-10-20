@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Users.API.Extensions;
+using Users.API.Infrastructure.Exceptions;
 using Users.API.Models;
 
 namespace Users.API.Application.Commands
@@ -25,18 +27,23 @@ namespace Users.API.Application.Commands
 
         public async Task Handle(CompletePasswordResetCommand notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Initiating password reset completion for {notification.UserName}");
-            var user = await _userManager.FindByNameAsync(notification.UserName);
+            var user = await _userManager.FindByIdAsync(notification.Id);
             if (user == null)
             {
-                _logger.LogWarning($"Password reset failed (invalid id): {notification.UserName}");
-                return;
+                _logger.LogWarning($"Password reset failed (invalid id): {notification.Id}");
+                throw new UsersApiException("Password reset failed", new[] { "User not found" }, 404);
             }
 
             var result = await _userManager.ResetPasswordAsync(user, notification.Token, notification.NewPassword);
-            _logger.LogInformation(result.Succeeded
-                ? $"Password reset for user id {user.Id}"
-                : $"Failed to reset password for user id {user.Id}: {string.Join("\n", result.Errors)}");
+            if (result.Succeeded)
+            {
+                _logger.LogInformation($"Password reset for user id {user.Id}");
+            }
+            else
+            {
+                _logger.LogWarning($"Failed to reset password for user id {user.Id}: {result.Errors.ToErrorString()}");
+                throw new UsersApiException("Password reset failed", result.Errors);
+            }
         }
     }
 }

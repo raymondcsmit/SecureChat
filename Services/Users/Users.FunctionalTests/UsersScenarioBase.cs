@@ -32,13 +32,22 @@ namespace Users.FunctionalTests
             return testServer;
         }
 
+        public void DeleteDatabase(TestServer testServer)
+        {
+            using (var scope = testServer.Host.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+                dbContext.Database.EnsureDeleted();
+            }
+        }
+
         private static readonly string BaseUrl = "api/users";
 
         public static class Get
         {
             public static string Users = BaseUrl;
 
-            public static string UserById(int id) 
+            public static string UserById(string id) 
                 => $"{BaseUrl}/{id}";
         }
 

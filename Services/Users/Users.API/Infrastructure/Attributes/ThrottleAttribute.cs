@@ -17,6 +17,12 @@ namespace Users.API.Infrastructure.Attributes
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (env == "Development")
+            {
+                return;
+            }
+
             var actionName = context.ActionDescriptor.DisplayName;
             var key = string.Concat(actionName, "-", context.HttpContext.Request.HttpContext.Connection.RemoteIpAddress);
 
