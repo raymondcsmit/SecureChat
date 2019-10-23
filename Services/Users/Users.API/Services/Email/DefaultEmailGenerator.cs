@@ -13,16 +13,16 @@ namespace Users.API.Services.Email
             _configuration = configuration;
         }
 
-        public (string, string) GenerateEmailVerificationEmail(string userName, string token)
+        public (string, string) GenerateEmailConfirmationEmail(string userName, string token)
         {
-            var emailVerificationUrl = _configuration["EmailConfirmationUrl"];
-            var url = UriHelpers.BuildUri(emailVerificationUrl, new NameValueCollection()
+            var emailConfirmationUrl = _configuration["EmailConfirmationUrl"];
+            var url = UriHelpers.BuildUri(emailConfirmationUrl, new NameValueCollection()
             {
                 {"UserName", userName},
                 {"Token", token}
             }).ToString();
             return ("Please confirm your email",
-                $@"Thank you for registering with SecureChat. Please click <a href=""{url}"">here</a> to verify your email address.");
+                $@"Thank you for registering with SecureChat. Please click <a href=""{url}"">here</a> to confirm your email address.");
         }
 
         public (string, string) GeneratePasswordResetEmail(string userName, string token, string completionUrl)

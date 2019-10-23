@@ -47,7 +47,7 @@ namespace Registration
 
             services.AddTransient<ILoginUrlService, LoginUrlService>();
             services.AddScoped<IUsersClient, UsersClient>();
-            services.AddTransient<IUrlGeneratorService, UrlGeneratorService>();
+            services.AddTransient<IActionUrlGeneratorService, ActionActionUrlGeneratorService>();
             services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
             services.AddHttpClientServices(Configuration);
         }

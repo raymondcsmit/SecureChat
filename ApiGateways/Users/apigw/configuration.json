@@ -29,7 +29,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/users/{id}/reset-password",
+      "DownstreamPathTemplate": "/api/users/{userName}/reset-password",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -37,7 +37,7 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/users/{id}/reset-password",
+      "UpstreamPathTemplate": "/api/users/{userName}/reset-password",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {

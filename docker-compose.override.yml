@@ -10,7 +10,7 @@ services:
         RegistrationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/registration
         PasswordResetUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/password-reset
     extra_hosts:
-        - "${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1"
+        - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
   users.service:
     environment:
@@ -28,7 +28,12 @@ services:
   registration.app:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102
+      AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+    depends_on:
+      - users.apigw
+    extra_hosts:
+      - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
   angularspa.app:
     environment:
@@ -62,6 +67,9 @@ services:
       AuthServiceUrl: http://auth.service
     volumes:
       - ./ApiGateways/Users/apigw:/app/configuration
+    depends_on:
+      - auth.service
+      - users.service
 
   rabbitmq:
     environment:

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Polly.CircuitBreaker;
 using Registration.Exceptions;
@@ -18,11 +19,13 @@ namespace Registration.Controllers
     {
         private readonly IUsersClient _usersClient;
         private readonly ILoginUrlService _loginUrlService;
+        private readonly IConfiguration _configuration;
 
-        public RegistrationController(IUsersClient usersClient, ILoginUrlService loginUrlService)
+        public RegistrationController(IUsersClient usersClient, ILoginUrlService loginUrlService, IConfiguration configuration)
         {
             _usersClient = usersClient;
             _loginUrlService = loginUrlService;
+            _configuration = configuration;
         }
 
         [HttpGet("", Name = nameof(RegisterGet))]
@@ -49,7 +52,8 @@ namespace Registration.Controllers
             try
             {
                 var user = await _usersClient.CreateUserAsync(registrationForm);
-                return RedirectToAction(nameof(RegisterConfirmationGet), user);
+                TempData["ConfirmationEmail"] = user.Email;
+                return RedirectToAction(nameof(RegisterConfirmationGet));
             }
             catch (ApiException e)
             {
@@ -61,11 +65,11 @@ namespace Registration.Controllers
         }
 
         [HttpGet("confirmation", Name = nameof(RegisterConfirmationGet))]
-        public IActionResult RegisterConfirmationGet(User user)
+        public IActionResult RegisterConfirmationGet()
         {
-            ViewData["LoginUrl"] = _loginUrlService.GetLoginUrl();
+            ViewData["LoginUrl"] = _loginUrlService.GetLoginUrl() ?? $"{_configuration["AuthUrl"]}/account/login";
             _loginUrlService.ClearLoginUrlCookie();
-            return View(user);
+            return View();
         }
     }
 }

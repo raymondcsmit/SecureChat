@@ -15,19 +15,19 @@ namespace Registration.Services
     public class UsersClient : IUsersClient
     {
         private readonly HttpClient _httpClient;
-        private readonly IUrlGeneratorService _urlGeneratorService;
+        private readonly IActionUrlGeneratorService _actionUrlGeneratorService;
 
         public UsersClient(
             HttpClient httpClient,
-            IUrlGeneratorService urlGeneratorService)
+            IActionUrlGeneratorService actionUrlGeneratorService)
         {
             _httpClient = httpClient;
-            _urlGeneratorService = urlGeneratorService;
+            _actionUrlGeneratorService = actionUrlGeneratorService;
         }
 
         public async Task<User> CreateUserAsync(RegistrationFormDto registrationFormDto)
         {
-            using (var response = await _httpClient.PostAsJsonAsync("users", registrationFormDto))
+            using (var response = await _httpClient.PostAsJsonAsync("api/users", registrationFormDto))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -40,7 +40,7 @@ namespace Registration.Services
 
         public async Task ConfirmEmailAsync(EmailConfirmationDto emailConfirmationDto)
         {
-            using (var response = await _httpClient.PostAsJsonAsync($"users/{emailConfirmationDto.Id}/confirm-email", emailConfirmationDto))
+            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{emailConfirmationDto.Id}/confirm-email", emailConfirmationDto))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -55,12 +55,12 @@ namespace Registration.Services
         {
             var body = new
             {
-                CompletionUrl = _urlGeneratorService.GetUrl(nameof(PasswordResetController.CompletePasswordResetGet), new
+                CompletionUrl = _actionUrlGeneratorService.GetUrl(nameof(PasswordResetController.CompletePasswordResetGet), new
                 {
                     passwordResetDto.LoginUrl
                 })
             };
-            using (var response = await _httpClient.PostAsJsonAsync($"users/{passwordResetDto.UserName}/reset-password", body))
+            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{passwordResetDto.UserName}/reset-password", body))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -79,7 +79,7 @@ namespace Registration.Services
                 UserName = passwordResetDto.UserName,
                 NewPassword = passwordResetDto.Password
             };
-            using (var response = await _httpClient.PostAsJsonAsync($"users/{passwordResetDto.UserName}/complete-password-reset", body))
+            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{passwordResetDto.UserName}/complete-password-reset", body))
             {
                 if (response.IsSuccessStatusCode)
                 {

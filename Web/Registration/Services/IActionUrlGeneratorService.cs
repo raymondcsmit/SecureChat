@@ -1,6 +1,6 @@
 ﻿namespace Registration.Services
 {
-    public interface IUrlGeneratorService
+    public interface IActionUrlGeneratorService
     {
         string GetUrl(string actionName);
         string GetUrl(string actionName, object queryParams);

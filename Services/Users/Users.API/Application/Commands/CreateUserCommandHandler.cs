@@ -46,10 +46,11 @@ namespace Users.API.Application.Commands
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);
+            await _userManager.AddToRoleAsync(createdUser, "user");
             _logger.LogInformation($"Successfully created user with id {createdUser.Id}");
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var (subject, body) =
-                _emailGenerator.GenerateEmailVerificationEmail(user.UserName, token);
+                _emailGenerator.GenerateEmailConfirmationEmail(user.UserName, token);
             await _emailSender.SendEmailAsync(user.Email, subject, body);
             return _mapper.Map<UserDto>(createdUser);
         }

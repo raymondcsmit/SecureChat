@@ -23,7 +23,7 @@ namespace OcelotApiGw
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var authUrl = _cfg.GetValue<string>("AuthUrl");
+            var authUrl = _cfg["AuthServiceUrl"];
             const string authenticationProviderKey = "AuthApiKey";
 
             services.AddHealthChecks()

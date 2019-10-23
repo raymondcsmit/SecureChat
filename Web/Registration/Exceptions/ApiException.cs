@@ -11,6 +11,11 @@ namespace Registration.Exceptions
 {
     public class ApiException : Exception
     {
+        private class ApiError
+        {
+            public IEnumerable<string> Errors { get; set; }
+        }
+
         public IEnumerable<string> Errors { get; }
 
         public ApiException(IEnumerable<string> errors)
@@ -31,7 +36,7 @@ namespace Registration.Exceptions
             }
 
             var content = await response.Content.ReadAsStringAsync();
-            dynamic json = JsonConvert.DeserializeObject(content);
+            var json = JsonConvert.DeserializeObject<ApiError>(content);
             try
             {
                 return new ApiException(json.Errors);
