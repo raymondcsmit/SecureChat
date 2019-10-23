@@ -4,7 +4,8 @@ services:
   auth.service:
     environment:
         ASPNETCORE_ENVIRONMENT: Development
-        ConnectionString: Server=mysql; Database=auth_db; Uid=auth; Pwd=12345;
+        AuthDbConnectionString: Server=mysql; Database=auth_db; Uid=auth; Pwd=12345;
+        UsersDbConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
         AngularSpaClientUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6001
         PublicOriginUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
         RegistrationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/registration

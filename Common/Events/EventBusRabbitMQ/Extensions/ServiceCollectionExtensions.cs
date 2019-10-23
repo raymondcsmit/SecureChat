@@ -13,21 +13,14 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration, Assembly asm)
+        public static IServiceCollection AddEventBus(this IServiceCollection services, Action<EventBusOptions> configureOptions, Assembly assembly)
         {
             services.AddSingleton<IRabbitMQPersistentConnection, DefaultRabbitMQPersistentConnection>();
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
             services.AddSingleton<IEventBus, EventBusRabbitMQ>();
-            services.Configure<EventBusOptions>(options =>
-            {
-                options.HostName = configuration["EventBusConnection"];
-                options.UserName = configuration["EventBusUserName"];
-                options.Password = configuration["EventBusPassword"];
-                options.QueueName = configuration["EventBusQueueName"];
-                options.RetryCount = int.Parse(configuration["EventBusRetryCount"]);
-            });
 
-            var concreteTypes = asm.GetTypes()
+            services.Configure(configureOptions);
+            var concreteTypes = assembly.GetTypes()
                 .Where(type => type.ImplementsGenericInterface(typeof(IIntegrationEventHandler<>)) 
                                || type.GetInterfaces(true).Contains(typeof(IDynamicIntegrationEventHandler)));
             foreach (var concreteType in concreteTypes)

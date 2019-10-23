@@ -43,7 +43,7 @@ namespace Auth.Controllers
         private readonly ILogger<AccountController> _logger;
         private readonly IRedirectUrlGenerator _redirectUrlGenerator;
         private readonly ILoginService<User> _loginService;
-        private readonly OidcSettings _oidcSettings;
+        private readonly AuthSettings _authSettings;
 
         public AccountController(
             IIdentityServerInteractionService interaction,
@@ -53,7 +53,7 @@ namespace Auth.Controllers
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             ILogger<AccountController> logger,
-            IOptions<OidcSettings> oidcSettings,
+            IOptions<AuthSettings> oidcSettings,
             IRedirectUrlGenerator redirectUrlGenerator,
             ILoginService<User> loginService)
         {
@@ -66,7 +66,7 @@ namespace Auth.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _oidcSettings = oidcSettings.Value;
+            _authSettings = oidcSettings.Value;
             _redirectUrlGenerator = redirectUrlGenerator;
             _loginService = loginService;
         }
@@ -292,8 +292,8 @@ namespace Auth.Controllers
             {
                 AllowRememberLogin = AccountOptions.AllowRememberLogin,
                 EnableLocalLogin = allowLocal && AccountOptions.AllowLocalLogin,
-                RegistrationUrl = _redirectUrlGenerator.GenerateUrl(baseUrl: _oidcSettings.RegistrationUrl),
-                PasswordResetUrl = _redirectUrlGenerator.GenerateUrl(baseUrl: _oidcSettings.PasswordResetUrl),
+                RegistrationUrl = _redirectUrlGenerator.GenerateUrl(baseUrl: _authSettings.RegistrationUrl),
+                PasswordResetUrl = _redirectUrlGenerator.GenerateUrl(baseUrl: _authSettings.PasswordResetUrl),
                 Username = context?.LoginHint,
                 ExternalProviders = providers.ToArray()
             };

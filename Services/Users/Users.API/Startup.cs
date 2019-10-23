@@ -92,7 +92,13 @@ namespace Users.API
 
             services.Configure<DbConnectionInfo>(Configuration);
 
-            services.AddEventBus(Configuration, GetType().Assembly);
+            services.AddEventBus(options =>
+            {
+                options.HostName = Configuration["EventBusConnection"];
+                options.UserName = Configuration["EventBusUserName"];
+                options.Password = Configuration["EventBusPassword"];
+                options.QueueName = Configuration["EventBusQueueName"];
+            }, GetType().Assembly);
 
             services.AddScoped<UsersDbContextSeed>();
 

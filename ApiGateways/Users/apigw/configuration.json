@@ -26,6 +26,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "AuthApiKey",
         "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "permission": "users.viewprofile"
       }
     },
     {

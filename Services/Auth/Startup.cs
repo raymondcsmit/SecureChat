@@ -32,10 +32,9 @@ namespace Auth
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration["ConnectionString"];
             var migrationsAssembly = typeof(Startup).Assembly.FullName;
 
-            services.Configure<OidcSettings>(Configuration);
+            services.Configure<AuthSettings>(Configuration);
 
             services.AddDiscoveryClient(Configuration);
 
@@ -43,7 +42,7 @@ namespace Auth
 
             services.AddDbContext<UsersDbContext>(options =>
             {
-                options.UseMySql(connectionString,
+                options.UseMySql(Configuration["UsersDbConnectionString"],
                     opt =>
                     {
                         opt.MigrationsAssembly(migrationsAssembly);
@@ -74,7 +73,7 @@ namespace Auth
             // configure identity server with in-memory stores, keys, clients and resources
             services.AddIdentityServer(options =>
                 {
-                    options.PublicOrigin = Configuration["PublicOrigin"];
+                    options.PublicOrigin = Configuration["PublicOriginUrl"];
                     if (!Environment.IsDevelopment())
                     {
                         options.Authentication.CookieLifetime = TimeSpan.FromHours(2);
@@ -83,7 +82,7 @@ namespace Auth
                 .AddDeveloperSigningCredential()
                 .AddConfigurationStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString,
+                    options.ConfigureDbContext = builder => builder.UseMySql(Configuration["AuthDbConnectionString"],
                         opt =>
                         {
                             opt.MigrationsAssembly(migrationsAssembly);
@@ -92,7 +91,7 @@ namespace Auth
                 })
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = builder => builder.UseMySql(connectionString,
+                    options.ConfigureDbContext = builder => builder.UseMySql(Configuration["AuthDbConnectionString"],
                         opt =>
                         {
                             opt.MigrationsAssembly(migrationsAssembly);

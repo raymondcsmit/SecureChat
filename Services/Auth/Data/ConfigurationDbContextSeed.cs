@@ -12,12 +12,12 @@ namespace Auth.Data
     public class ConfigurationDbContextSeed
     {
         private readonly ConfigurationDbContext _context;
-        private readonly OidcSettings _oidcSettings;
+        private readonly AuthSettings _authSettings;
 
-        public ConfigurationDbContextSeed(ConfigurationDbContext context, IOptions<OidcSettings> oidcSettings)
+        public ConfigurationDbContextSeed(ConfigurationDbContext context, IOptions<AuthSettings> oidcSettings)
         {
             _context = context;
-            _oidcSettings = oidcSettings.Value;
+            _authSettings = oidcSettings.Value;
         }
 
         public async Task SeedAsync()
@@ -42,10 +42,10 @@ namespace Auth.Data
 
         private IEnumerable<Client> GetClients()
         {
-            var props = _oidcSettings.GetType()
+            var props = _authSettings.GetType()
                 .GetProperties()
                 .Where(prop => prop.Name.Contains("Client"));
-            var clientUrls = props.ToDictionary(prop => prop.Name, prop => prop.GetValue(_oidcSettings) as string);
+            var clientUrls = props.ToDictionary(prop => prop.Name, prop => prop.GetValue(_authSettings) as string);
 
             return Config.GetClients(clientUrls)
                 .Select(model => model.ToEntity());
