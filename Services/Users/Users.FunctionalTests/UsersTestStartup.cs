@@ -22,10 +22,6 @@ namespace Users.FunctionalTests
 
         public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (Configuration["isTest"] == bool.TrueString.ToLowerInvariant())
-            {
-                app.UseMiddleware<AutoAuthorizeMiddleware>();
-            }
             base.Configure(app, env);
         }
 

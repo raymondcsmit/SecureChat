@@ -19,6 +19,7 @@ using Users.API.Models;
 namespace Users.API.Controllers
 {
     [Route("api/users")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;

@@ -46,7 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{1B5673C1
 		ApiGateways\Users\apigw\configuration.json = ApiGateways\Users\apigw\configuration.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Users.FunctionalTests", "Services\Users\Users.FunctionalTests\Users.FunctionalTests.csproj", "{AB55DA95-49F9-4882-80B4-CB255D2DDECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.FunctionalTests", "Services\Users\Users.FunctionalTests\Users.FunctionalTests.csproj", "{AB55DA95-49F9-4882-80B4-CB255D2DDECD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

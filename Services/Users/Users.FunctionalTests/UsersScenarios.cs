@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Polly;
@@ -38,7 +39,7 @@ namespace Users.FunctionalTests
         [InlineData("foo", "foo@bar", null)]
         public async Task CreateUser_ShouldReturnBadRequest_OnInvalidData(string username, string email, string password)
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = username,
@@ -53,7 +54,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CreateUser_ShouldReturnCreated_OnValidData()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -68,7 +69,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CreateUser_ShouldReturnCreatedUserInBody_OnValidData()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -84,7 +85,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CreateUser_ShouldCreateUser_OnValidData()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -102,7 +103,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CreateUser_ShouldSetValidTimestamp_OnValidData()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -123,7 +124,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task GetUserById_ShouldReturnUser_OnValidId()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -142,7 +143,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task GetUserById_ShouldReturnNotFound_OnInvalidId()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var getResponse = await client.GetAsync(Get.UserById("gibberish"));
             Assert.True(getResponse.StatusCode == HttpStatusCode.NotFound);
         }
@@ -150,7 +151,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CreateUser_ShouldSendEmailToUser_OnValidData()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -166,7 +167,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ConfirmEmail_ShouldConfirmUserEmail_OnValidToken()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -196,7 +197,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ConfirmEmail_ShouldReturnBadRequest_OnInvalidToken()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -213,7 +214,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ConfirmEmail_ShouldReturnNotFound_OnInvalidUser()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var confirmEmailResponse = await client.PostAsJsonAsync(Post.ConfirmEmailById("gibberish"), new { Token = "gibberish" });
             Assert.True(confirmEmailResponse.StatusCode == HttpStatusCode.NotFound);
         }
@@ -221,7 +222,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ResetPassword_ShouldSendEmailToUser_OnValidUsername()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -240,7 +241,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ResetPassword_ShouldNotSendEmail_OnInvalidUsername()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             await client.PostAsJsonAsync(Post.ResetPasswordByUserName("gibberish"), new { CompletionUrl = "foo.bar" });
             UsersTestStartup.EmailSenderMock.Verify(mock =>
                 mock.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -249,7 +250,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task ResetPassword_ShouldReturnOk_OnInvalidUsername()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var response = await client.PostAsJsonAsync(Post.ResetPasswordByUserName("gibberish"), new { CompletionUrl = "foo.bar" });
             Assert.True(response.StatusCode == HttpStatusCode.OK);
         }
@@ -257,7 +258,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CompletePasswordReset_ShouldResetPassword_OnValidIdAndToken()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -287,7 +288,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CompletePasswordReset_ShouldReturn404_OnInvalidId()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var response = await client.PostAsJsonAsync(Post.CompletePasswordResetById("gibberish"), new { Token = "gibberish", NewPassword = "P@ssword2" });
             Assert.True(response.StatusCode == HttpStatusCode.NotFound);
         }
@@ -295,7 +296,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CompletePasswordReset_ShouldReturnBadRequest_OnInvalidToken()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -313,7 +314,7 @@ namespace Users.FunctionalTests
         [Fact]
         public async Task CompletePasswordReset_ShouldNotChangePassword_OnInvalidToken()
         {
-            var client = TestServerFixture.TestServer.CreateClient();
+            var client = CreateClient();
             var user = new
             {
                 UserName = "Foo",
@@ -334,10 +335,35 @@ namespace Users.FunctionalTests
             }
         }
 
+        [Fact]
+        public async Task ServiceEndpoints_ShouldNotReturnUnauthorized_OnValidBypassSecret()
+        {
+            var client = TestServerFixture.TestServer.CreateClient();
+            client.DefaultRequestHeaders.Add("BypassAuthentication", "secret");
+            var getResponse = await client.GetAsync(Get.UserById("gibberish"));
+            Assert.False(getResponse.StatusCode == HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task ServiceEndpoints_ShouldReturnUnauthorized_OnInvalidBypassSecret()
+        {
+            var client = TestServerFixture.TestServer.CreateClient();
+            client.DefaultRequestHeaders.Add("BypassAuthentication", "gibberish12345");
+            var getResponse = await client.GetAsync(Get.UserById("gibberish"));
+            Assert.True(getResponse.StatusCode == HttpStatusCode.Unauthorized);
+        }
+
         public void Dispose()
         {
             TestServerFixture.ClearUsers().Wait();
             UsersTestStartup.EmailSenderMock.Reset();
+        }
+
+        private HttpClient CreateClient()
+        {
+            var client = TestServerFixture.TestServer.CreateClient();
+            client.DefaultRequestHeaders.Add("BypassAuthentication", "secret");
+            return client;
         }
     }
 }

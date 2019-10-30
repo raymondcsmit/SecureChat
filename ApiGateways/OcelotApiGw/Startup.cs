@@ -8,6 +8,7 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using System;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace OcelotApiGw
@@ -60,6 +61,8 @@ namespace OcelotApiGw
                 app.UseDeveloperExceptionPage();
             }
 
+            app.RemoveHeader(_cfg["BypassAuthenticationHeader"]);
+
             app.UseHealthChecks("/hc", new HealthCheckOptions()
             {
                 Predicate = _ => true,
@@ -74,6 +77,19 @@ namespace OcelotApiGw
             app.UseCors("CorsPolicy");
 
             app.UseOcelot().Wait();
+        }
+    }
+
+    public static class Extensions
+    {
+        public static IApplicationBuilder RemoveHeader(this IApplicationBuilder app, string headerName)
+        {
+            var rewriteOptions = new RewriteOptions().Add(rule =>
+            {
+                rule.HttpContext.Request.Headers.Remove(headerName);
+                rule.Result = RuleResult.ContinueRules;
+            });
+            return app.UseRewriter(rewriteOptions);
         }
     }
 }

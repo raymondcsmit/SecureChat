@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using AutoMapper;
 using HealthChecks.UI.Client;
+using Helpers.Extensions;
 using Helpers.Mapping;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
@@ -48,6 +56,10 @@ namespace Users.API
 
             services.AddMvc(options =>
             {
+                //var policy = new AuthorizationPolicyBuilder()
+                //    .RequireAuthenticatedUser()
+                //    .Build();
+                //options.Filters.Add(new AuthorizeFilter(policy));
                 options.Filters.Add(typeof(GlobalExceptionFilter));
             })
             .AddJsonOptions(options =>
@@ -71,13 +83,16 @@ namespace Users.API
                     });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.Authority = Configuration["AuthUrl"];
-                    options.Audience = "UsersApi";
-                    options.RequireHttpsMetadata = false;
-                });
+            services.AddAuthenticationWithBypass(opt =>
+            {
+                opt.Authority = Configuration["AuthUrl"];
+                opt.Audience = "UsersApi";
+                opt.RequireHttpsMetadata = false;
+            }, opt =>
+            {
+                opt.BypassAuthenticationHeader = Configuration["BypassAuthenticationHeader"];
+                opt.BypassAuthenticationSecret = Configuration["BypassAuthenticationSecret"];
+            });
 
             // No need for origin restrictions, since the microservice will not be exposed externally
             services.AddCors(options =>

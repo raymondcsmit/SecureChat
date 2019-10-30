@@ -22,14 +22,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/users/{id}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "AuthApiKey",
-        "AllowedScopes": []
-      },
-      "RouteClaimsRequirement": {
-        "permission": "users.viewprofile"
-      }
+      "UpstreamHttpMethod": [ "GET" ]
     },
     {
       "DownstreamPathTemplate": "/api/users/{userName}/reset-password",
