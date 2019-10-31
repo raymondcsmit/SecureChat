@@ -51,16 +51,16 @@ namespace Registration.Services
             }
         }
 
-        public async Task ResetPasswordAsync(PasswordResetDto passwordResetDto)
+        public async Task ResetPasswordAsync(string userName, string loginUrl)
         {
             var body = new
             {
                 CompletionUrl = _actionUrlGeneratorService.GetUrl(nameof(PasswordResetController.CompletePasswordResetGet), new
                 {
-                    passwordResetDto.LoginUrl
+                    LoginUrl = loginUrl ?? string.Empty
                 })
             };
-            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{passwordResetDto.UserName}/reset-password", body))
+            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{userName}/reset-password", body))
             {
                 if (response.IsSuccessStatusCode)
                 {
@@ -71,15 +71,15 @@ namespace Registration.Services
             }
         }
 
-        public async Task CompletePasswordResetAsync(PasswordResetCompletionPostDto passwordResetDto)
+        public async Task CompletePasswordResetAsync(string userName, string token, string password)
         {
             var body = new
             {
-                Token = passwordResetDto.Token,
-                UserName = passwordResetDto.UserName,
-                NewPassword = passwordResetDto.Password
+                Token = token,
+                UserName = userName,
+                NewPassword = password
             };
-            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{passwordResetDto.UserName}/complete-password-reset", body))
+            using (var response = await _httpClient.PostAsJsonAsync($"api/users/{userName}/complete-password-reset", body))
             {
                 if (response.IsSuccessStatusCode)
                 {

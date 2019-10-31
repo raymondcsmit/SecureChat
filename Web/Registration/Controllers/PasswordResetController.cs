@@ -16,21 +16,18 @@ namespace Registration.Controllers
     public class PasswordResetController : Controller
     {
         private readonly IUsersClient _usersClient;
-        private readonly ILoginUrlService _loginUrlService;
 
-        public PasswordResetController(IUsersClient usersClient, ILoginUrlService loginUrlService)
+        public PasswordResetController(IUsersClient usersClient)
         {
             _usersClient = usersClient;
-            _loginUrlService = loginUrlService;
         }
 
         [HttpGet("", Name = nameof(ResetPasswordGet))]
-        public IActionResult ResetPasswordGet(string loginUrl)
+        public IActionResult ResetPasswordGet([FromQuery] string loginUrl)
         {
-            ViewData["Errors"] = TempData["Errors"];
             if (loginUrl != null)
             {
-                _loginUrlService.SetLoginUrlCookie(loginUrl);
+                TempData["LoginUrl"] = loginUrl;
             }
             
             return View();
@@ -38,7 +35,7 @@ namespace Registration.Controllers
 
         [HttpPost("", Name = nameof(ResetPasswordPost))]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetPasswordPost(PasswordResetDto passwordResetDto)
+        public async Task<IActionResult> ResetPasswordPost([FromForm, Required] string userName)
         {
             if (!ModelState.IsValid)
             {
@@ -47,28 +44,26 @@ namespace Registration.Controllers
 
             try
             {
-                await _usersClient.ResetPasswordAsync(passwordResetDto);
+                await _usersClient.ResetPasswordAsync(userName, TempData["LoginUrl"] as string);
                 return RedirectToAction(nameof(ResetPasswordConfirmationGet));
             }
             catch (ApiException e)
             {
-                return RedirectToAction(nameof(ResetPasswordGet), new
-                {
-                    e.Errors
-                });
+                TempData["Errors"] = e.Errors;
             }
+
+            return RedirectToAction(nameof(ResetPasswordGet));
         }
 
         [HttpGet("confirmation", Name = nameof(ResetPasswordConfirmationGet))]
         public IActionResult ResetPasswordConfirmationGet()
         {
-            ViewData["LoginUrl"] = _loginUrlService.GetLoginUrl();
-            _loginUrlService.ClearLoginUrlCookie();
+            ViewData["LoginUrl"] = TempData["LoginUrl"];
             return View();
         }
 
         [HttpGet("complete", Name = nameof(CompletePasswordResetGet))]
-        public IActionResult CompletePasswordResetGet(PasswordResetCompletionGetDto dto)
+        public IActionResult CompletePasswordResetGet([FromQuery] PasswordResetCompletionGetDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -77,45 +72,42 @@ namespace Registration.Controllers
 
             if (dto.LoginUrl != null)
             {
-                _loginUrlService.SetLoginUrlCookie(dto.LoginUrl);
+                TempData["LoginUrl"] = dto.LoginUrl;
             }
 
-            return View(new PasswordResetViewModel()
-            {
-                UserName = dto.UserName,
-                Token = dto.Token
-            });
+            TempData["UserName"] = dto.UserName;
+            TempData["Token"] = dto.Token;
+
+            return View();
         }
 
         [HttpPost("complete", Name = nameof(CompletePasswordResetPost))]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CompletePasswordResetPost(PasswordResetCompletionPostDto dto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid 
+                || !TempData.TryGetValue("UserName", out var userName) 
+                || !TempData.TryGetValue("Token", out var token))
             {
                 return BadRequest();
             }
 
             try
             {
-                await _usersClient.CompletePasswordResetAsync(dto);
+                await _usersClient.CompletePasswordResetAsync(userName as string, token as string, dto.Password);
                 return RedirectToAction(nameof(CompletePasswordResetConfirmationGet));
             }
-            catch (TaskCanceledException)
+            catch (ApiException e)
             {
-                return RedirectToAction(nameof(CompletePasswordResetGet), new PasswordResetViewModel()
-                {
-                    UserName = dto.UserName,
-                    Token = dto.Token
-                });
+                TempData["Errors"] = e.Errors;
             }
+            return RedirectToAction(nameof(CompletePasswordResetGet));
         }
 
         [HttpGet("complete/confirmation", Name = nameof(CompletePasswordResetConfirmationGet))]
         public IActionResult CompletePasswordResetConfirmationGet(string next)
         {
-            ViewData["LoginUrl"] = _loginUrlService.GetLoginUrl();
-            _loginUrlService.ClearLoginUrlCookie();
+            ViewData["LoginUrl"] = TempData["LoginUrl"];
             return View();
         }
     }

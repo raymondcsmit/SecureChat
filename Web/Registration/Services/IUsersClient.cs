@@ -13,7 +13,7 @@ namespace Registration.Services
         Task<User> CreateUserAsync(RegistrationFormDto registrationFormDto);
 
         Task ConfirmEmailAsync(EmailConfirmationDto emailConfirmationDto);
-        Task ResetPasswordAsync(PasswordResetDto passwordResetDto);
-        Task CompletePasswordResetAsync(PasswordResetCompletionPostDto dto);
+        Task ResetPasswordAsync(string userName, string loginUrl);
+        Task CompletePasswordResetAsync(string userName, string token, string password);
     }
 }

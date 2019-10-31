@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Registration.Models
+namespace Registration.ViewModels
 {
-    public class PasswordResetDto
+    public class ResetPasswordGetViewModel
     {
         [Required]
         public string UserName { get; set; }
-
-        public string LoginUrl { get; set; }
     }
 }

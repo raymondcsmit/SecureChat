@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Registration.Services
 {
-    public class ActionActionUrlGeneratorService : IActionUrlGeneratorService
+    public class ActionUrlGeneratorService : IActionUrlGeneratorService
     {
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IActionContextAccessor _actionContextAccessor;
 
-        public ActionActionUrlGeneratorService(
+        public ActionUrlGeneratorService(
             IUrlHelperFactory urlHelperFactory,
             IActionContextAccessor actionContextAccessor)
         {

@@ -21,7 +21,7 @@ namespace Registration.Controllers
         }
 
         [HttpGet("", Name = nameof(ConfirmEmailGet))]
-        public async Task<IActionResult> ConfirmEmailGet(EmailConfirmationDto emailConfirmationDto)
+        public async Task<IActionResult> ConfirmEmailGet([FromQuery] EmailConfirmationDto emailConfirmationDto)
         {
             if (!ModelState.IsValid)
             {

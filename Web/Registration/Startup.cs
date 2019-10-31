@@ -45,9 +45,8 @@ namespace Registration
                     .WaitAndRetryAsync(retryCount: 3, sleepDurationProvider: retryAttempt => retryAttempt * TimeSpan.FromSeconds(3)));
 
 
-            services.AddTransient<ILoginUrlService, LoginUrlService>();
             services.AddScoped<IUsersClient, UsersClient>();
-            services.AddTransient<IActionUrlGeneratorService, ActionActionUrlGeneratorService>();
+            services.AddTransient<IActionUrlGeneratorService, ActionUrlGeneratorService>();
             services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
             services.AddHttpClientServices(Configuration);
         }

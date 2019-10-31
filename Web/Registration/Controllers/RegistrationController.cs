@@ -18,23 +18,20 @@ namespace Registration.Controllers
     public class RegistrationController : Controller
     {
         private readonly IUsersClient _usersClient;
-        private readonly ILoginUrlService _loginUrlService;
         private readonly IConfiguration _configuration;
 
-        public RegistrationController(IUsersClient usersClient, ILoginUrlService loginUrlService, IConfiguration configuration)
+        public RegistrationController(IUsersClient usersClient, IConfiguration configuration)
         {
             _usersClient = usersClient;
-            _loginUrlService = loginUrlService;
             _configuration = configuration;
         }
 
         [HttpGet("", Name = nameof(RegisterGet))]
         public IActionResult RegisterGet([FromQuery] string loginUrl)
         {
-            ViewData["Errors"] = TempData["Errors"];
             if (loginUrl != null)
             {
-                _loginUrlService.SetLoginUrlCookie(loginUrl);
+                TempData["LoginUrl"] = loginUrl;
             }
 
             return View();
@@ -67,8 +64,7 @@ namespace Registration.Controllers
         [HttpGet("confirmation", Name = nameof(RegisterConfirmationGet))]
         public IActionResult RegisterConfirmationGet()
         {
-            ViewData["LoginUrl"] = _loginUrlService.GetLoginUrl() ?? $"{_configuration["AuthUrl"]}/account/login";
-            _loginUrlService.ClearLoginUrlCookie();
+            ViewData["LoginUrl"] = TempData["LoginUrl"] ?? $"{_configuration["AuthUrl"]}/account/login";
             return View();
         }
     }
