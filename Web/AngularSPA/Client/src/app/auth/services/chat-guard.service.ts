@@ -14,7 +14,6 @@ export class ChatGuardService implements CanActivate {
   constructor(private store: Store<fromAuth.State>, private router: Router) { }
 
   canActivate(): Observable<boolean> {
-    return of(true);
     return this.store.pipe(
       select(fromAuth.getSignedIn),
       tap(signedIn => {

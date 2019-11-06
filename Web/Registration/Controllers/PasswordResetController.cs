@@ -91,6 +91,7 @@ namespace Registration.Controllers
             {
                 return BadRequest();
             }
+            TempData.Keep();
 
             try
             {
@@ -108,6 +109,7 @@ namespace Registration.Controllers
         public IActionResult CompletePasswordResetConfirmationGet(string next)
         {
             ViewData["LoginUrl"] = TempData["LoginUrl"];
+            TempData.Clear();
             return View();
         }
     }

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Polly;
 using Users.API.Models;
+using Users.API.Services;
 
 namespace Users.API.Infrastructure
 {
@@ -36,19 +37,22 @@ namespace Users.API.Infrastructure
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<UsersDbContextSeed> _logger;
         private readonly IHostingEnvironment _environment;
+        private readonly RoleClaimsAdder _roleClaimsAdder;
 
         public UsersDbContextSeed(
             UsersDbContext usersDbContext,
             UserManager<User> userManager, 
             RoleManager<IdentityRole> roleManager,
             ILogger<UsersDbContextSeed> logger,
-            IHostingEnvironment environment)
+            IHostingEnvironment environment,
+            RoleClaimsAdder roleClaimsAdder)
         {
             _usersDbContext = usersDbContext;
             _userManager = userManager;
             _roleManager = roleManager;
             _logger = logger;
             _environment = environment;
+            _roleClaimsAdder = roleClaimsAdder;
         }
 
         public async Task SeedAsync()
@@ -82,14 +86,14 @@ namespace Users.API.Infrastructure
                 var user = await _userManager.FindByNameAsync(userInfo.UserName);
                 if (user == null)
                 {
-                    user = new User()
+                    user = new User
                     {
                         UserName = userInfo.UserName,
                         Email = userInfo.Email
                     };
                     await _userManager.CreateAsync(user, userInfo.Password);
                     user = await _userManager.FindByNameAsync(userInfo.UserName);
-                    await _userManager.AddToRolesAsync(user, userInfo.Roles);
+                    await _roleClaimsAdder.AddRoleClaimsAsync(user, userInfo.Roles.ToArray());
                 }
             }
         }

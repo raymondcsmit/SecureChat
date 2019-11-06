@@ -10,7 +10,10 @@ namespace Auth
         {
             return new List<ApiResource>
             {
-                new ApiResource("secureChatApi", "Secure Chat API"),
+                new ApiResource("users", "Users Service")
+                {
+                    UserClaims = new[] { "permission" }
+                }
             };
         }
 
@@ -37,7 +40,7 @@ namespace Auth
                         IdentityServerConstants.StandardScopes.Address,
                         IdentityServerConstants.StandardScopes.Email,
                         "permissions",
-                        "secureChatApi"
+                        "users"
                     }
                 }
             };
@@ -52,11 +55,7 @@ namespace Auth
                 new IdentityResources.Profile(),
                 new IdentityResources.Email(),
                 new IdentityResources.Address(),
-                new IdentityResource {
-                    Name = "permissions",
-                    DisplayName = "Permissions",
-                    UserClaims = new List<string> { "Permission" }
-                }
+                new IdentityResource("permissions", "Permissions", new[] {"permission"})
             };
         }
     }

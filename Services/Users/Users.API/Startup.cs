@@ -34,6 +34,7 @@ using Users.API.Infrastructure;
 using Users.API.Infrastructure.Filters;
 using Users.API.Infrastructure.HealthChecks;
 using Users.API.Models;
+using Users.API.Services;
 using Users.API.Services.Email;
 using Users.API.Services.Email.Extensions;
 
@@ -116,6 +117,7 @@ namespace Users.API
             }, GetType().Assembly);
 
             services.AddScoped<UsersDbContextSeed>();
+            services.AddScoped<RoleClaimsAdder>();
 
             services.AddHealthChecks()
                 .AddCheck("self-check", () => HealthCheckResult.Healthy())
