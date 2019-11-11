@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
-import { ChatGuardService } from '../auth/services/chat-guard.service';
+import { ChatGuardService } from '../chat/services/chat-guard.service';
 
 export const routes: Routes = [
   {

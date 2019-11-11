@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
-import * as fromAuth from '../reducers';
-import * as AuthActions from '../actions/auth.actions';
+import * as fromAuth from '../../auth/reducers';
 import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
+import { LoadSelf } from '../actions/user.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +15,16 @@ export class ChatGuardService implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.store.pipe(
-      select(fromAuth.getSignedIn),
-      tap(signedIn => {
-        if (!signedIn) this.router.navigate(['auth', 'login'])
-      })
+      select(fromAuth.getId),
+      tap(id => {
+        if (id) {
+          this.store.dispatch(new LoadSelf({id: id}));
+        }
+        else {
+          this.router.navigate(['auth', 'login']);
+        }
+      }),
+      map(id => id != null)
     );
   }
 }

@@ -5,12 +5,14 @@ import { User } from "../models/User";
 
 export interface State extends EntityState<User> {
     friendIds: string[];
+    selfId: string;
 }
 
 export const adapter: EntityAdapter<User> = createEntityAdapter<User>();
 
 const initialState: State = adapter.getInitialState({
-    friendIds: []
+    friendIds: [],
+    selfId: null
 });
 
 export function reducer(state = initialState, action: UserActionsUnion | EntityActionsUnion<User>): State {

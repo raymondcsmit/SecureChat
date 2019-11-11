@@ -23,12 +23,13 @@ export const selectAuthStatusState = createSelector(
 
 export const getSignedIn = createSelector(
     selectAuthStatusState,
-    fromAuth.selectedSignedIn
+    fromAuth.selectSignedIn
 );
 
-export const getUser = createSelector(
-    selectAuthStatusState, 
-    fromAuth.selectUser
+export const getId = createSelector(
+    selectAuthStatusState,
+    getSignedIn,
+    (state, signedIn) => signedIn ? fromAuth.selectId(state) : null
 );
 
 export const getOidcUser = createSelector(

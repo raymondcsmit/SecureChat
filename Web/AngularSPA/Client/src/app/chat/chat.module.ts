@@ -17,12 +17,13 @@ import { UserSearchComponent } from './components/user-search/user-search.compon
 import { UserSearchResultComponent } from './components/user-search-result/user-search-result.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserEffects } from './effects/user.effects';
 
 @NgModule({
   imports: [
     ChatRoutingModule,
     StoreModule.forFeature('chatModule', reducers),
-    EffectsModule.forFeature([ChatEffects]),
+    EffectsModule.forFeature([ChatEffects, UserEffects]),
     MaterialModule,
     CommonModule,
     FormsModule,

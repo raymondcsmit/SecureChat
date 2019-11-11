@@ -7,7 +7,14 @@ export enum UserActionTypes {
     AddFriend = '[User] AddFriend',
     RemoveFriend = '[User] RemoveFriend',
     ExecuteUserQuery = '[User] ExecuteUserQuery',
-    UserQueryExecuted = '[User] UserQueryExecuted'
+    UserQueryExecuted = '[User] UserQueryExecuted',
+    LoadSelf = "[User] LoadSelf"
+}
+
+export class LoadSelf implements Action {
+    readonly type = UserActionTypes.LoadSelf;
+
+    constructor(public payload: {id: string}) {}
 }
 
 export class AddFriend implements Action {
@@ -24,4 +31,5 @@ export class RemoveFriend implements Action {
 
 export type UserActionsUnion =
     AddFriend
-    | RemoveFriend;
+    | RemoveFriend
+    | LoadSelf;
