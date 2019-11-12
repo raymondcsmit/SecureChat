@@ -21,6 +21,10 @@ export function reducer(state = initialState, action: UserActionsUnion | EntityA
     }
     
     switch (action.type) {
+        case EntityActionTypes.AddEntity: {
+            return adapter.addOne(action.payload.entity, state);
+        }
+
         case EntityActionTypes.LoadEntities: {
             return adapter.addAll(action.payload.entities, state);
         }
@@ -63,4 +67,5 @@ export const selectUserCount = selectTotal;
 export const selectFriendIds = (state: State) => state.friendIds;
 export const selectFriends = (state: State) => selectUsers(state).filter(user => selectFriendIds(state).includes(user.id));
 export const selectUserById = (id: string) => (state: State) => selectEntities(state)[id];
-export const selectUsersById = (ids: string[]) => (state: State) => selectAll(state).filter(user => ids.includes(user.id))
+export const selectUsersById = (ids: string[]) => (state: State) => selectAll(state).filter(user => ids.includes(user.id));
+export const selectSelf = (state: State) => selectUserById(state.selfId)(state);

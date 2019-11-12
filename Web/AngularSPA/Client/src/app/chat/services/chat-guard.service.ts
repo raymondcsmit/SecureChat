@@ -15,16 +15,15 @@ export class ChatGuardService implements CanActivate {
 
   canActivate(): Observable<boolean> {
     return this.store.pipe(
-      select(fromAuth.getId),
-      tap(id => {
-        if (id) {
-          this.store.dispatch(new LoadSelf({id: id}));
+      select(fromAuth.getSignedIn),
+      tap(signedIn => {
+        if (signedIn) {
+          this.store.dispatch(new LoadSelf());
         }
         else {
           this.router.navigate(['auth', 'login']);
         }
-      }),
-      map(id => id != null)
+      })
     );
   }
 }

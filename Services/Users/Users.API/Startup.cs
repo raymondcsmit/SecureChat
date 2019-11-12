@@ -33,6 +33,7 @@ using Users.API.Application.Queries;
 using Users.API.Infrastructure;
 using Users.API.Infrastructure.Filters;
 using Users.API.Infrastructure.HealthChecks;
+using Users.API.Infrastructure.Services;
 using Users.API.Models;
 using Users.API.Services;
 using Users.API.Services.Email;
@@ -87,7 +88,7 @@ namespace Users.API
             services.AddAuthenticationWithBypass(opt =>
             {
                 opt.Authority = Configuration["AuthUrl"];
-                opt.Audience = "UsersApi";
+                opt.Audience = "users";
                 opt.RequireHttpsMetadata = false;
             }, opt =>
             {
@@ -118,6 +119,9 @@ namespace Users.API
 
             services.AddScoped<UsersDbContextSeed>();
             services.AddScoped<RoleClaimsAdder>();
+
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddHealthChecks()
                 .AddCheck("self-check", () => HealthCheckResult.Healthy())

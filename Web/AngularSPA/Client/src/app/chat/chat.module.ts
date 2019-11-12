@@ -18,6 +18,7 @@ import { UserSearchResultComponent } from './components/user-search-result/user-
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserEffects } from './effects/user.effects';
+import { ChatGuardService } from './services/chat-guard.service';
 
 @NgModule({
   imports: [

@@ -13,8 +13,6 @@ export enum UserActionTypes {
 
 export class LoadSelf implements Action {
     readonly type = UserActionTypes.LoadSelf;
-
-    constructor(public payload: {id: string}) {}
 }
 
 export class AddFriend implements Action {

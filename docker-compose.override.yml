@@ -15,18 +15,20 @@ services:
 
   users.service:
     environment:
-        ASPNETCORE_ENVIRONMENT: Development
-        ConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
-        EventBusConnection: rabbitmq
-        EventBusUserName: rabbitmq
-        EventBusPassword: "12345"
-        EventBusQueueName: users.service
-        SendGridUser: ${SEND_GRID_USER}
-        SendGridKey: ${SEND_GRID_KEY}
-        AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
-        EmailConfirmationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/email-confirmation
-        BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
-        BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
+      EventBusConnection: rabbitmq
+      EventBusUserName: rabbitmq
+      EventBusPassword: "12345"
+      EventBusQueueName: users.service
+      SendGridUser: ${SEND_GRID_USER}
+      SendGridKey: ${SEND_GRID_KEY}
+      AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+      EmailConfirmationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/email-confirmation
+      BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
+      BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
+    extra_hosts:
+      - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
   registration.app:
     environment:

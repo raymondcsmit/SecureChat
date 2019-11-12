@@ -6,7 +6,7 @@ import { AuthRoutingModule, routes } from './auth-routing.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './reducers';
-import { ChatGuardService } from './services/chat-guard.service';
+import { ChatGuardService } from '../chat/services/chat-guard.service';
 import { AuthEffects } from './effects/auth.effects';
 import { UserManager } from 'oidc-client';
 import { environment } from '../../environments/environment';

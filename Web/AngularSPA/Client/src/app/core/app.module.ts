@@ -13,6 +13,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from '../auth/auth.module';
 import { MaterialModule } from '../material/material.module';
+import { ChatGuardService } from '../chat/services/chat-guard.service';
 
 
 export const COMPONENTS = [
@@ -36,7 +37,7 @@ export const COMPONENTS = [
     AuthModule.forRoot(),
     MaterialModule
   ],
-  providers: [],
+  providers: [ChatGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

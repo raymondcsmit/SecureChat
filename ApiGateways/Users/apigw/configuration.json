@@ -25,6 +25,18 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/users/me",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "users.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/users/me",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/users/{userName}/reset-password",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

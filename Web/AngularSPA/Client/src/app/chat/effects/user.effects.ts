@@ -17,7 +17,7 @@ export class UserEffects {
     @Effect()
     LoadSelf$ = this.actions$.pipe(
         ofType<LoadSelf>(UserActionTypes.LoadSelf),
-        switchMap(action => this.userService.getUser(action.payload.id)),
+        switchMap(action => this.userService.getSelf()),
         map((user: User) => new AddEntity(user.constructor.name, {entity: user}))
     );
 

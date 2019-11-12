@@ -12,7 +12,7 @@ namespace Auth
             {
                 new ApiResource("users", "Users Service")
                 {
-                    UserClaims = new[] { "permission" }
+                    UserClaims = new[] { "permission", "sub" }
                 }
             };
         }

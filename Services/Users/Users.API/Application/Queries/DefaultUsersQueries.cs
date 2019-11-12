@@ -17,7 +17,9 @@ namespace Users.API.Application.Queries
         private readonly IMapper _mapper;
         private DbConnectionInfo _dbConnectionInfo;
 
-        public DefaultUsersQueries(IMapper mapper, IOptions<DbConnectionInfo> dbConnectionInfo)
+        public DefaultUsersQueries(
+            IMapper mapper, 
+            IOptions<DbConnectionInfo> dbConnectionInfo)
         {
             _mapper = mapper;
             _dbConnectionInfo = dbConnectionInfo.Value;

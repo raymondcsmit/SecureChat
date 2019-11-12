@@ -14,6 +14,7 @@ using Users.API.Application;
 using Users.API.Application.Commands;
 using Users.API.Application.Queries;
 using Users.API.Infrastructure.Attributes;
+using Users.API.Infrastructure.Services;
 using Users.API.Models;
 
 namespace Users.API.Controllers
@@ -24,13 +25,16 @@ namespace Users.API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IUsersQueries _usersQueries;
+        private readonly IIdentityService _identityService;
 
         public UsersController(
             IMediator mediator,
-            IUsersQueries usersQueries)
+            IUsersQueries usersQueries,
+            IIdentityService identityService)
         {
             _mediator = mediator;
             _usersQueries = usersQueries;
+            _identityService = identityService;
         }
 
         [AllowAnonymous]
@@ -47,8 +51,17 @@ namespace Users.API.Controllers
             return Created(Url.Action(nameof(GetUserByIdAsync), new {id = user.Id}), user);
         }
 
+        [HttpGet("me", Name = nameof(GetAuthenticatedUser))]
+        public async Task<IActionResult> GetAuthenticatedUser()
+        {
+            var id = _identityService.GetUserIdentity();
+
+            var user = await _usersQueries.GetUserByIdAsync(id);
+            return Ok(user);
+        }
+
         [HttpGet("{id}", Name = nameof(GetUserByIdAsync))]
-        public async Task<IActionResult> GetUserByIdAsync([Required] string id)
+        public async Task<IActionResult> GetUserByIdAsync([FromRoute] string id)
         {
             var user = await _usersQueries.GetUserByIdAsync(id);
             return Ok(user);
@@ -58,6 +71,11 @@ namespace Users.API.Controllers
         [HttpPost("{userName}/reset-password", Name = nameof(ResetPasswordAsync))]
         public async Task<IActionResult> ResetPasswordAsync([FromRoute] string userName, [FromBody] ResetPasswordCommand resetPasswordCommand)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse(ModelState));
+            }
+
             resetPasswordCommand.UserName = userName;
             await _mediator.Publish(resetPasswordCommand);
 

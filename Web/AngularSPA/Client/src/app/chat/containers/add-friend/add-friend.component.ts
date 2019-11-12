@@ -34,7 +34,7 @@ export class AddFriendComponent implements OnInit {
   ngOnInit() {
     this.searchResult$ = this.searchSubject.pipe(
       debounceTime(1000),
-      switchMap(query => this.userService.searchUsers(query).pipe(
+      switchMap(query => this.userService.getUsers(query).pipe(
           map(result => result.items.users))
       )
     )

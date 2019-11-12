@@ -52,6 +52,7 @@ export const getUserById = (id: string) => createSelector(getUsersState, fromUse
 export const getUsersById = (ids: string[]) => createSelector(getUsersState, fromUsers.selectUsersById(ids));
 export const getFriendIds = createSelector(getUsersState, fromUsers.selectFriendIds);
 export const getFriends = createSelector(getUsersState, fromUsers.selectFriends);
+export const getSelf = createSelector(getUsersState, fromUsers.selectSelf);
 
 // messages
 export const getMessagesState = createSelector(

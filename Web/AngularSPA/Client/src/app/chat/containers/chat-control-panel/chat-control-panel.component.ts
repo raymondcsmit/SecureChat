@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { getChatroomsByOwnerId, getAllMessages, getFriends } from '../../reducers';
+import { getChatroomsByOwnerId, getAllMessages, getFriends, getSelf } from '../../reducers';
 import { exhaustMap, take, switchMap } from 'rxjs/operators';
-import { getUser } from 'src/app/auth/reducers';
 import { User } from 'src/app/chat/models/User';
 import { DeleteChatroom, InviteFriends } from '../../actions/chat.actions';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +29,7 @@ export class ChatControlPanelComponent implements OnInit {
 
   ngOnInit() {
     this.myChatrooms$ = this.store.pipe(
-      select(getUser),
+      select(getSelf),
       switchMap(loggedInUser => combineLatest(
         this.store.select(getChatroomsByOwnerId(loggedInUser.id), 
         this.store.select(getAllMessages)), (chatrooms, messages) => chatrooms.map(chatroom => ({
