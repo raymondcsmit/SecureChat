@@ -2,10 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Message } from '../../models/Message';
 import { Observable } from 'rxjs';
-import { getUserById, getMessagesByChatId } from '../../reducers';
+import { getUserById, getMessagesByChatId, getSelf } from '../../reducers';
 import { map } from 'rxjs/operators';
 import { SendMessage } from '../../actions/message.actions';
-import { selectUser } from 'src/app/auth/reducers/auth.reducer';
 import { User } from 'src/app/chat/models/User';
 import * as fromAuth from '../../../auth/reducers';
 
@@ -30,7 +29,7 @@ export class ChatMessagesComponent implements OnInit {
     );
     
     this.authUser$ = this.store.pipe(
-      select(fromAuth.getUser)
+      select(getSelf)
     );
   }
 
