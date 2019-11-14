@@ -1,5 +1,5 @@
 import { Action } from "@ngrx/store";
-import { Predicate } from "@angular/core";
+import { User } from "../models/User";
 
 export enum UserActionTypes {
     FriendAdded = '[User] FriendAdded',
@@ -8,11 +8,18 @@ export enum UserActionTypes {
     RemoveFriend = '[User] RemoveFriend',
     ExecuteUserQuery = '[User] ExecuteUserQuery',
     UserQueryExecuted = '[User] UserQueryExecuted',
-    LoadSelf = "[User] LoadSelf"
+    LoadSelf = "[User] LoadSelf",
+    AddSelf = "[User] AddSelf"
 }
 
 export class LoadSelf implements Action {
     readonly type = UserActionTypes.LoadSelf;
+}
+
+export class AddSelf implements Action {
+    readonly type = UserActionTypes.AddSelf;
+  
+    constructor(public payload: { user: User }) {}
 }
 
 export class AddFriend implements Action {
@@ -30,4 +37,5 @@ export class RemoveFriend implements Action {
 export type UserActionsUnion =
     AddFriend
     | RemoveFriend
-    | LoadSelf;
+    | LoadSelf
+    | AddSelf;

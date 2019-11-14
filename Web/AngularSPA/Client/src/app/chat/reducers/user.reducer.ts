@@ -49,6 +49,12 @@ export function reducer(state = initialState, action: UserActionsUnion | EntityA
             return adapter.removeMany(action.payload.predicate, state);
         }
 
+        case UserActionTypes.AddSelf: {
+            let newState = adapter.addOne(action.payload.user, state);
+            newState.selfId = action.payload.user.id;
+            return newState;
+        }
+
         default: {
           return state;
         }

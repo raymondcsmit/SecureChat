@@ -5,7 +5,7 @@ import { } from 'rxjs';
 import { Store } from "@ngrx/store";
 import { HttpClient } from "@angular/common/http";
 import { apiConfig } from "../apiConfig";
-import { LoadSelf, UserActionTypes } from "../actions/user.actions";
+import { LoadSelf, UserActionTypes, AddSelf } from "../actions/user.actions";
 import { State } from "../reducers/user.reducer";
 import { UserService } from "../services/user.service";
 import { AddEntity } from "../actions/entity.actions";
@@ -18,7 +18,7 @@ export class UserEffects {
     LoadSelf$ = this.actions$.pipe(
         ofType<LoadSelf>(UserActionTypes.LoadSelf),
         switchMap(action => this.userService.getSelf()),
-        map((user: User) => new AddEntity(user.constructor.name, {entity: user}))
+        map((user: User) => new AddSelf({user: user}))
     );
 
     constructor(

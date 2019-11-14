@@ -4,6 +4,7 @@ import * as authActions from '../../../auth/actions/auth.actions';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/chat/models/User';
 import { getSelf } from '../../reducers';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-root',
@@ -20,7 +21,9 @@ export class ChatRootComponent implements OnInit {
   constructor(private store: Store<any>) { }
 
   ngOnInit() {
-    this.user$ = this.store.pipe(select(getSelf));
+    this.user$ = this.store.pipe(
+      select(getSelf)
+    );
   }
 
   signOut() {

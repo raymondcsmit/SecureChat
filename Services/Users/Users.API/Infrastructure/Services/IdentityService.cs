@@ -17,7 +17,7 @@ namespace Users.API.Infrastructure.Services
         }
 
         public string GetUserIdentity() =>
-            _context.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "sub")?.Value;
+            _context.HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
 
         public IEnumerable<Claim> GetClaims() =>
             _context.HttpContext.User.Claims;
