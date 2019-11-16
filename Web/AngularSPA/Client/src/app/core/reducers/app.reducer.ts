@@ -1,24 +1,30 @@
-import { Action } from '@ngrx/store';
 import { CoreActionTypes, CoreActionsUnion } from '../actions/actions';
 
 export interface State {
-    busy: boolean;
+    busy: boolean[];
 }
 
 export const initialState: State = {
-    busy: false,
+    busy: [],
 }
 
 export function reducer(state = initialState, action: CoreActionsUnion): State {
     switch (action.type) {
         case CoreActionTypes.SetGlobalBusy:
+            let busy = [...state.busy];
+            if (action.payload.value) {
+                busy.push(true);
+            }
+            else {
+                busy.pop();
+            }
             return {
                 ...state,
-                busy: action.payload.value
+                busy: busy
             };
         default:
             return state;
     }
 }
 
-export const selectGlobalBusy = (state: State) => state.busy;
+export const selectGlobalBusy = (state: State) => state.busy.length > 0;

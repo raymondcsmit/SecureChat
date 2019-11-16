@@ -15,6 +15,7 @@ import { ConfirmationDialogComponent } from '../core/components/confirmation-dia
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 const materialModules = [
   MatTabsModule,
@@ -29,7 +30,8 @@ const materialModules = [
   MatDialogModule,
   MatTableModule,
   MatSelectModule,
-  MatChipsModule
+  MatChipsModule,
+  MatProgressBarModule
 ];
 
 @NgModule({

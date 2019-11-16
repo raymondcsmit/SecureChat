@@ -1,12 +1,12 @@
 import * as fromAuth from './auth.reducer';
-import * as fromRoot from '../../core/reducers';
+import * as fromCore from '../../core/reducers';
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
 
 export interface AuthState {
     status: fromAuth.State,
 }
 
-export interface State extends fromRoot.State {
+export interface State extends fromCore.State {
     auth: AuthState
 }
 
