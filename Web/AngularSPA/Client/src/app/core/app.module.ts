@@ -15,12 +15,14 @@ import { AuthModule } from '../auth/auth.module';
 import { MaterialModule } from '../material/material.module';
 import { ChatGuardService } from '../chat/services/chat-guard.service';
 import { SetGlobalBusyInterceptorService } from './services/set-global-busy-interceptor.service';
+import { ErrorComponent } from './components/error/error.component';
 
 
 export const COMPONENTS = [
   AppComponent,
   FooterComponent,
-  NotFoundPageComponent
+  NotFoundPageComponent,
+  ErrorComponent
 ]
 
 @NgModule({

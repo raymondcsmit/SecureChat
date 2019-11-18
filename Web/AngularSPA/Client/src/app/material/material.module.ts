@@ -16,6 +16,10 @@ import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatCardModule} from '@angular/material/card';
+import {MatTreeModule} from '@angular/material/tree';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 const materialModules = [
   MatTabsModule,
@@ -31,7 +35,11 @@ const materialModules = [
   MatTableModule,
   MatSelectModule,
   MatChipsModule,
-  MatProgressBarModule
+  MatProgressBarModule,
+  MatCardModule,
+  MatTreeModule,
+  MatCheckboxModule,
+  MatSnackBarModule
 ];
 
 @NgModule({
@@ -41,6 +49,7 @@ const materialModules = [
   ],
   exports: materialModules,
   declarations: [ConfirmationDialogComponent],
-  entryComponents: [ConfirmationDialogComponent]
+  entryComponents: [ConfirmationDialogComponent],
+  providers: []
 })
 export class MaterialModule { }

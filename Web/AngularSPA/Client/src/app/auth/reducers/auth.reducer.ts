@@ -31,3 +31,4 @@ export function reducer(state = initialState, action: AuthActionsUnion): State {
 export const selectSignedIn = (state: State) => state.oidcUser != null && !state.oidcUser.expired;
 export const selectOidcUser = (state: State) => state.oidcUser;
 export const selectId = (state: State) => state.oidcUser.profile.sub;
+export const selectPermissions = (state: State) => selectOidcUser(state).profile.permission as string[];

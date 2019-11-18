@@ -50,7 +50,7 @@ export function reducer(state = initialState, action: UserActionsUnion | EntityA
         }
 
         case UserActionTypes.AddSelf: {
-            let newState = adapter.addOne(action.payload.user, state);
+            let newState = {... adapter.addOne(action.payload.user, state)};
             newState.selfId = action.payload.user.id;
             return newState;
         }

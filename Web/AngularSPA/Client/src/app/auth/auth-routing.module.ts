@@ -7,7 +7,7 @@ import { SignOutCallbackComponent } from './containers/sign-out-callback/sign-ou
 
 export const routes: Routes = [
   {
-    path: 'auth',
+    path: '',
     children: [
       { path: 'login', component: LoginPageComponent, canActivate: [LoginPageGuardService] },
       { path: 'sign-in-callback', component: SignInCallbackComponent },

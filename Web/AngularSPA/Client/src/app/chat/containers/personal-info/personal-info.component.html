@@ -1,0 +1,31 @@
+<form class="d-flex flex-column align-items-center justify-content-center flex-grow-1" [formGroup]="editPersonalInfoForm">
+  <mat-card *ngIf="(user$ | async) as user">
+    <mat-card-content>
+      <mat-form-field class="w-100">
+        <textarea matInput placeholder="Permissions" disabled [value]="permissions$ | async"></textarea>
+      </mat-form-field>
+      <mat-form-field class="w-100 p-2">
+        <input matInput placeholder="Username" [value]="user.userName" formControlName="userName">
+        <mat-error *ngIf="editPersonalInfoForm.get('userName').errors?.required && (editPersonalInfoForm.touched || editPersonalInfoForm.dirty)">
+          Username is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-100 p-2">
+        <input matInput placeholder="Email" [value]="user.email" formControlName="email">
+        <mat-error *ngIf="editPersonalInfoForm.get('email').errors?.required && (editPersonalInfoForm.touched || editPersonalInfoForm.dirty)">
+          Email is <strong>required</strong>
+        </mat-error>
+        <mat-error *ngIf="editPersonalInfoForm.get('email').errors?.email && (editPersonalInfoForm.touched || editPersonalInfoForm.dirty)">
+          Email is <strong>invalid</strong>
+        </mat-error>
+      </mat-form-field>
+      <div *ngIf="!user.emailConfirmed" class="p-2">
+        <span>**Email Unconfirmed** (Click <a [routerLink]="" (click)="onConfirmEmail()">here</a> to confirm)</span>
+      </div>
+      <div class="d-flex flex-row justify-content-center">
+        <button mat-button (click)="onEdit()" *ngIf="!editing">Edit</button>
+        <button mat-button *ngIf="editing">Submit</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</form>

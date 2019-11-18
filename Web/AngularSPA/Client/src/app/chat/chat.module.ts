@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserEffects } from './effects/user.effects';
 import { ChatGuardService } from './services/chat-guard.service';
+import { PersonalInfoComponent } from './containers/personal-info/personal-info.component';
 
 @NgModule({
   imports: [
@@ -53,7 +54,8 @@ import { ChatGuardService } from './services/chat-guard.service';
     //ChatroomsComponent,
     //PrivateChatsComponent,
     UserSearchComponent,
-    UserSearchResultComponent
+    UserSearchResultComponent,
+    PersonalInfoComponent
   ],
   providers: [
     ChatService

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Users.API.Extensions;
 using Users.API.Infrastructure.Exceptions;
 using Users.API.Models;
+using Users.API.Services.Email;
 
 namespace Users.API.Application.Commands
 {
@@ -16,13 +17,19 @@ namespace Users.API.Application.Commands
     {
         private readonly UserManager<User> _userManager;
         private readonly ILogger<ConfirmEmailCommandHandler> _logger;
+        private readonly IEmailSender _emailSender;
+        private readonly IEmailGenerator _emailGenerator;
 
         public ConfirmEmailCommandHandler(
             UserManager<User> userManager,
-            ILogger<ConfirmEmailCommandHandler> logger)
+            ILogger<ConfirmEmailCommandHandler> logger,
+            IEmailSender emailSender,
+            IEmailGenerator emailGenerator)
         {
             _userManager = userManager;
             _logger = logger;
+            _emailSender = emailSender;
+            _emailGenerator = emailGenerator;
         }
 
         public async Task Handle(ConfirmEmailCommand notification, CancellationToken cancellationToken)
@@ -33,6 +40,17 @@ namespace Users.API.Application.Commands
                 _logger.LogWarning($"Email confirmation failed (invalid id): {notification.Id}");
                 throw new UsersApiException("Email confirmation failed", new[] { "User not found" }, 404);
             }
+
+            if (notification.Token == null)
+            {
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var (subject, body) =
+                    _emailGenerator.GenerateEmailConfirmationEmail(user.UserName, token);
+                await _emailSender.SendEmailAsync(user.Email, subject, body);
+                _logger.LogInformation($"Sending email confirmation email for user id {user.Id}");
+                return;
+            }
+
 
             var result = await _userManager.ConfirmEmailAsync(user, notification.Token);
             _logger.LogInformation(result.Succeeded

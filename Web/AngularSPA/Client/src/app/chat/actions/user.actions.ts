@@ -9,7 +9,8 @@ export enum UserActionTypes {
     ExecuteUserQuery = '[User] ExecuteUserQuery',
     UserQueryExecuted = '[User] UserQueryExecuted',
     LoadSelf = "[User] LoadSelf",
-    AddSelf = "[User] AddSelf"
+    AddSelf = "[User] AddSelf",
+    ConfirmEmail = "[User] ConfirmEmail"
 }
 
 export class LoadSelf implements Action {
@@ -34,8 +35,13 @@ export class RemoveFriend implements Action {
     constructor(public payload: { id: string }) {}
 }
 
+export class ConfirmEmail implements Action {
+    readonly type = UserActionTypes.ConfirmEmail;
+}
+
 export type UserActionsUnion =
     AddFriend
     | RemoveFriend
     | LoadSelf
-    | AddSelf;
+    | AddSelf
+    | ConfirmEmail;

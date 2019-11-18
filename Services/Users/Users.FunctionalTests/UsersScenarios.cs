@@ -212,6 +212,24 @@ namespace Users.FunctionalTests
         }
 
         [Fact]
+        public async Task ConfirmEmail_ShouldResendConfirmationEmail_OnMissingToken()
+        {
+            var client = CreateClient();
+            var user = new
+            {
+                UserName = "Foo",
+                Email = "foo@bar.com",
+                Password = "P@ssword1"
+            };
+
+            var createUserResponse = await client.PostAsJsonAsync(Post.CreateUser, user);
+            var createUserResponseBody = await createUserResponse.DeserializeAsync<UserDto>();
+            await client.PostAsJsonAsync(Post.ConfirmEmailById(createUserResponseBody.Id), new { });
+            UsersTestStartup.EmailSenderMock.Verify(mock =>
+                mock.SendEmailAsync(user.Email, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
         public async Task ConfirmEmail_ShouldReturnNotFound_OnInvalidUser()
         {
             var client = CreateClient();

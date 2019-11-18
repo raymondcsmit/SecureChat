@@ -12,7 +12,6 @@ namespace Users.API.Application.Commands
     {
         public string Id { get; set; }
 
-        [Required]
         public string Token { get; set; }
     }
 }

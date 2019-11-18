@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Users.API.Application;
 using Users.API.Application.Commands;
 using Users.API.Application.Queries;
 using Users.API.Infrastructure.Attributes;
@@ -101,11 +92,6 @@ namespace Users.API.Controllers
         [HttpPost("{id}/confirm-email", Name = nameof(ConfirmEmailAsync))]
         public async Task<IActionResult> ConfirmEmailAsync([FromRoute] string id, [FromBody] ConfirmEmailCommand confirmEmailCommand)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new ErrorResponse(ModelState));
-            }
-
             confirmEmailCommand.Id = id;
             await _mediator.Publish(confirmEmailCommand);
 

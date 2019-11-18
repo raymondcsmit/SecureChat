@@ -36,3 +36,8 @@ export const getOidcUser = createSelector(
     selectAuthStatusState,
     fromAuth.selectOidcUser
 );
+
+export const getPermissions = createSelector(
+    selectAuthStatusState,
+    fromAuth.selectPermissions
+)
