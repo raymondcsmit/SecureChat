@@ -36,9 +36,9 @@ export const COMPONENTS = [
       stateKey: 'router'
     }),
     EffectsModule.forRoot([]),
-    AppRoutingModule,
     AuthModule.forRoot(),
-    MaterialModule
+    MaterialModule,
+    AppRoutingModule,
   ],
   providers: [
     ChatGuardService,

@@ -1,4 +1,12 @@
-<p>
-  Page not found
-</p>
-<button routerLink="/">Go Home</button>
+<div class="d-flex flex-column flex-grow-1 align-items-center justify-content-center">
+  <mat-card>
+    <mat-card-content>
+      <div class="d-flex flex-column align-items-center justify-content-center p-2">
+          <mat-icon>error</mat-icon>
+          <span>Page Not Found</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <button mat-button routerLink="/chat" class="mt-2">Return to Chat</button>
+</div>
+

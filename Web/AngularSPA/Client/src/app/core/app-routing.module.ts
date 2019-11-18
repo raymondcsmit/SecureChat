@@ -20,9 +20,9 @@ export const routes: Routes = [
   {
     path: '', redirectTo: '/chat', pathMatch: 'full'
   },
-  // {
-  //   path: '**', component: NotFoundPageComponent
-  // }
+  {
+    path: '**', component: NotFoundPageComponent
+  }
 ]
 
 @NgModule({
