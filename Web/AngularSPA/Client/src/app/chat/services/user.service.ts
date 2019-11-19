@@ -35,6 +35,14 @@ export class UserService {
     );
   }
 
+  updateUser(id: string, body: Partial<User>) {
+    const url = `${this.usersApi}/users/${id}`;
+    return this.httpClient.patch<User>(url, body, {observe: 'response'}).pipe(
+      map(_ => true),
+      catchError(res => throwError(this.resolveErrors(res)))
+    )
+  }
+
   private resolveErrors(res: HttpErrorResponse) {
     return (res.error && res.error.errors) ? res.error.errors : ["An error has occured"];
 }

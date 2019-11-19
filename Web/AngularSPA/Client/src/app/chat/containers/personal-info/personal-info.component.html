@@ -25,7 +25,7 @@
       <div class="d-flex flex-row justify-content-center">
         <button mat-button routerLink="/chat" type="button">Return to Chat</button>
         <button mat-button (click)="onEdit()" *ngIf="!editing" type="button">Edit</button>
-        <button mat-button *ngIf="editing">Submit</button>
+        <button mat-button (click)="onSubmit(user.id)" *ngIf="editing">Submit</button>
       </div>
     </mat-card-content>
   </mat-card>

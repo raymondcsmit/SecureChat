@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -95,6 +96,20 @@ namespace Users.API.Controllers
             confirmEmailCommand.Id = id;
             await _mediator.Publish(confirmEmailCommand);
 
+            return Ok();
+        }
+
+        [HttpPut("{id}", Name = nameof(UpdateUserById))]
+        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] UpdateUserCommand updateUserCommand)
+        {
+            var myId = _identityService.GetUserIdentity();
+            var myPermissions = _identityService.GetPermissions();
+            if (myId != id && !myPermissions.Contains("users.update"))
+            {
+                return Unauthorized();
+            }
+
+            await _mediator.Publish(updateUserCommand);
             return Ok();
         }
     }

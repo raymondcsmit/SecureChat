@@ -26,7 +26,7 @@ export class Success implements Action {
 export class Failure implements Action {
     readonly type = CoreActionTypes.Failure;
 
-    constructor(public payload: {action: Action}) {}
+    constructor(public payload: {action: Action, errors: string[]}) {}
 }
 
 export type CoreActionsUnion = 

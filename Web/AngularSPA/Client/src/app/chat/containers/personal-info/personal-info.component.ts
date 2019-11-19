@@ -6,9 +6,9 @@ import { Observable, Subscription } from 'rxjs';
 import { User } from '../../models/User';
 import { getPermissions } from 'src/app/auth/reducers';
 import { map, filter } from 'rxjs/operators';
-import { ConfirmEmail, UserActionTypes } from '../../actions/user.actions';
+import { ConfirmEmail, UserActionTypes, UpdateUser } from '../../actions/user.actions';
 import { Actions, ofType } from '@ngrx/effects';
-import { Success, CoreActionTypes } from 'src/app/core/actions/actions';
+import { Success, CoreActionTypes, Failure } from 'src/app/core/actions/actions';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
@@ -24,7 +24,6 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   user$: Observable<User>;
   permissions$: Observable<string>;
   editing: boolean = false;
-  confirmEmailSuccess$: Observable<boolean>;
   subscriptions: Subscription[] = [];
 
   constructor(
@@ -49,14 +48,29 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       map(p => p.join(', '))
     );
 
-    this.confirmEmailSuccess$ = this.actions.pipe(
+    let s = this.actions.pipe(
       ofType<Success>(CoreActionTypes.Success),
-      filter(action => action.payload.action instanceof ConfirmEmail),
-      map(_ => true)
+      filter(action => action.payload.action instanceof ConfirmEmail)
+    ).subscribe(_ =>
+      this.snackBar.open("Email confirmation email sent", 'Dismiss', {duration: 5000})
     );
-    this.subscriptions.push(this.confirmEmailSuccess$.subscribe(_ =>
-      this.snackBar.open("Email confirmation email sent", '', {duration: 3000})
-    ));
+    this.subscriptions.push(s);
+
+    let s2 = this.actions.pipe(
+      ofType<Success>(CoreActionTypes.Success),
+      filter(action => action.payload.action instanceof UpdateUser)
+    ).subscribe(_ =>
+      this.snackBar.open("User successfully updated", 'Dismiss', {duration: 5000})
+    );
+    this.subscriptions.push(s2);
+
+    let s3 = this.actions.pipe(
+      ofType<Failure>(CoreActionTypes.Failure),
+      filter(action => action.payload.action instanceof UpdateUser)
+    ).subscribe(action =>
+      this.snackBar.open("User update failed", 'Dismiss', {duration: 5000})
+    );
+    this.subscriptions.push(s3);
   }
 
   ngOnDestroy() {
@@ -69,6 +83,12 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.editing = true;
     this.editPersonalInfoForm.reset();
     this.editPersonalInfoForm.enable();
+  }
+
+  onSubmit(id: string) {
+    let user = this.editPersonalInfoForm.value();
+    this.store.dispatch(new UpdateUser({id: id, user: user}));
+    this.editPersonalInfoForm.disable();
   }
 
   onConfirmEmail() {
