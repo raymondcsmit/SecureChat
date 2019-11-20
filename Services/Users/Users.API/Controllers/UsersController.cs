@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Users.API.Application.Commands;
 using Users.API.Application.Queries;
+using Users.API.Dtos;
 using Users.API.Infrastructure.Attributes;
 using Users.API.Infrastructure.Services;
 using Users.API.Models;
@@ -99,18 +101,18 @@ namespace Users.API.Controllers
             return Ok();
         }
 
-        //[HttpPut("{id}", Name = nameof(UpdateUserById))]
-        //public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] UpdateUserCommand updateUserCommand)
-        //{
-        //    var myId = _identityService.GetUserIdentity();
-        //    var myPermissions = _identityService.GetPermissions();
-        //    if (myId != id && !myPermissions.Contains("users.update"))
-        //    {
-        //        return Unauthorized();
-        //    }
+        [HttpPatch("{id}", Name = nameof(UpdateUserById))]
+        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
+        {
+            var myId = _identityService.GetUserIdentity();
+            var myPermissions = _identityService.GetPermissions();
+            if (myId != id && !myPermissions.Contains("users.update"))
+            {
+                return Unauthorized();
+            }
 
-        //    await _mediator.Publish(updateUserCommand);
-        //    return Ok();
-        //}
+            await _mediator.Publish(new UpdateUserCommand(id, patch));
+            return NoContent();
+        }
     }
 }

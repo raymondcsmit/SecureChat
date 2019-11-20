@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +33,7 @@ using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
 using Steeltoe.Common.Discovery;
 using Steeltoe.Discovery.Client;
 using Users.API.Application.Queries;
+using Users.API.Dtos;
 using Users.API.Infrastructure;
 using Users.API.Infrastructure.Filters;
 using Users.API.Infrastructure.HealthChecks;
@@ -128,9 +131,13 @@ namespace Users.API
                 .AddCheck("self-check", () => HealthCheckResult.Healthy())
                 .AddCheck("db-check", new MySqlConnectionHealthCheck(Configuration["ConnectionString"]));
 
-            services.AddAutoMapper(config => 
-                    config.AddProfile(new AutoMapperConfig(new [] {typeof(Startup).Assembly})),
-                    typeof(Startup).Assembly);
+            services.AddAutoMapper(config =>
+                {
+                    config.AddProfile(new AutoMapperConfig(new[] {typeof(Startup).Assembly}));
+                    config.CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
+                    config.CreateMap(typeof(Operation<>), typeof(Operation<>));
+                }
+                ,typeof(Startup).Assembly);
 
             services.AddEmailSender(Configuration, HostingEnvironment);
 
