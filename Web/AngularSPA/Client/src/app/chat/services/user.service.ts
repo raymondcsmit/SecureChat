@@ -35,9 +35,9 @@ export class UserService {
     );
   }
 
-  updateUser(id: string, body: Partial<User>) {
+  updateUser(id: string, patch: any) {
     const url = `${this.usersApi}/users/${id}`;
-    return this.httpClient.patch<User>(url, body, {observe: 'response'}).pipe(
+    return this.httpClient.patch<User>(url, patch, {observe: 'response'}).pipe(
       map(_ => true),
       catchError(res => throwError(this.resolveErrors(res)))
     )

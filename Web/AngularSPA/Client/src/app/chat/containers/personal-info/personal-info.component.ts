@@ -86,7 +86,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(id: string) {
-    let user = this.editPersonalInfoForm.value();
+    let user = this.editPersonalInfoForm.value;
     this.store.dispatch(new UpdateUser({id: id, user: user}));
     this.editPersonalInfoForm.disable();
   }

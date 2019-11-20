@@ -99,18 +99,18 @@ namespace Users.API.Controllers
             return Ok();
         }
 
-        [HttpPut("{id}", Name = nameof(UpdateUserById))]
-        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] UpdateUserCommand updateUserCommand)
-        {
-            var myId = _identityService.GetUserIdentity();
-            var myPermissions = _identityService.GetPermissions();
-            if (myId != id && !myPermissions.Contains("users.update"))
-            {
-                return Unauthorized();
-            }
+        //[HttpPut("{id}", Name = nameof(UpdateUserById))]
+        //public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] UpdateUserCommand updateUserCommand)
+        //{
+        //    var myId = _identityService.GetUserIdentity();
+        //    var myPermissions = _identityService.GetPermissions();
+        //    if (myId != id && !myPermissions.Contains("users.update"))
+        //    {
+        //        return Unauthorized();
+        //    }
 
-            await _mediator.Publish(updateUserCommand);
-            return Ok();
-        }
+        //    await _mediator.Publish(updateUserCommand);
+        //    return Ok();
+        //}
     }
 }
