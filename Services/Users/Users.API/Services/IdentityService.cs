@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Users.API.Infrastructure.Services
+namespace Users.API.Services
 {
     public class IdentityService : IIdentityService
     {

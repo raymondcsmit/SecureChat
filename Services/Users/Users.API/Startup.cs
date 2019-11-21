@@ -37,7 +37,6 @@ using Users.API.Dtos;
 using Users.API.Infrastructure;
 using Users.API.Infrastructure.Filters;
 using Users.API.Infrastructure.HealthChecks;
-using Users.API.Infrastructure.Services;
 using Users.API.Models;
 using Users.API.Services;
 using Users.API.Services.Email;
@@ -74,7 +73,10 @@ namespace Users.API
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
             });
 
-            services.AddIdentity<User, IdentityRole>()
+            services.AddIdentity<User, IdentityRole>(config =>
+                {
+                    config.User.RequireUniqueEmail = true;
+                })
                 .AddEntityFrameworkStores<UsersDbContext>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddDefaultTokenProviders();

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Users.API.Infrastructure.Services
+namespace Users.API.Services
 {
     public interface IIdentityService
     {

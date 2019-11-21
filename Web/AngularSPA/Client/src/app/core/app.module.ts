@@ -16,7 +16,9 @@ import { MaterialModule } from '../material/material.module';
 import { ChatGuardService } from '../chat/services/chat-guard.service';
 import { SetGlobalBusyInterceptorService } from './services/set-global-busy-interceptor.service';
 import { ErrorComponent } from './components/error/error.component';
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../../environments/environment';
+import { ConnectFormDirective } from './directives/connect-form.directive';
 
 export const COMPONENTS = [
   AppComponent,
@@ -32,6 +34,10 @@ export const COMPONENTS = [
     BrowserAnimationsModule,
     HttpClientModule,
     StoreModule.forRoot(reducers, { metaReducers }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 100,
+      logOnly: environment.production, // Restrict extension to log-only mode
+    }),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router'
     }),

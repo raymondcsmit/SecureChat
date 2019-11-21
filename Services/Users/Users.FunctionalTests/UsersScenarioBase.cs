@@ -55,5 +55,13 @@ namespace Users.FunctionalTests
             public static string ConfirmEmailById(string id)
                 => $"{BaseUrl}/{id}/confirm-email";
         }
+
+        public static class Patch
+        {
+            public static string Users = BaseUrl;
+
+            public static string UpdateUserById(string id)
+                => $"{BaseUrl}/{id}";
+        }
     }
 }

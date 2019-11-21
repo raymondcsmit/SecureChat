@@ -1,17 +1,17 @@
-<form class="d-flex flex-column align-items-center justify-content-center flex-grow-1" [formGroup]="editPersonalInfoForm">
-  <mat-card *ngIf="(user$ | async) as user">
+<form *ngIf="(user$ | async) as user" class="d-flex flex-column align-items-center justify-content-center flex-grow-1" [formGroup]="editPersonalInfoForm" [connectForm]="user">
+  <mat-card>
     <mat-card-content>
       <mat-form-field class="w-100">
         <textarea matInput placeholder="Permissions" disabled [value]="permissions$ | async"></textarea>
       </mat-form-field>
       <mat-form-field class="w-100 p-2">
-        <input matInput placeholder="Username" [value]="user.userName" formControlName="userName">
+        <input matInput placeholder="Username" formControlName="userName">
         <mat-error *ngIf="editPersonalInfoForm.get('userName').errors?.required && (editPersonalInfoForm.touched || editPersonalInfoForm.dirty)">
           Username is <strong>required</strong>
         </mat-error>
       </mat-form-field>
       <mat-form-field class="w-100 p-2">
-        <input matInput placeholder="Email" [value]="user.email" formControlName="email">
+        <input matInput placeholder="Email" formControlName="email">
         <mat-error *ngIf="editPersonalInfoForm.get('email').errors?.required && (editPersonalInfoForm.touched || editPersonalInfoForm.dirty)">
           Email is <strong>required</strong>
         </mat-error>

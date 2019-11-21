@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Actions, Effect, ofType } from "@ngrx/effects";
-import { tap, exhaustMap, map, withLatestFrom, switchMap, filter, catchError, debounceTime, throttleTime, mergeMap } from 'rxjs/operators';
+import { tap, exhaustMap, map, withLatestFrom, switchMap, filter, catchError, debounceTime, throttleTime, mergeMap, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Store, select } from "@ngrx/store";
 import { HttpClient } from "@angular/common/http";
@@ -48,6 +48,7 @@ export class UserEffects {
         throttleTime(5000),
         mergeMap(action => this.store.pipe(
             select(getUserById(action.payload.id)),
+            take(1),
             map(user => {
                 let u = {...user};
                 var observer = jsonpatch.observe(u);

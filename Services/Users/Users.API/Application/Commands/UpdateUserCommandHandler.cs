@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using Users.API.Infrastructure.Exceptions;
 using Users.API.Models;
@@ -37,7 +38,13 @@ namespace Users.API.Application.Commands
                 throw new UsersApiException("User update failed", new[] { "User not found" }, 404);
             }
 
-            _mapper.Map(command.Patch, user);
+            var userPatch = _mapper.Map<JsonPatchDocument<User>>(command.Patch);
+            userPatch.ApplyTo(user);
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                throw new UsersApiException("User could not be updated", result.Errors);
+            }
             _logger.LogInformation($"Successfully updated user with id {command.Id}");
         }
     }

@@ -20,6 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserEffects } from './effects/user.effects';
 import { ChatGuardService } from './services/chat-guard.service';
 import { PersonalInfoComponent } from './containers/personal-info/personal-info.component';
+import { ConnectFormDirective } from '../core/directives/connect-form.directive';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import { PersonalInfoComponent } from './containers/personal-info/personal-info.
     //PrivateChatsComponent,
     UserSearchComponent,
     UserSearchResultComponent,
-    PersonalInfoComponent
+    PersonalInfoComponent,
+    ConnectFormDirective
   ],
   providers: [
     ChatService

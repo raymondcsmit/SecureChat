@@ -8,8 +8,8 @@ using Users.API.Application.Commands;
 using Users.API.Application.Queries;
 using Users.API.Dtos;
 using Users.API.Infrastructure.Attributes;
-using Users.API.Infrastructure.Services;
 using Users.API.Models;
+using Users.API.Services;
 
 namespace Users.API.Controllers
 {
@@ -106,7 +106,7 @@ namespace Users.API.Controllers
         {
             var myId = _identityService.GetUserIdentity();
             var myPermissions = _identityService.GetPermissions();
-            if (myId != id && !myPermissions.Contains("users.update"))
+            if (myId != "system" && myId != id && !myPermissions.Contains("users.update"))
             {
                 return Unauthorized();
             }

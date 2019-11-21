@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Newtonsoft.Json;
 using Polly;
 using Users.API.Dtos;
 using Users.API.Infrastructure;
@@ -48,6 +50,43 @@ namespace Users.FunctionalTests
             };
 
             var response = await client.PostAsJsonAsync(Post.CreateUser, user);
+            Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateUser_ShouldReturnBadRequest_OnInvalidEmail()
+        {
+            var client = CreateClient();
+            var user = new
+            {
+                UserName = "Foo",
+                Email = "gibberish",
+                Password = "P@ssword1"
+            };
+
+            var response = await client.PostAsJsonAsync(Post.CreateUser, user);
+            Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateUser_ShouldReturnBadRequest_OnDuplicateEmail()
+        {
+            var client = CreateClient();
+            var user1 = new
+            {
+                UserName = "Foo",
+                Email = "foo@foo.com",
+                Password = "P@ssword1"
+            };
+            var user2 = new
+            {
+                UserName = "Bar",
+                Email = "foo@foo.com",
+                Password = "P@ssword1"
+            };
+
+            await client.PostAsJsonAsync(Post.CreateUser, user1);
+            var response = await client.PostAsJsonAsync(Post.CreateUser, user2);
             Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
         }
 
@@ -224,6 +263,7 @@ namespace Users.FunctionalTests
 
             var createUserResponse = await client.PostAsJsonAsync(Post.CreateUser, user);
             var createUserResponseBody = await createUserResponse.DeserializeAsync<UserDto>();
+            UsersTestStartup.EmailSenderMock.Reset();
             await client.PostAsJsonAsync(Post.ConfirmEmailById(createUserResponseBody.Id), new { });
             UsersTestStartup.EmailSenderMock.Verify(mock =>
                 mock.SendEmailAsync(user.Email, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
@@ -369,6 +409,78 @@ namespace Users.FunctionalTests
             client.DefaultRequestHeaders.Add("BypassAuthentication", "gibberish12345");
             var getResponse = await client.GetAsync(Get.UserById("gibberish"));
             Assert.True(getResponse.StatusCode == HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task UpdateUserById_ShouldPerformPartialUpdate_OnValidData()
+        {
+            var client = CreateClient();
+            var user = new
+            {
+                UserName = "Foo",
+                Email = "foo@foo.com",
+                Password = "P@ssword1"
+            };
+
+            var createUserResponse = await client.PostAsJsonAsync(Post.CreateUser, user);
+            var createUserResponseBody = await createUserResponse.DeserializeAsync<UserDto>();
+            var patch = new dynamic[]
+            {
+                new {op = "replace", path = "/email", value = "foo@foo.com"},
+                new {op = "replace", path = "/username", value = "bar"}
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
+            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(createUserResponseBody.Id), content);
+            var responseStr = await patchResponse.Content.ReadAsStringAsync();
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var updatedUser = await userManager.FindByIdAsync(createUserResponseBody.Id);
+                Assert.True(updatedUser.Email == "foo@foo.com");
+                Assert.True(updatedUser.UserName == "bar");
+            }
+        }
+
+        [Theory]
+        [InlineData("replace", "/username", "Bar")]
+        [InlineData("replace", "/email", "bar@bar.com")]
+        public async Task UpdateUserById_ShouldReturnBadRequest_OnInvalidData(string op, string path, string value)
+        {
+            var client = CreateClient();
+            var user1 = new
+            {
+                UserName = "Foo",
+                Email = "foo@foo.com",
+                Password = "P@ssword1"
+            };
+
+            var user2 = new
+            {
+                UserName = "Bar",
+                Email = "bar@bar.com",
+                Password = "P@ssword1"
+            };
+
+            var createUserResponse = await client.PostAsJsonAsync(Post.CreateUser, user1);
+            var createUserResponseBody = await createUserResponse.DeserializeAsync<UserDto>();
+            await client.PostAsJsonAsync(Post.CreateUser, user2);
+            var patch = new dynamic[]
+            {
+                new {op, path, value}
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
+            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(createUserResponseBody.Id), content);
+            var responseStr = await patchResponse.Content.ReadAsStringAsync();
+            Assert.True(patchResponse.StatusCode == HttpStatusCode.BadRequest);
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var updatedUser = await userManager.FindByIdAsync(createUserResponseBody.Id);
+                Assert.True(updatedUser.Email == "foo@foo.com");
+                Assert.True(updatedUser.UserName == "Foo");
+            }
         }
 
         public void Dispose()

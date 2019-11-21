@@ -6,8 +6,8 @@ import { Observable, Subscription } from 'rxjs';
 import { User } from '../../models/User';
 import { getPermissions } from 'src/app/auth/reducers';
 import { map, filter } from 'rxjs/operators';
-import { ConfirmEmail, UserActionTypes, UpdateUser } from '../../actions/user.actions';
-import { Actions, ofType } from '@ngrx/effects';
+import { ConfirmEmail, UserActionTypes, UpdateUser, LoadSelf } from '../../actions/user.actions';
+import { Actions, ofType, Effect } from '@ngrx/effects';
 import { Success, CoreActionTypes, Failure } from 'src/app/core/actions/actions';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -58,18 +58,24 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
     let s2 = this.actions.pipe(
       ofType<Success>(CoreActionTypes.Success),
-      filter(action => action.payload.action instanceof UpdateUser)
-    ).subscribe(_ =>
-      this.snackBar.open("User successfully updated", 'Dismiss', {duration: 5000})
-    );
+      filter(action => {
+        let r = action.payload.action instanceof UpdateUser;
+        return r;
+      })
+    ).subscribe(_ => {
+      this.snackBar.open("User successfully updated", 'Dismiss', {duration: 5000});
+      this.store.dispatch(new LoadSelf());
+      this.stopEditing();
+    });
     this.subscriptions.push(s2);
 
     let s3 = this.actions.pipe(
       ofType<Failure>(CoreActionTypes.Failure),
       filter(action => action.payload.action instanceof UpdateUser)
-    ).subscribe(action =>
+    ).subscribe(action => {
       this.snackBar.open("User update failed", 'Dismiss', {duration: 5000})
-    );
+      this.stopEditing();
+    });
     this.subscriptions.push(s3);
   }
 
@@ -80,19 +86,27 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   }
 
   onEdit() {
-    this.editing = true;
-    this.editPersonalInfoForm.reset();
-    this.editPersonalInfoForm.enable();
+    this.startEditing();
   }
 
   onSubmit(id: string) {
     let user = this.editPersonalInfoForm.value;
     this.store.dispatch(new UpdateUser({id: id, user: user}));
-    this.editPersonalInfoForm.disable();
   }
 
   onConfirmEmail() {
     this.store.dispatch(new ConfirmEmail());
   }
 
+  private startEditing() {
+    this.editing = true;
+    this.editPersonalInfoForm.markAsUntouched();
+    this.editPersonalInfoForm.enable();
+  }
+
+  private stopEditing() {
+    this.editing = false;
+    this.editPersonalInfoForm.markAsUntouched();
+    this.editPersonalInfoForm.disable();
+  }
 }
