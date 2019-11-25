@@ -14,7 +14,7 @@ export class UserSearchResultComponent implements OnInit {
   @Input()
   searchResult: User[];
   @Output()
-  action: EventEmitter<UserSearchResultAction>;
+  action = new EventEmitter<UserSearchResultAction>();
 
   actionIcon = {
     add: "person_add"

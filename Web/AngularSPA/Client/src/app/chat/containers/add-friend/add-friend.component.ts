@@ -52,7 +52,7 @@ export class AddFriendComponent implements OnInit {
     let user = actionEvent.data.user;
     this.openConfirmationDialog(user.userName).subscribe((result: ConfirmationDialogResult) => {
       if (result === "continue") {
-        this.store.dispatch(new AddFriend({id: user.id}));
+        this.store.dispatch(new AddFriend({user: user}));
         this.router.navigate(["./"]);
       }
     });

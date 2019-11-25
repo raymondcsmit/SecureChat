@@ -27,7 +27,7 @@ export class AddSelf implements Action {
 export class AddFriend implements Action {
     readonly type = UserActionTypes.AddFriend;
   
-    constructor(public payload: { id: string }) {}
+    constructor(public payload: { user: User }) {}
 }
 
 export class RemoveFriend implements Action {

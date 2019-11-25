@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { ChatRootComponent } from './containers/chat-root/chat-root.component';
 import { PersonalInfoComponent } from './containers/personal-info/personal-info.component';
+import { AddFriendComponent } from './containers/add-friend/add-friend.component';
 
 export const routes: Routes = [
   { 
@@ -17,6 +18,10 @@ export const routes: Routes = [
       {
         path: 'personal-info',
         component: PersonalInfoComponent
+      },
+      {
+        path: 'add-friend',
+        component: AddFriendComponent
       }
     ]
   }
