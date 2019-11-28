@@ -1,13 +1,9 @@
 ﻿using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Registration.Controllers;
 using Registration.Exceptions;
-using Registration.Infrastructure;
 using Registration.Models;
-using Registration.ViewModels;
 using Registration.Views.Registration;
 
 namespace Registration.Services

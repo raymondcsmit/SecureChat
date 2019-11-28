@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Helpers.Auth
+﻿namespace Helpers.Auth
 {
     public static class MagicHeaderDefaults
     {

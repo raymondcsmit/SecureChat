@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
 using Users.API.Infrastructure;
 
 namespace Users.FunctionalTests

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net.Http;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Polly.CircuitBreaker;
 using Registration.Exceptions;
 using Registration.Models;
 using Registration.Services;
-using Registration.ViewModels;
 
 namespace Registration.Controllers
 {

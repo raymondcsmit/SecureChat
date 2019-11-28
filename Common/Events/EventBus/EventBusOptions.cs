@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace SecureChat.Common.Events.EventBus
+﻿namespace SecureChat.Common.Events.EventBus
 {
     public class EventBusOptions
     {

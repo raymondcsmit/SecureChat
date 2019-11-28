@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using AutoMapper;
 using Helpers.Mapping;
 using MediatR;
 using Users.API.Dtos;

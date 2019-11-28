@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Helpers.Mapping;
+﻿using Helpers.Mapping;
 using Users.API.Models;
 
 namespace Users.API.Dtos

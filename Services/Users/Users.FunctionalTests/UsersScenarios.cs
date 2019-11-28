@@ -1,21 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
-using Polly;
 using Users.API.Dtos;
-using Users.API.Infrastructure;
 using Users.API.Models;
-using Users.API.Services.Email;
 using Users.FunctionalTests.Extensions;
 using Xunit;
 

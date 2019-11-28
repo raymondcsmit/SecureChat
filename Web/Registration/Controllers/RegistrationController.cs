@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Polly.CircuitBreaker;
 using Registration.Exceptions;
 using Registration.Models;
 using Registration.Services;
-using Registration.Views.Registration;
 
 namespace Registration.Controllers
 {
