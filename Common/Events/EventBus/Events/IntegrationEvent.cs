@@ -8,11 +8,11 @@ namespace SecureChat.Common.Events.EventBus.Events
         public IntegrationEvent()
         {
             Id = Guid.NewGuid();
-            CreationDate = DateTime.UtcNow;
+            CreationDate = DateTimeOffset.UtcNow;
         }
 
         [JsonConstructor]
-        public IntegrationEvent(Guid id, DateTime createDate)
+        public IntegrationEvent(Guid id, DateTimeOffset createDate)
         {
             Id = id;
             CreationDate = createDate;
@@ -22,6 +22,6 @@ namespace SecureChat.Common.Events.EventBus.Events
         public Guid Id { get; private set; }
 
         [JsonProperty]
-        public DateTime CreationDate { get; private set; }
+        public DateTimeOffset CreationDate { get; private set; }
     }
 }

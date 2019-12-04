@@ -4,6 +4,6 @@ namespace SecureChat.Common.Events.EventBus.Abstractions
 {
     public interface IDynamicIntegrationEventHandler
     {
-        Task Handle(dynamic eventData);
+        Task Handle(dynamic eventData, bool redelivered);
     }
 }

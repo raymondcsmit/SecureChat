@@ -5,7 +5,7 @@ namespace Associations.Domain.SeedWork
 {
     public abstract class Entity
     {
-        public string Id { get; private set; }
+        public string Id { get; protected set; }
 
         private List<INotification> _domainEvents = new List<INotification>();
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();

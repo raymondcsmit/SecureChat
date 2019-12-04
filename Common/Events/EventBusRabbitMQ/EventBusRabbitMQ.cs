@@ -100,6 +100,8 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                                      basicProperties: properties,
                                      body: body);
                 });
+
+                _logger.LogTrace($"Published {@event.GetType().Name}");
             }
         }
 
@@ -191,7 +193,7 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                 var eventName = ea.RoutingKey;
                 var message = Encoding.UTF8.GetString(ea.Body);
 
-                await ProcessEvent(eventName, message);
+                await ProcessEvent(eventName, message, ea.Redelivered);
 
                 channel.BasicAck(ea.DeliveryTag,multiple:false);
             };
@@ -209,7 +211,7 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
             return channel;
         }
 
-        private async Task ProcessEvent(string eventName, string message)
+        private async Task ProcessEvent(string eventName, string message, bool redelivered)
         {
             if (_subsManager.HasSubscriptionsForEvent(eventName))
             {
@@ -218,10 +220,9 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                 {
                     if (subscription.IsDynamic)
                     {
-                        var handler = _serviceProvider.GetService(subscription.HandlerType) as IDynamicIntegrationEventHandler;
-                        if (handler == null) continue;
-                        dynamic eventData = JObject.Parse(message);
-                        await handler.Handle(eventData);
+                        if (!(_serviceProvider.GetService(subscription.HandlerType) is IDynamicIntegrationEventHandler handler)) continue;
+                        dynamic integrationEvent = JObject.Parse(message);
+                        await handler.Handle(integrationEvent, redelivered);
                     }
                     else
                     {
@@ -229,8 +230,10 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                         if (handler == null) continue;
                         var eventType = _subsManager.GetEventTypeByName(eventName);
                         dynamic integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                        await handler.Handle(integrationEvent);
+                        await handler.Handle(integrationEvent, redelivered);
                     }
+
+                    _logger.LogTrace($"Consumed {eventName}");
                 }
             }
         }

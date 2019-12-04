@@ -48,7 +48,7 @@ namespace Associations.Infrastructure.UnitOfWork
         {
             try
             {
-                using (var conn = await _dbConnectionFactory.GetConnectionAsync())
+                using (var conn = await _dbConnectionFactory.OpenConnectionAsync())
                 using (var transaction = conn.BeginTransaction())
                 {
                     foreach (var operation in _operations)

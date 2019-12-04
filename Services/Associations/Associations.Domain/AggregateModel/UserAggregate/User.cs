@@ -11,17 +11,14 @@ namespace Associations.Domain.AggregateModel.UserAggregate
     {
         public string Username { get; protected set; }
 
-        public int Age { get; protected set; }
-
-        public string Sex { get; protected set; }
-
-        public string Location { get; protected set; }
-
         public Session Session { get; protected set; }
 
-        protected User()
+        protected User() {}
+
+        public User(string id, string userName)
         {
-            
+            Id = id;
+            Username = userName;
         }
 
         public void EndSession()

@@ -13,12 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\Associations.Domain\Associations.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="EntityConfigurations\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
 </Project>

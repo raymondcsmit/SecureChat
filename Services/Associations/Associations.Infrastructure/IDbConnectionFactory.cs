@@ -8,6 +8,6 @@ namespace Associations.Infrastructure
 {
     public interface IDbConnectionFactory
     {
-        Task<IDbConnection> GetConnectionAsync();
+        Task<IDbConnection> OpenConnectionAsync();
     }
 }

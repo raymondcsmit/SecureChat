@@ -1,8 +1,14 @@
 ﻿using System;
+using Associations.API.Application.IntegrationEvents.EventHandling;
+using Associations.API.Application.IntegrationEvents.Events;
 using Associations.API.Infrastructure;
 using Associations.API.Infrastructure.Filters;
 using Associations.API.Services;
+using Associations.Domain.AggregateModel.UserAggregate;
+using Associations.Domain.SeedWork;
 using Associations.Infrastructure;
+using Associations.Infrastructure.Repositories;
+using Associations.Infrastructure.UnitOfWork;
 using AutoMapper;
 using HealthChecks.UI.Client;
 using Helpers.Extensions;
@@ -20,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
 using Steeltoe.Discovery.Client;
 using Users.API.Infrastructure.HealthChecks;
@@ -78,7 +85,10 @@ namespace Associations.API
             });
 
             services.Configure<DbConnectionInfo>(Configuration);
-            services.AddScoped<IDbConnectionFactory, MySqlConnectionFactory>();
+            services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
+            services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
+
+            services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddEventBus(options =>
             {
@@ -102,6 +112,7 @@ namespace Associations.API
                 config.AddProfile(new AutoMapperConfig(new[] { typeof(Startup).Assembly }));
                 config.CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
                 config.CreateMap(typeof(Operation<>), typeof(Operation<>));
+                config.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
             }, typeof(Startup).Assembly);
 
             services.AddMediatR(typeof(Startup).Assembly);
@@ -135,6 +146,17 @@ namespace Associations.API
             app.UseMvc();
 
             app.UseDiscoveryClient();
+        }
+    }
+
+    internal static class CustomExtensionMethods
+    {
+        public static IApplicationBuilder ConfigureEventBus(this IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<UserRegisteredIntegrationEvent, UserRegisteredIntegrationEventHandler>();
+
+            return app;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace SecureChat.Common.Events.EventBus.Tests
             Handled = false;
         }
 
-        public async Task Handle(TestIntegrationEvent @event)
+        public async Task Handle(TestIntegrationEvent @event, bool redelivered)
         {
             Handled = true;
         }
