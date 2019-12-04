@@ -30,6 +30,20 @@ services:
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
+  associations.service:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionString: Server=mysql; Database=associations_db; Uid=associations; Pwd=12345;
+      EventBusConnection: rabbitmq
+      EventBusUserName: rabbitmq
+      EventBusPassword: "12345"
+      EventBusQueueName: users.service
+      AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
+      BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
+      BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
+    extra_hosts:
+      - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
+
   registration.app:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
@@ -77,6 +91,17 @@ services:
       - auth.service
       - users.service
 
+  associations.apigw:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      AuthServiceUrl: http://auth.service
+      BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
+    volumes:
+      - ./ApiGateways/Associations/apigw:/app/configuration
+    depends_on:
+      - auth.service
+      - associations.service
+
   rabbitmq:
     environment:
       RABBITMQ_DEFAULT_USER: rabbitmq 
@@ -86,6 +111,7 @@ services:
     ports:
       - "5101:5101"
       - "5102:5102"
+      - "5103:5103"
       - "6001:6001"
       - "6002:6002"
     volumes:
@@ -104,13 +130,22 @@ services:
     environment:
         MYSQL_ROOT_PASSWORD: "12345"
     volumes:
-      - ./Infrastructure/mysql/scripts:/docker-entrypoint-initdb.d
+      - ./Infrastructure/mysql/initdb:/docker-entrypoint-initdb.d
       - ./Infrastructure/mysql/data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p12345"]
       interval: 10s
       timeout: 60s
       retries: 5
+
+  flyway:
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+          /flyway/flyway -url=jdbc:mysql://mysql/associations_db -locations=filesystem:/flyway/sql/associations_db -user=associations -password=12345 -connectRetries=60 migrate
+    volumes:
+      - ./Infrastructure/mysql/migrations:/flyway/sql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -122,3 +157,14 @@ services:
         MYSQL_USERNAME: root
         MYSQL_ROOT_PASSWORD: "12345"
         PMA_HOST: mysql
+
+  portainer:
+    image: portainer/portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - "9000:9000"
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --no-auth

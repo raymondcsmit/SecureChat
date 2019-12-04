@@ -18,6 +18,14 @@ services:
     depends_on:
       - mysql
 
+  associations.service:
+    build: 
+      context: .
+      dockerfile: Services/Associations/Associations.API/Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+
   registration.app:
     build: 
       context: .
@@ -34,6 +42,12 @@ services:
     depends_on:
       - users.service
 
+  associations.apigw:
+    build:
+      context: ./ApiGateways/OcelotApiGw
+    depends_on:
+      - associations.service
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
@@ -41,6 +55,11 @@ services:
     image: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+
+  flyway:
+    image: flyway/flyway
+    depends_on:
+      - mysql
 
   nginx:
     image: nginx

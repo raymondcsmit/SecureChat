@@ -5,3 +5,7 @@ GRANT ALL PRIVILEGES ON auth_db.* TO 'auth'@'%';
 CREATE DATABASE IF NOT EXISTS users_db;
 CREATE USER 'users'@'%' IDENTIFIED BY '12345';
 GRANT ALL PRIVILEGES ON users_db.* TO 'users'@'%';
+
+CREATE DATABASE IF NOT EXISTS associations_db;
+CREATE USER 'associations'@'%' IDENTIFIED BY '12345';
+GRANT ALL PRIVILEGES ON associations_db.* TO 'associations'@'%';
