@@ -5,7 +5,7 @@ services:
     environment:
         ASPNETCORE_ENVIRONMENT: Development
         AuthDbConnectionString: Server=mysql; Database=auth_db; Uid=auth; Pwd=12345;
-        UsersDbConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
+        AccountDbConnectionString: Server=mysql; Database=account_db; Uid=account; Pwd=12345;
         AngularSpaClientUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6001
         PublicOriginUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
         RegistrationUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/registration
@@ -13,14 +13,14 @@ services:
     extra_hosts:
         - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
-  users.service:
+  account.service:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionString: Server=mysql; Database=users_db; Uid=users; Pwd=12345;
+      ConnectionString: Server=mysql; Database=account_db; Uid=account; Pwd=12345;
       EventBusConnection: rabbitmq
       EventBusUserName: rabbitmq
       EventBusPassword: "12345"
-      EventBusQueueName: users.service
+      EventBusQueueName: account.service
       SendGridUser: ${SEND_GRID_USER}
       SendGridKey: ${SEND_GRID_KEY}
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
@@ -30,14 +30,14 @@ services:
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
-  associations.service:
+  chat.service:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionString: Server=mysql; Database=associations_db; Uid=associations; Pwd=12345;
+      ConnectionString: Server=mysql; Database=chat_db; Uid=chat; Pwd=12345;
       EventBusConnection: rabbitmq
       EventBusUserName: rabbitmq
       EventBusPassword: "12345"
-      EventBusQueueName: users.service
+      EventBusQueueName: account.service
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
       BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
       BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
@@ -47,10 +47,10 @@ services:
   registration.app:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102
+      AccountApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
     depends_on:
-      - users.apigw
+      - account.apigw
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
 
@@ -58,8 +58,8 @@ services:
     environment:
         ASPNETCORE_ENVIRONMENT: Development
         AngularSpaDevClient: http://angularspa.development.app:4200
-        UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
-        ChatsApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+        AccountApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+        ChatApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
         AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
         ClientId: AngularSpaClient
     depends_on:
@@ -70,37 +70,37 @@ services:
       context: .
       dockerfile: Web/AngularSPA.Development/Dockerfile
     volumes:
-      - ./Web/AngularSPA/Client:/usr/src/app
+      - ./Web/AngularSPA/Client:/app
     ports:
       - '4200:4200'
       - '9876:9876'
     environment:
-      UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
-      ChatsApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+      AccountApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
+      ChatApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
       ClientId: AngularSpaClient
 
-  users.apigw:
+  account.apigw:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       AuthServiceUrl: http://auth.service
       BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
     volumes:
-      - ./ApiGateways/Users/apigw:/app/configuration
+      - ./ApiGateways/Account/apigw:/app/configuration
     depends_on:
       - auth.service
-      - users.service
+      - account.service
 
-  associations.apigw:
+  chat.apigw:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       AuthServiceUrl: http://auth.service
       BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
     volumes:
-      - ./ApiGateways/Associations/apigw:/app/configuration
+      - ./ApiGateways/Chat/apigw:/app/configuration
     depends_on:
       - auth.service
-      - associations.service
+      - chat.service
 
   rabbitmq:
     environment:
@@ -143,7 +143,7 @@ services:
       - /bin/sh
       - -c
       - |
-          /flyway/flyway -url=jdbc:mysql://mysql/associations_db -locations=filesystem:/flyway/sql/associations_db -user=associations -password=12345 -connectRetries=60 migrate
+          /flyway/flyway -url=jdbc:mysql://mysql/chat_db -locations=filesystem:/flyway/sql/chat_db -user=chat -password=12345 -connectRetries=60 migrate
     volumes:
       - ./Infrastructure/mysql/migrations:/flyway/sql
 

@@ -8,20 +8,20 @@ services:
     restart: always
     depends_on:
       - mysql
-      - users.service
+      - account.service
 
-  users.service:
+  account.service:
     build: 
       context: .
-      dockerfile: Services/Users/Users.API/Dockerfile
+      dockerfile: Services/Account/Account.API/Dockerfile
     restart: always
     depends_on:
       - mysql
 
-  associations.service:
+  chat.service:
     build: 
       context: .
-      dockerfile: Services/Associations/Associations.API/Dockerfile
+      dockerfile: Services/Chat/Chat.API/Dockerfile
     restart: always
     depends_on:
       - mysql
@@ -36,17 +36,17 @@ services:
       context: .
       dockerfile: Web/AngularSPA/Dockerfile
 
-  users.apigw:
+  account.apigw:
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
-      - users.service
+      - account.service
 
-  associations.apigw:
+  chat.apigw:
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
-      - associations.service
+      - chat.service
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -66,7 +66,7 @@ services:
     restart: always
     depends_on:
       - auth.service
-      - users.apigw
+      - account.apigw
       - registration.app
       - angularspa.app
 

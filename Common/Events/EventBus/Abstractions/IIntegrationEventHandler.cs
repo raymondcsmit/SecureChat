@@ -6,7 +6,7 @@ namespace SecureChat.Common.Events.EventBus.Abstractions
     public interface IIntegrationEventHandler<in TIntegrationEvent> : IIntegrationEventHandler 
         where TIntegrationEvent: IntegrationEvent
     {
-        Task Handle(TIntegrationEvent integrationEvent, bool redelivered);
+        Task Handle(TIntegrationEvent @event, bool redelivered);
     }
 
     public interface IIntegrationEventHandler

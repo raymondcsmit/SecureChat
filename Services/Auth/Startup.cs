@@ -42,7 +42,7 @@ namespace Auth
 
             services.AddDbContext<UsersDbContext>(options =>
             {
-                options.UseMySql(Configuration["UsersDbConnectionString"],
+                options.UseMySql(Configuration["AccountDbConnectionString"],
                     opt =>
                     {
                         opt.MigrationsAssembly(migrationsAssembly);

@@ -8,7 +8,7 @@ import { AddFriend } from '../../actions/user.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
+import { AccountService } from '../../services/account.service';
 import { ActionEvent } from '../../models/ActionEvent';
 
 @Component({
@@ -29,7 +29,7 @@ export class AddFriendComponent implements OnInit {
     private store: Store<any>, 
     private dialog: MatDialog, 
     private router: Router,
-    private userService: UserService) { }
+    private userService: AccountService) { }
 
   ngOnInit() {
     this.searchResult$ = this.searchSubject.pipe(

@@ -46,7 +46,7 @@ namespace OcelotApiGw
                     x.RequireHttpsMetadata = false;
                     x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        ValidAudiences = new[] { "users" }
+                        ValidAudiences = new[] { "account" }
                     };
                 });
 

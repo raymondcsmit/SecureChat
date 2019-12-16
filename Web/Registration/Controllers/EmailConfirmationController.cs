@@ -9,11 +9,11 @@ namespace Registration.Controllers
     [Route("email-confirmation")]
     public class EmailConfirmationController : Controller
     {
-        private readonly IUsersClient _usersClient;
+        private readonly IAccountClient _accountClient;
 
-        public EmailConfirmationController(IUsersClient usersClient)
+        public EmailConfirmationController(IAccountClient accountClient)
         {
-            _usersClient = usersClient;
+            _accountClient = accountClient;
         }
 
         [HttpGet("", Name = nameof(ConfirmEmailGet))]
@@ -26,7 +26,7 @@ namespace Registration.Controllers
 
             try
             {
-                await _usersClient.ConfirmEmailAsync(emailConfirmationDto);
+                await _accountClient.ConfirmEmailAsync(emailConfirmationDto);
                 return RedirectToAction(nameof(ConfirmEmailConfirmationGet));
             }
             catch (ApiException)

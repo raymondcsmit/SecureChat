@@ -9,8 +9,8 @@ const envFile = `export const environment = {
   production: ${isProduction},
   authorityUrl: "${process.env.AuthUrl}",
   clientId: "${process.env.ClientId}",
-  usersApi: "${process.env.UsersApiUrl}",
-  chatsApi: "${process.env.ChatsApiUrl}"
+  accountApi: "${process.env.AccountApiUrl}",
+  chatApi: "${process.env.ChatApiUrl}"
 }`
 
 fs.writeFileSync(targetPath, envFile);

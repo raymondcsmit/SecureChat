@@ -10,7 +10,7 @@ namespace Auth
         {
             return new List<ApiResource>
             {
-                new ApiResource("users", "Users Service")
+                new ApiResource("account", "Account Service")
                 {
                     UserClaims = new[] { "permission", "sub" }
                 }
@@ -40,7 +40,7 @@ namespace Auth
                         IdentityServerConstants.StandardScopes.Address,
                         IdentityServerConstants.StandardScopes.Email,
                         "permissions",
-                        "users"
+                        "account"
                     }
                 }
             };

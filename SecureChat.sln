@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcelotApiGw", "ApiGateways\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{3D89A524-F654-4222-8FE3-E999BABBE5E7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{9FE84EAE-F3DE-4C82-B6CB-AD9C063A4519}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{9FE84EAE-F3DE-4C82-B6CB-AD9C063A4519}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.API", "Services\Users\Users.API\Users.API.csproj", "{3EDFA0F1-89E8-4B26-9C29-9D854EFAC658}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.API", "Services\Account\Account.API\Account.API.csproj", "{3EDFA0F1-89E8-4B26-9C29-9D854EFAC658}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus", "Common\Events\EventBus\EventBus.csproj", "{E84F5F2A-7648-47C6-A266-A06B82FA2606}"
 EndProject
@@ -39,30 +39,28 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration.API", "Servic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{A86F1E38-3B9D-441A-984F-F0FB56463590}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{EE4DA81F-F62C-4215-B590-5787306E987A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{EE4DA81F-F62C-4215-B590-5787306E987A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{1B5673C1-A3FF-40C9-8389-AAB441B7B450}"
 	ProjectSection(SolutionItems) = preProject
-		ApiGateways\Users\apigw\configuration.json = ApiGateways\Users\apigw\configuration.json
+		ApiGateways\Account\apigw\configuration.json = ApiGateways\Account\apigw\configuration.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.FunctionalTests", "Services\Users\Users.FunctionalTests\Users.FunctionalTests.csproj", "{AB55DA95-49F9-4882-80B4-CB255D2DDECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.FunctionalTests", "Services\Account\Account.FunctionalTests\Account.FunctionalTests.csproj", "{AB55DA95-49F9-4882-80B4-CB255D2DDECD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Associations", "Associations", "{6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chat", "Chat", "{6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chats", "Chats", "{816ED291-6C2E-412C-BF35-B9965FC9999B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.API", "Services\Chat\Chat.API\Chat.API.csproj", "{D52FCD33-CCAD-4F89-8784-A094FCFAB08E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Associations.API", "Services\Associations\Associations.API\Associations.API.csproj", "{D52FCD33-CCAD-4F89-8784-A094FCFAB08E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Domain", "Services\Chat\Chat.Domain\Chat.Domain.csproj", "{FD9D6F9F-D40E-497C-9775-F4D759D94FB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Associations.Domain", "Services\Associations\Associations.Domain\Associations.Domain.csproj", "{FD9D6F9F-D40E-497C-9775-F4D759D94FB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Infrastructure", "Services\Chat\Chat.Infrastructure\Chat.Infrastructure.csproj", "{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Associations.Infrastructure", "Services\Associations\Associations.Infrastructure\Associations.Infrastructure.csproj", "{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Associations", "Associations", "{4C38EDFD-B06C-45DB-BBF4-99C6867471A7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chat", "Chat", "{4C38EDFD-B06C-45DB-BBF4-99C6867471A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{8F8BBB9F-738A-44B6-A191-65E3182F70FE}"
 	ProjectSection(SolutionItems) = preProject
-		ApiGateways\Associations\apigw\configuration.json = ApiGateways\Associations\apigw\configuration.json
+		ApiGateways\Chat\apigw\configuration.json = ApiGateways\Chat\apigw\configuration.json
 	EndProjectSection
 EndProject
 Global
@@ -153,7 +151,6 @@ Global
 		{1B5673C1-A3FF-40C9-8389-AAB441B7B450} = {EE4DA81F-F62C-4215-B590-5787306E987A}
 		{AB55DA95-49F9-4882-80B4-CB255D2DDECD} = {9FE84EAE-F3DE-4C82-B6CB-AD9C063A4519}
 		{6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B} = {AB8F4EB5-25AB-4861-AD4C-30D6F5E875F4}
-		{816ED291-6C2E-412C-BF35-B9965FC9999B} = {AB8F4EB5-25AB-4861-AD4C-30D6F5E875F4}
 		{D52FCD33-CCAD-4F89-8784-A094FCFAB08E} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
 		{FD9D6F9F-D40E-497C-9775-F4D759D94FB7} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
 		{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}

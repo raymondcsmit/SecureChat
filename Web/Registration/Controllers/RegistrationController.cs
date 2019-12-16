@@ -10,12 +10,12 @@ namespace Registration.Controllers
     [Route("registration")]
     public class RegistrationController : Controller
     {
-        private readonly IUsersClient _usersClient;
+        private readonly IAccountClient _accountClient;
         private readonly IConfiguration _configuration;
 
-        public RegistrationController(IUsersClient usersClient, IConfiguration configuration)
+        public RegistrationController(IAccountClient accountClient, IConfiguration configuration)
         {
-            _usersClient = usersClient;
+            _accountClient = accountClient;
             _configuration = configuration;
         }
 
@@ -41,7 +41,7 @@ namespace Registration.Controllers
 
             try
             {
-                var user = await _usersClient.CreateUserAsync(registrationForm);
+                var user = await _accountClient.CreateUserAsync(registrationForm);
                 TempData["ConfirmationEmail"] = user.Email;
                 return RedirectToAction(nameof(RegisterConfirmationGet));
             }

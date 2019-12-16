@@ -10,11 +10,11 @@ namespace Registration.Controllers
     [Route("password-reset")]
     public class PasswordResetController : Controller
     {
-        private readonly IUsersClient _usersClient;
+        private readonly IAccountClient _accountClient;
 
-        public PasswordResetController(IUsersClient usersClient)
+        public PasswordResetController(IAccountClient accountClient)
         {
-            _usersClient = usersClient;
+            _accountClient = accountClient;
         }
 
         [HttpGet("", Name = nameof(ResetPasswordGet))]
@@ -39,7 +39,7 @@ namespace Registration.Controllers
 
             try
             {
-                await _usersClient.ResetPasswordAsync(userName, TempData["LoginUrl"] as string);
+                await _accountClient.ResetPasswordAsync(userName, TempData["LoginUrl"] as string);
                 return RedirectToAction(nameof(ResetPasswordConfirmationGet));
             }
             catch (ApiException e)
@@ -90,7 +90,7 @@ namespace Registration.Controllers
 
             try
             {
-                await _usersClient.CompletePasswordResetAsync(userName as string, token as string, dto.Password);
+                await _accountClient.CompletePasswordResetAsync(userName as string, token as string, dto.Password);
                 return RedirectToAction(nameof(CompletePasswordResetConfirmationGet));
             }
             catch (ApiException e)

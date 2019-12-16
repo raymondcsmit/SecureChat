@@ -37,15 +37,15 @@ namespace Registration
             });
             services.AddHttpContextAccessor();
 
-            services.AddHttpClient<IUsersClient, UsersClient>(config =>
+            services.AddHttpClient<IAccountClient, AccountClient>(config =>
                     {
-                        config.BaseAddress = new Uri(Configuration["UsersApiUrl"]);
+                        config.BaseAddress = new Uri(Configuration["AccountApiUrl"]);
                     })
                 .AddTransientHttpErrorPolicy(builder => builder
                     .WaitAndRetryAsync(retryCount: 3, sleepDurationProvider: retryAttempt => retryAttempt * TimeSpan.FromSeconds(3)));
 
 
-            services.AddScoped<IUsersClient, UsersClient>();
+            services.AddScoped<IAccountClient, AccountClient>();
             services.AddTransient<IActionUrlGeneratorService, ActionUrlGeneratorService>();
             services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
             services.AddHttpClientServices(Configuration);
@@ -84,7 +84,7 @@ namespace Registration
 
         public static IServiceCollection AddHttpClientServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHttpClient<IUsersClient, UsersClient>()
+            services.AddHttpClient<IAccountClient, AccountClient>()
                     .SetHandlerLifetime(TimeSpan.FromMinutes(5))  //Sample. Default lifetime is 2 minutes
                    .AddPolicyHandler(GetRetryPolicy())
                    .AddPolicyHandler(GetCircuitBreakerPolicy());

@@ -7,7 +7,7 @@ import { HttpClient } from "@angular/common/http";
 import { apiConfig } from "../apiConfig";
 import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser } from "../actions/user.actions";
 import { State } from "../reducers/user.reducer";
-import { UserService } from "../services/user.service";
+import { AccountService } from "../services/account.service";
 import { AddEntity } from "../actions/entity.actions";
 import { User } from "../models/User";
 import { getSelf, getUserById } from "../reducers";
@@ -21,7 +21,7 @@ export class UserEffects {
     @Effect()
     LoadSelf$ = this.actions$.pipe(
         ofType<LoadSelf>(UserActionTypes.LoadSelf),
-        switchMap(action => this.userService.getSelf().pipe(
+        switchMap(action => this.accountService.getSelf().pipe(
             map((user: User) => new AddSelf({user: user})),
             catchError(errors => {
                 this.router.navigate(['/error'], {queryParams: {errors: JSON.stringify(errors)}});
@@ -36,7 +36,7 @@ export class UserEffects {
         throttleTime(5000),
         withLatestFrom(this.store.select(getSelf)),
         filter(([action, user]) => user != null),
-        switchMap(([action, user]) => this.userService.confirmEmail(user.id).pipe(
+        switchMap(([action, user]) => this.accountService.confirmEmail(user.id).pipe(
             map(_ => new Success({action: action})),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
@@ -57,7 +57,7 @@ export class UserEffects {
                 return [action, patch];
             })
         )),
-        switchMap(([action, patch]: [UpdateUser, any]) => this.userService.updateUser(action.payload.id, patch).pipe(
+        switchMap(([action, patch]: [UpdateUser, any]) => this.accountService.updateUser(action.payload.id, patch).pipe(
             map(_ => new Success({action: action})),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
@@ -66,7 +66,7 @@ export class UserEffects {
     constructor(
         private actions$: Actions,
         private store: Store<State>,
-        private userService: UserService,
+        private accountService: AccountService,
         private router: Router
     ) {
     }

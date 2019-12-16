@@ -3,12 +3,10 @@ import { Actions, Effect, ofType } from "@ngrx/effects";
 import { Router } from "@angular/router";
 import * as fromActions from "../actions/auth.actions";
 import * as fromAuth from '../reducers';
-import { exhaustMap, map, tap, withLatestFrom } from 'rxjs/operators';
+import { exhaustMap, map, tap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { UserManager } from "oidc-client";
 import { Store } from "@ngrx/store";
-import { AddEntity } from "src/app/chat/actions/entity.actions";
-import { User } from "../../chat/models/User";
 
 @Injectable()
 export class AuthEffects {
@@ -60,11 +58,9 @@ export class AuthEffects {
     )
 
     @Effect()
-    authenticationFailure = this.actions$.pipe(
+    signinFailure$ = this.actions$.pipe(
         ofType<fromActions.SignInFailure>(fromActions.AuthActionTypes.SignInFailure),
-        tap(action => {
-            this.router.navigate(['auth', 'login']);
-        })
+        map(() => new fromActions.SignOutSuccess({ fromCallback: true }))
     );
 
     constructor(
