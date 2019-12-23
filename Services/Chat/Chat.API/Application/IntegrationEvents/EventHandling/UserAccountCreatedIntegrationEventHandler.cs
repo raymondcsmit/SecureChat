@@ -6,14 +6,14 @@ using SecureChat.Common.Events.EventBus.Abstractions;
 
 namespace Chat.API.Application.IntegrationEvents.EventHandling
 {
-    public class UserRegisteredIntegrationEventHandler : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
+    public class UserAccountCreatedIntegrationEventHandler : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ILogger<UserRegisteredIntegrationEventHandler> _logger;
+        private readonly ILogger<UserAccountCreatedIntegrationEventHandler> _logger;
 
-        public UserRegisteredIntegrationEventHandler(
+        public UserAccountCreatedIntegrationEventHandler(
             IUserRepository userRepository,
-            ILogger<UserRegisteredIntegrationEventHandler> logger)
+            ILogger<UserAccountCreatedIntegrationEventHandler> logger)
         {
             _userRepository = userRepository;
             _logger = logger;
@@ -24,7 +24,7 @@ namespace Chat.API.Application.IntegrationEvents.EventHandling
             var existingUser = await _userRepository.GetAsync(@event.UserId);
             if (existingUser != null)
             {
-                _userRepository.Add(new User(@event.UserId, @event.UserName));
+                _userRepository.Add(new User(@event.UserId, @event.UserName, @event.Email));
                 await _userRepository.UnitOfWork.SaveChangesAsync();
             }
         }

@@ -23,13 +23,11 @@ namespace Account.API.Application.Commands
         public UpdateUserCommandHandler(
             UserManager<User> userManager,
             ILogger<UpdateUserCommandHandler> logger,
-            IMapper mapper,
-            IEventBus eventBus)
+            IMapper mapper)
         {
             _userManager = userManager;
             _logger = logger;
             _mapper = mapper;
-            _eventBus = eventBus;
         }
 
         public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -49,13 +47,6 @@ namespace Account.API.Application.Commands
                 throw new UsersApiException("User could not be updated", result.Errors);
             }
             _logger.LogInformation($"Successfully updated user with id {command.Id}");
-
-            _eventBus.Publish(new UserAccountUpdatedIntegrationEvent()
-            {
-                UserId = user.Id,
-                UserName = user.UserName,
-                Email = user.Email
-            });
         }
     }
 }

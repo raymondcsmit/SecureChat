@@ -5,30 +5,30 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Chat.API.Infrastructure.Exceptions
 {
-    public class AssociationsApiException : Exception
+    public class ChatApplicationException : Exception
     {
         public IEnumerable<string> Errors { get; } = new List<string>();
 
         public int ErrorCode { get; }
 
-        public AssociationsApiException()
+        public ChatApplicationException()
         { }
 
-        public AssociationsApiException(string message, IEnumerable<string> errors = null, int errorCode = 400)
+        public ChatApplicationException(string message, IEnumerable<string> errors = null, int errorCode = 400)
             : base(message)
         {
             ErrorCode = errorCode;
             if (errors != null) Errors = errors;
         }
 
-        public AssociationsApiException(string message, Exception innerException, IEnumerable<string> errors = null, int errorCode = 400)
+        public ChatApplicationException(string message, Exception innerException, IEnumerable<string> errors = null, int errorCode = 400)
             : base(message, innerException)
         {
             ErrorCode = errorCode;
             if (errors != null) Errors = errors;
         }
 
-        public AssociationsApiException(string message, IEnumerable<IdentityError> errors, int errorCode = 400)
+        public ChatApplicationException(string message, IEnumerable<IdentityError> errors, int errorCode = 400)
             : base(message)
         {
             ErrorCode = errorCode;

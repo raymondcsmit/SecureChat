@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace Chat.Domain.Exceptions
 {
-    public class AssociationsDomainException : Exception
+    public class ChatDomainException : Exception
     {
         public IEnumerable<string> Errors { get; } = new List<string>();
 
-        public AssociationsDomainException()
+        public ChatDomainException()
         { }
 
-        public AssociationsDomainException(string message, IEnumerable<string> errors = null)
+        public ChatDomainException(string message, IEnumerable<string> errors = null)
             : base(message)
         {
             if (errors != null) Errors = errors;
         }
 
-        public AssociationsDomainException(string message, Exception innerException, IEnumerable<string> errors = null)
+        public ChatDomainException(string message, Exception innerException, IEnumerable<string> errors = null)
             : base(message, innerException)
         {
             if (errors != null) Errors = errors;

@@ -1,5 +1,6 @@
 ﻿using Chat.API.Infrastructure.Exceptions;
 using Chat.API.Models;
+using Chat.Domain.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,32 +22,34 @@ namespace Chat.API.Infrastructure.Filters
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is AssociationsApiException e)
+            _logger.LogError(new EventId(context.Exception.HResult),
+                context.Exception,
+                context.Exception.Message);
+            switch (context.Exception)
             {
-                if (e.ErrorCode == 404)
-                {
-                    context.Result = new NotFoundResult();
-                }
-                else
-                {
+                case ChatApplicationException e:
+                    if (e.ErrorCode == 404)
+                    {
+                        context.Result = new NotFoundResult();
+                    }
+                    else
+                    {
+                        context.Result = new BadRequestObjectResult(new ErrorResponse(e.Errors));
+                    }
+                    break;
+                case ChatDomainException e:
                     context.Result = new BadRequestObjectResult(new ErrorResponse(e.Errors));
-                }
-                
-            }
-            else
-            {
-                _logger.LogError(new EventId(context.Exception.HResult),
-                    context.Exception,
-                    context.Exception.Message);
+                    break;
+                default:
+                    var message = _env.IsDevelopment() ? context.Exception.Message : "An error has occured.";
 
-                var message = _env.IsDevelopment() ? context.Exception.Message : "An error has occured.";
-
-                context.Result = new ObjectResult(new ErrorResponse(new[] { message }))
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError
-                };
+                    context.Result = new ObjectResult(new ErrorResponse(new[] { message }))
+                    {
+                        StatusCode = StatusCodes.Status500InternalServerError
+                    };
+                    break;
             }
-            context.ExceptionHandled = true;
+
         }
     }
 }
