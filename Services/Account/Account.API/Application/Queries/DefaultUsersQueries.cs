@@ -38,7 +38,7 @@ namespace Account.API.Application.Queries
                 );
 
                 var user = result.FirstOrDefault() 
-                           ?? throw new UsersApiException("Could not fetch user", new[] { "User not found" }, 404);
+                           ?? throw new AccountApiException("Could not fetch user", new[] { "User not found" }, 404);
 
                 return _mapper.Map<UserDto>(user);
             }

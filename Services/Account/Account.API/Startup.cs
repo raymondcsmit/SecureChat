@@ -122,8 +122,6 @@ namespace Account.API
             services.AddAutoMapper(config =>
                 {
                     config.AddProfile(new AutoMapperConfig(new[] {typeof(Startup).Assembly}));
-                    config.CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
-                    config.CreateMap(typeof(Operation<>), typeof(Operation<>));
                 }
                 ,typeof(Startup).Assembly);
 

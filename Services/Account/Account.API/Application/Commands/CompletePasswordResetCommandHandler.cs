@@ -28,7 +28,7 @@ namespace Account.API.Application.Commands
             if (user == null)
             {
                 _logger.LogWarning($"Password reset failed (invalid id): {notification.Id}");
-                throw new UsersApiException("Password reset failed", new[] { "User not found" }, 404);
+                throw new AccountApiException("Password reset failed", new[] { "User not found" }, 404);
             }
 
             var result = await _userManager.ResetPasswordAsync(user, notification.Token, notification.NewPassword);
@@ -39,7 +39,7 @@ namespace Account.API.Application.Commands
             else
             {
                 _logger.LogWarning($"Failed to reset password for user id {user.Id}: {result.Errors.ToErrorString()}");
-                throw new UsersApiException("Password reset failed", result.Errors);
+                throw new AccountApiException("Password reset failed", result.Errors);
             }
         }
     }

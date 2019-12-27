@@ -10,5 +10,7 @@ namespace Chat.Domain.AggregateModel.UserAggregate
         void Update(User user);
 
         Task<User> GetAsync(string userId);
+
+        Task<(bool, bool)> UserNameOrEmailExists(string userName, string email);
     }
 }

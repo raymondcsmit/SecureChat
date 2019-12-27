@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Chat.Domain.AggregateModel.UserAggregate;
@@ -26,14 +27,15 @@ namespace Chat.Infrastructure.Repositories
 
         public void Add(User user)
         {
-            var sql = $@"INSERT INTO Users (Id, UserName)
-                        VALUES (@{nameof(user.Id)}, @{nameof(user.UserName)});";
+            var sql = $@"INSERT INTO Users (Id, UserName, Email)
+                        VALUES (@{nameof(user.Id)}, @{nameof(user.UserName)}, @{nameof(user.Email)});";
             UnitOfWork.AddOperation(user, async connection =>
             {
                 await connection.ExecuteAsync(sql, new
                 {
                     user.Id,
-                    Username = user.UserName
+                    user.UserName,
+                    user.Email
                 });
             });
         }
@@ -95,6 +97,29 @@ namespace Chat.Infrastructure.Repositories
                     (u, _, p) => new User(u.Id, u.userName, u.email, p),
                     splitOn: "userId,id");
                 return user == null ? null : _mapper.Map<User>(user);
+            }
+        }
+
+        public async Task<(bool, bool)> UserNameOrEmailExists(string userName, string email)
+        {
+            var userNameQuery = userName == null
+                ? ""
+                : $@"SELECT COUNT(*) FROM Users WHERE Users.UserName == @{nameof(userName)}";
+
+            var emailQuery = email == null
+                ? ""
+                : $@"SELECT COUNT(*) FROM Users WHERE Users.Email == @{nameof(email)}";
+
+            var sql = string.Join("UNION", userNameQuery, emailQuery);
+            using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
+            {
+                var result = await connection.QueryAsync<bool>(sql, new
+                {
+                    userName,
+                    email
+                });
+                var resultList = result.ToList();
+                return (resultList[0], resultList[1]);
             }
         }
     }

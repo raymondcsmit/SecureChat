@@ -21,7 +21,7 @@ namespace Account.API.Infrastructure.Filters
 
         public void OnException(ExceptionContext context)
         {
-            if (context.Exception is UsersApiException e)
+            if (context.Exception is AccountApiException e)
             {
                 if (e.ErrorCode == 404)
                 {

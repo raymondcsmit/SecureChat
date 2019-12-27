@@ -100,19 +100,5 @@ namespace Account.API.Controllers
 
             return Ok();
         }
-
-        [HttpPatch("{id}", Name = nameof(UpdateUserById))]
-        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
-        {
-            var myId = _identityService.GetUserIdentity();
-            var myPermissions = _identityService.GetPermissions();
-            if (myId != "system" && myId != id && !myPermissions.Contains("users.update"))
-            {
-                return Unauthorized();
-            }
-
-            await _mediator.Publish(new UpdateUserCommand(id, patch));
-            return NoContent();
-        }
     }
 }

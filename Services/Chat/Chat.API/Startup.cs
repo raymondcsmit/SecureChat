@@ -152,7 +152,7 @@ namespace Chat.API
         public static IApplicationBuilder ConfigureEventBus(this IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<UserRegisteredIntegrationEvent, UserAccountCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<UserAccountCreatedIntegrationEvent, UserAccountCreatedIntegrationEventHandler>();
 
             return app;
         }

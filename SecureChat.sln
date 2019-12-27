@@ -63,6 +63,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{8F8BBB9F
 		ApiGateways\Chat\apigw\configuration.json = ApiGateways\Chat\apigw\configuration.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.FunctionalTests", "Services\Chat\Chat.FunctionalTests\Chat.FunctionalTests.csproj", "{A070D4AF-2F53-4BF9-B057-611F4C871511}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A070D4AF-2F53-4BF9-B057-611F4C871511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A070D4AF-2F53-4BF9-B057-611F4C871511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A070D4AF-2F53-4BF9-B057-611F4C871511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A070D4AF-2F53-4BF9-B057-611F4C871511}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -156,6 +162,7 @@ Global
 		{0B4EFE49-A640-4F17-BBC5-EA1ACB46586A} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
 		{4C38EDFD-B06C-45DB-BBF4-99C6867471A7} = {A86F1E38-3B9D-441A-984F-F0FB56463590}
 		{8F8BBB9F-738A-44B6-A191-65E3182F70FE} = {4C38EDFD-B06C-45DB-BBF4-99C6867471A7}
+		{A070D4AF-2F53-4BF9-B057-611F4C871511} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {576D061A-08BD-48E3-B064-23BEF5036C89}

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Chat.API.Application.Commands;
 using Chat.API.Dtos;
+using Chat.API.Models;
 using Chat.API.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,14 @@ namespace Chat.API.Controllers
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
         public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserUpdateDto> patch)
         {
+            var testDto = new UserUpdateDto();
+            patch.ApplyTo(testDto, ModelState);
+            TryValidateModel(testDto);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse(ModelState));
+            }
+
             var myId = _identityService.GetUserIdentity();
             var myPermissions = _identityService.GetPermissions();
             if (myId != "system" && myId != id && !myPermissions.Contains("users.update"))

@@ -11,7 +11,7 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class AccountService {
 
-  private accountApi = environment.accountApi;
+  private accountApi = environment.chatApi;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -45,5 +45,5 @@ export class AccountService {
 
   private resolveErrors(res: HttpErrorResponse) {
     return (res.error && res.error.errors) ? res.error.errors : ["An error has occured"];
-}
+  }
 }

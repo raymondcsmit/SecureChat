@@ -45,18 +45,15 @@ namespace Account.API.Application.Commands
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
-                throw new UsersApiException("User could not be created", result.Errors);
+                throw new AccountApiException("User could not be created", result.Errors);
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);
             await _userManager.AddToRoleAsync(createdUser, "user");
             _logger.LogInformation($"Successfully created user with id {createdUser.Id}");
-            _eventBus.Publish(new UserRegisteredIntegrationEvent()
-            {
-                UserId = createdUser.Id,
-                UserName = createdUser.UserName,
-                Email = createdUser.Email
-            });
+
+            _eventBus.Publish(new UserRegisteredIntegrationEvent(createdUser.Id, createdUser.UserName, createdUser.Email));
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var (subject, body) =
                 _emailGenerator.GenerateEmailConfirmationEmail(user.UserName, token);

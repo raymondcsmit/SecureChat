@@ -35,7 +35,7 @@ namespace Account.API.Application.Commands
             if (user == null)
             {
                 _logger.LogWarning($"Email confirmation failed (invalid id): {notification.Id}");
-                throw new UsersApiException("Email confirmation failed", new[] { "User not found" }, 404);
+                throw new AccountApiException("Email confirmation failed", new[] { "User not found" }, 404);
             }
 
             if (notification.Token == null)
@@ -61,7 +61,7 @@ namespace Account.API.Application.Commands
             else
             {
                 _logger.LogWarning($"Email confirmation failed for user id {user.Id}: {result.Errors.ToErrorString()}");
-                throw new UsersApiException("Email confirmation failed", result.Errors);
+                throw new AccountApiException("Email confirmation failed", result.Errors);
             }
         }
     }

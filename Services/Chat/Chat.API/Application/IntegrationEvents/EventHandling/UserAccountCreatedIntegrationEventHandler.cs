@@ -6,7 +6,7 @@ using SecureChat.Common.Events.EventBus.Abstractions;
 
 namespace Chat.API.Application.IntegrationEvents.EventHandling
 {
-    public class UserAccountCreatedIntegrationEventHandler : IIntegrationEventHandler<UserRegisteredIntegrationEvent>
+    public class UserAccountCreatedIntegrationEventHandler : IIntegrationEventHandler<UserAccountCreatedIntegrationEvent>
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserAccountCreatedIntegrationEventHandler> _logger;
@@ -19,7 +19,7 @@ namespace Chat.API.Application.IntegrationEvents.EventHandling
             _logger = logger;
         }
 
-        public async Task Handle(UserRegisteredIntegrationEvent @event, bool redelivered)
+        public async Task Handle(UserAccountCreatedIntegrationEvent @event, bool redelivered)
         {
             var existingUser = await _userRepository.GetAsync(@event.UserId);
             if (existingUser != null)
