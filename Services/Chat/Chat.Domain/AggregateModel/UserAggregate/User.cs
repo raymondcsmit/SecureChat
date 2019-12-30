@@ -6,6 +6,11 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 {
     public class User : Entity, IAggregateRoot
     {
+        public static class Flags
+        {
+            public const string ProfileAdded = nameof(ProfileAdded);
+        }
+
         private string _userName;
         private string _email;
 
@@ -29,11 +34,9 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
         }
 
-        public Profile Profile { get; protected set; }
+        public Profile Profile { get; private set; }
 
-        public Session Session { get; protected set; }
-
-        public bool ProfileCreated { get; protected set; }
+        public Session Session { get; private set; }
 
         protected User() {}
 
@@ -62,13 +65,15 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             Session.Refresh();
         }
 
-        public void UpdateProfile(Profile profile)
+        public void AddProfile(Profile profile)
         {
             if (Profile != profile)
             {
                 Profile = profile;
-                ProfileCreated = true;
+                AddFlag(Flags.ProfileAdded);
             }
         }
+
+        public bool HasProfile => Profile != null;
     }
 }

@@ -8,10 +8,10 @@ namespace Chat.Infrastructure
 {
     public class ResilientMySqlConnectionFactory : IDbConnectionFactory
     {
-        private readonly DatabaseResiliencePolicy _policy;
+        private readonly IDatabaseResiliencePolicy _policy;
         private readonly DbConnectionInfo _connectionInfo;
 
-        public ResilientMySqlConnectionFactory(IOptions<DbConnectionInfo> connectionInfo, DatabaseResiliencePolicy policy)
+        public ResilientMySqlConnectionFactory(IOptions<DbConnectionInfo> connectionInfo, IDatabaseResiliencePolicy policy)
         {
             _policy = policy;
             _connectionInfo = connectionInfo.Value;

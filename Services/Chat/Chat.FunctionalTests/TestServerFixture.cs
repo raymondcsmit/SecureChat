@@ -24,7 +24,7 @@ namespace Chat.FunctionalTests
             using (var scope = TestServer.Host.Services.CreateScope())
             {
                 var conn = await scope.ServiceProvider.GetRequiredService<IDbConnectionFactory>().OpenConnectionAsync();
-                await conn.QueryAsync("DELETE FROM Users;");
+                await conn.QueryAsync("DELETE FROM UserProfileMap; DELETE FROM Users; DELETE FROM Profiles");
             }
         }
     }

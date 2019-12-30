@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Helpers.Resilience
 {
-    public interface IResiliencePolicy
+    public interface IDatabaseResiliencePolicy
     {
         void Execute(Action operation);
 

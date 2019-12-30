@@ -8,6 +8,9 @@ namespace Chat.Domain.SeedWork
         public string Id { get; protected set; }
 
         private List<INotification> _domainEvents = new List<INotification>();
+
+        private HashSet<string> _flags = new HashSet<string>();
+
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly();
 
         public bool IsTransient => Id == default;
@@ -63,6 +66,18 @@ namespace Chat.Domain.SeedWork
         {
             return !(left == right);
         }
+
+        public void AddFlag(string flag)
+        {
+            if (!_flags.Contains(flag))
+            {
+                _flags.Add(flag);
+            }
+        }
+
+        public bool HasFlag(string flag) => _flags.Contains(flag);
+
+        public void ClearFlag(string flag) => _flags.Remove(flag);
     }
 
 }

@@ -9,7 +9,7 @@ using Polly.Wrap;
 
 namespace Helpers.Resilience
 {
-    public class DatabaseResiliencePolicy : IResiliencePolicy
+    public class DatabaseResiliencePolicy : IDatabaseResiliencePolicy
     {
         private const int RetryCount = 3;
         private const int RetryDelay = 3000;

@@ -5,7 +5,7 @@
         public string HostName { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public int RetryCount { get; set; } = 5;
+        public int RetryCount { get; set; } = 1;
         public string QueueName { get; set; }
     }
 }

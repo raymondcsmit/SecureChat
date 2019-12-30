@@ -34,7 +34,7 @@ namespace Chat.FunctionalTests.Scenarios
 
             var patch = new dynamic[]
             {
-                new {op = "replace", path = "/email", value = "foo@foo.com"},
+                new {op = "replace", path = "/email", value = "bar@bar.com"},
                 new {op = "replace", path = "/username", value = "bar"}
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
@@ -45,7 +45,7 @@ namespace Chat.FunctionalTests.Scenarios
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
                 var updatedUser = await userRepository.GetAsync(user.Id);
-                Assert.True(updatedUser.Email == "foo@foo.com");
+                Assert.True(updatedUser.Email == "bar@bar.com");
                 Assert.True(updatedUser.UserName == "bar");
             }
         }
@@ -56,7 +56,7 @@ namespace Chat.FunctionalTests.Scenarios
         public async Task UpdateUserById_ShouldReturnBadRequest_OnInvalidData(string op, string path, string value)
         {
             var client = CreateClient();
-            var user1 = new User("1", "Foo", "foo@bar.com");
+            var user1 = new User("1", "Foo", "foo@foo.com");
             var user2 = new User("2", "Bar", "bar@bar.com");
             foreach (var user in new[] {user1, user2})
             {
@@ -78,6 +78,8 @@ namespace Chat.FunctionalTests.Scenarios
                 Assert.True(updatedUser.Email == "foo@foo.com");
                 Assert.True(updatedUser.UserName == "Foo");
             }
+
+            await TestServerFixture.ClearUsers();
         }
 
         private HttpClient CreateClient()

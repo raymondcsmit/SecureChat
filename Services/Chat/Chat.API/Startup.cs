@@ -13,6 +13,7 @@ using Chat.Infrastructure.UnitOfWork;
 using HealthChecks.UI.Client;
 using Helpers.Extensions;
 using Helpers.Mapping;
+using Helpers.Resilience;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -83,6 +84,7 @@ namespace Chat.API
             });
 
             services.Configure<DbConnectionInfo>(Configuration);
+            services.AddTransient<IDatabaseResiliencePolicy, DatabaseResiliencePolicy>();
             services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
             services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
 

@@ -9,6 +9,7 @@ using Helpers.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SecureChat.Common.Events.EventBus.Abstractions;
+using Profile = Chat.Domain.AggregateModel.UserAggregate.Profile;
 
 namespace Chat.API.Application.Commands
 {
@@ -37,7 +38,7 @@ namespace Chat.API.Application.Commands
                 throw new ChatApplicationException("User update failed", new[] { "User not found" }, 404);
             }
 
-            var dto = new UserUpdateDto();
+            var dto = new UserDto();
             command.Patch.ApplyTo(dto);
             var (userNameExists, emailExists) = await _userRepository.UserNameOrEmailExists(dto.UserName, dto.Email);
             if (userNameExists)
@@ -50,7 +51,14 @@ namespace Chat.API.Application.Commands
             }
 
             command.Patch.ApplyTo(user, _mapper);
-            command.Patch.ApplyTo(user.Profile, _mapper);
+            if (user.Profile != null)
+            {
+                command.Patch.ApplyTo(user.Profile, _mapper);
+            }
+            else if (dto.Profile != null)
+            {
+                user.AddProfile(_mapper.Map<Profile>(dto.Profile));
+            }
             _userRepository.Update(user);
              await _userRepository.UnitOfWork.SaveChangesAsync();
 

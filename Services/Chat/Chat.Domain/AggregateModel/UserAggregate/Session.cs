@@ -7,9 +7,9 @@ namespace Chat.Domain.AggregateModel.UserAggregate
     {
         private const int IdleTime = 30;
 
-        public DateTimeOffset StartTime { get; protected set; }
+        public DateTimeOffset StartTime { get; private set; }
 
-        public DateTimeOffset LastActivityTime { get; protected set; }
+        public DateTimeOffset LastActivityTime { get; private set; }
 
         protected Session() { }
 

@@ -50,35 +50,42 @@ namespace Chat.Infrastructure.Repositories
             {
                 await connection.ExecuteAsync(sql1, new
                 {
-                    user.UserName, user.Email
+                    user.UserName,
+                    user.Email,
+                    user.Id
                 });
             });
 
-            if (user.ProfileCreated)
+            if (user.HasFlag(User.Flags.ProfileAdded))
             {
-                var sql2 = $@"INSERT INTO Profiles (Age, Sex, Location)
+                var sql2 = $@"INSERT INTO Profiles (Age, Sex, Location, IsPublic)
                         VALUES (@{nameof(Profile.Age)}, @{nameof(Profile.Sex)}, @{nameof(Profile.Location)});
-                        INSERT INTO UsersProfiles (UserId, ProfileId)
+                        INSERT INTO UserProfileMap (UserId, ProfileId)
                         VALUES (@{nameof(User.Id)}, SELECT LAST_INSERT_ID());";
                 UnitOfWork.AddOperation(user.Profile, async connection => 
                     await connection.ExecuteAsync(sql2, new
                     {
-                        user.Profile.Age, user.Profile.Sex, user.Profile.Location
+                        user.Profile.Age,
+                        user.Profile.Sex,
+                        user.Profile.Location,
+                        user.Id
                     }));
+                user.ClearFlag(User.Flags.ProfileAdded);
             }
-            else
+            else if (user.HasProfile)
             {
                 var sql3 = $@"UPDATE Profiles SET
                             Age = @{nameof(Profile.Age)},
                             Sex = @{nameof(Profile.Sex)},
                             Location = @{nameof(Profile.Location)}
-                        WHERE Users.Id = @{nameof(user.Id)}";
+                        WHERE Profiles.Id = @{nameof(user.Id)}";
                 UnitOfWork.AddOperation(user.Profile, async connection =>
                     await connection.ExecuteAsync(sql3, new
                     {
                         user.Profile.Age,
                         user.Profile.Sex,
-                        user.Profile.Location
+                        user.Profile.Location,
+                        user.Id
                     }));
             }
         }
@@ -86,31 +93,35 @@ namespace Chat.Infrastructure.Repositories
         public async Task<User> GetAsync(string userId)
         {
             var sql = $@"SELECT * FROM Users
-                        LEFT JOIN UserProfiles ON UserProfiles.UserId = Users.Id
-                        JOIN Profiles ON UserProfiles.ProfileId = Profiles.Id
+                        LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
+                        LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id
                         WHERE Users.Id = @{nameof(userId)}
                         LIMIT 1";
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
                 var user = await connection.QueryAsync<dynamic, dynamic, Profile, User>(
                     sql, 
-                    (u, _, p) => new User(u.Id, u.userName, u.email, p),
+                    (u, _, p) => new User(u.Id, u.UserName, u.Email, p),
+                    new
+                    {
+                        userId
+                    },
                     splitOn: "userId,id");
-                return user == null ? null : _mapper.Map<User>(user);
+                return user.FirstOrDefault();
             }
         }
 
         public async Task<(bool, bool)> UserNameOrEmailExists(string userName, string email)
         {
             var userNameQuery = userName == null
-                ? ""
-                : $@"SELECT COUNT(*) FROM Users WHERE Users.UserName == @{nameof(userName)}";
+                ? @"(SELECT COUNT(*) FROM Users WHERE false)"
+                : $@"(SELECT COUNT(*) FROM Users WHERE Users.UserName = @{nameof(userName)})";
 
             var emailQuery = email == null
-                ? ""
-                : $@"SELECT COUNT(*) FROM Users WHERE Users.Email == @{nameof(email)}";
+                ? @"(SELECT COUNT(*) FROM Users WHERE false)"
+                : $@"(SELECT COUNT(*) FROM Users WHERE Users.Email = @{nameof(email)})";
 
-            var sql = string.Join("UNION", userNameQuery, emailQuery);
+            var sql = string.Join("UNION ALL", userNameQuery, emailQuery);
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
                 var result = await connection.QueryAsync<bool>(sql, new

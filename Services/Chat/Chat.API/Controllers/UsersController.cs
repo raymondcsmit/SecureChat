@@ -27,9 +27,9 @@ namespace Chat.API.Controllers
         }
 
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
-        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserUpdateDto> patch)
+        public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
         {
-            var testDto = new UserUpdateDto();
+            var testDto = new UserDto();
             patch.ApplyTo(testDto, ModelState);
             TryValidateModel(testDto);
             if (!ModelState.IsValid)

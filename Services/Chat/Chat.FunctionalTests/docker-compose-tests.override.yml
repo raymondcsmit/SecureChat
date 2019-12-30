@@ -2,6 +2,8 @@ version: '3.4'
 
 services:
   rabbitmq:
+    ports:
+      - "5672:5672"
     environment:
       RABBITMQ_DEFAULT_USER: rabbitmq 
       RABBITMQ_DEFAULT_PASS: "12345"
