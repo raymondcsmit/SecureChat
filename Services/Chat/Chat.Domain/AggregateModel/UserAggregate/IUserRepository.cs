@@ -11,6 +11,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         Task<User> GetAsync(string userId);
 
-        Task<(bool, bool)> UserNameOrEmailExists(string userName, string email);
+        Task<(bool userNameExists, bool emailExists)> UserNameOrEmailExists(string userName, string email);
     }
 }

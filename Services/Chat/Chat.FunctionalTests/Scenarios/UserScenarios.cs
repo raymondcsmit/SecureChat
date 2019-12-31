@@ -3,14 +3,16 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Chat.API.Application.IntegrationEvents.Events;
 using Chat.Domain.AggregateModel.UserAggregate;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
 namespace Chat.FunctionalTests.Scenarios
 {
-    public class UserScenarios : ChatScenarioBase, IClassFixture<TestServerFixture>
+    public class UserScenarios : ChatScenarioBase, IClassFixture<TestServerFixture>, IDisposable
     {
         public TestServerFixture TestServerFixture { get; }
 
@@ -78,8 +80,88 @@ namespace Chat.FunctionalTests.Scenarios
                 Assert.True(updatedUser.Email == "foo@foo.com");
                 Assert.True(updatedUser.UserName == "Foo");
             }
+        }
 
-            await TestServerFixture.ClearUsers();
+        [Fact]
+        public async Task UpdateUserById_ShouldCreateProfile_WhenProfileDoesNotExist()
+        {
+            var client = CreateClient();
+
+            var user = new User("1", "alice", "alice@alice.com");
+            await CreateTestUserAsync(user);
+
+            var profile = new
+            {
+                age = 20,
+                sex = "M",
+                location = "PA"
+            };
+            var patch = new dynamic[]
+            {
+                new {op = "add", path = "/profile", value = profile},
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
+            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            var responseStr = await patchResponse.Content.ReadAsStringAsync();
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var updatedUser = await userRepository.GetAsync(user.Id);
+                Assert.True(updatedUser.HasProfile);
+                Assert.True(updatedUser.Profile.Age == profile.age && 
+                            updatedUser.Profile.Sex == profile.sex &&
+                            updatedUser.Profile.Location == profile.location);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateUserById_ShouldPartiallyUpdateProfile_WhenProfileExists()
+        {
+            var client = CreateClient();
+
+            var user = new User("1", "alice", "alice@alice.com")
+            {
+                Profile = new Profile(20, "M", "PA")
+            };
+            await CreateTestUserAsync(user);
+
+            var patch = new dynamic[]
+            {
+                new {op = "replace", path = "/profile/age", value = 21},
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
+            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            var responseStr = await patchResponse.Content.ReadAsStringAsync();
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var updatedUser = await userRepository.GetAsync(user.Id);
+                Assert.True(updatedUser.HasProfile);
+                Assert.True(updatedUser.Profile.Age == 21);
+            }
+        }
+
+        [Theory]
+        [InlineData("replace", "/username", "Bar")]
+        [InlineData("replace", "/email", "bar@bar.com")]
+        public async Task UpdateUserById_ShouldDispatchIntegrationEvent_OnEmailUserNameUpdate(string op, string path, string value)
+        {
+            var client = CreateClient();
+            var user = new User("1", "Foo", "foo@foo.com");
+            await CreateTestUserAsync(user);
+
+            var patch = new dynamic[]
+            {
+                new {op, path, value}
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
+            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+
+            ChatTestStartup.EventBusMock.Verify(mock =>
+                mock.Publish(It.IsAny<UserAccountUpdatedIntegrationEvent>()), Times.Once);
+            ChatTestStartup.EventBusMock.Reset();
         }
 
         private HttpClient CreateClient()
@@ -97,6 +179,11 @@ namespace Chat.FunctionalTests.Scenarios
                 userRepository.Add(user);
                 await userRepository.UnitOfWork.SaveChangesAsync();
             }
+        }
+
+        public void Dispose()
+        {
+            TestServerFixture.ClearUsers().Wait();
         }
     }
 }

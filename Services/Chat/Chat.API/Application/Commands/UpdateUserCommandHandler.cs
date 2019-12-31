@@ -38,7 +38,21 @@ namespace Chat.API.Application.Commands
                 throw new ChatApplicationException("User update failed", new[] { "User not found" }, 404);
             }
 
-            var dto = new UserDto();
+            await EnsureUniqueUserNameEmail(command);
+
+            command.Patch.ApplyTo(user, _mapper);
+            _userRepository.Update(user);
+             await _userRepository.UnitOfWork.SaveChangesAsync();
+
+            _logger.LogInformation($"Successfully updated user with id {command.Id}");
+        }
+
+        private async Task EnsureUniqueUserNameEmail(UpdateUserCommand command)
+        {
+            var dto = new UserDto()
+            {
+                Profile = new ProfileDto()
+            };
             command.Patch.ApplyTo(dto);
             var (userNameExists, emailExists) = await _userRepository.UserNameOrEmailExists(dto.UserName, dto.Email);
             if (userNameExists)
@@ -49,20 +63,6 @@ namespace Chat.API.Application.Commands
             {
                 throw new ChatApplicationException("User Update Failed", new[] { "Email already in use" }, 400);
             }
-
-            command.Patch.ApplyTo(user, _mapper);
-            if (user.Profile != null)
-            {
-                command.Patch.ApplyTo(user.Profile, _mapper);
-            }
-            else if (dto.Profile != null)
-            {
-                user.AddProfile(_mapper.Map<Profile>(dto.Profile));
-            }
-            _userRepository.Update(user);
-             await _userRepository.UnitOfWork.SaveChangesAsync();
-
-            _logger.LogInformation($"Successfully updated user with id {command.Id}");
         }
     }
 }

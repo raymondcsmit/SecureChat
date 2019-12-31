@@ -23,7 +23,7 @@ services:
         MYSQL_ROOT_PASSWORD: "12345"
         PMA_HOST: mysql
    
-  flyway:
+  flyway_test:
     entrypoint:
       - /bin/sh
       - -c

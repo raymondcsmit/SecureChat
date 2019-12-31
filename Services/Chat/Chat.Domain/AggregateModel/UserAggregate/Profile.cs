@@ -7,15 +7,15 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 {
     public class Profile: Entity
     {
-        public string Age { get; private set; }
+        public int Age { get; set; }
 
-        public string Sex { get; private set; }
+        public string Sex { get; set; }
 
-        public string Location { get; private set; }
+        public string Location { get; set; }
 
         private Profile() { }
 
-        public Profile(string age, string sex, string location)
+        public Profile(int age, string sex, string location)
         {
             Age = age;
             Sex = sex;

@@ -13,6 +13,7 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         private string _userName;
         private string _email;
+        private Profile _profile;
 
         public string UserName
         {
@@ -34,7 +35,18 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
         }
 
-        public Profile Profile { get; private set; }
+        public Profile Profile
+        {
+            get => _profile;
+            set
+            {
+                if (_profile == null && value != null)
+                {
+                    AddFlag(Flags.ProfileAdded);
+                }
+                _profile = value;
+            }
+        }
 
         public Session Session { get; private set; }
 
@@ -45,7 +57,7 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             Id = id;
             _userName = userName;
             _email = email;
-            Profile = profile;
+            _profile = profile;
         }
 
         public void EndSession()
@@ -63,15 +75,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
 
             Session.Refresh();
-        }
-
-        public void AddProfile(Profile profile)
-        {
-            if (Profile != profile)
-            {
-                Profile = profile;
-                AddFlag(Flags.ProfileAdded);
-            }
         }
 
         public bool HasProfile => Profile != null;

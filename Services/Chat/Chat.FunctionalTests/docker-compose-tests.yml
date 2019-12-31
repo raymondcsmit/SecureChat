@@ -14,7 +14,7 @@ services:
     depends_on:
         - mysql
 
-  flyway:
+  flyway_test:
     image: flyway/flyway
     depends_on:
       - mysql

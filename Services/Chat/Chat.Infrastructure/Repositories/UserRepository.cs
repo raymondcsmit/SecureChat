@@ -38,6 +38,11 @@ namespace Chat.Infrastructure.Repositories
                     user.Email
                 });
             });
+
+            if (user.Profile != null)
+            {
+                AddProfile(user.Id, user.Profile);
+            }
         }
 
         public void Update(User user)
@@ -58,35 +63,12 @@ namespace Chat.Infrastructure.Repositories
 
             if (user.HasFlag(User.Flags.ProfileAdded))
             {
-                var sql2 = $@"INSERT INTO Profiles (Age, Sex, Location, IsPublic)
-                        VALUES (@{nameof(Profile.Age)}, @{nameof(Profile.Sex)}, @{nameof(Profile.Location)});
-                        INSERT INTO UserProfileMap (UserId, ProfileId)
-                        VALUES (@{nameof(User.Id)}, SELECT LAST_INSERT_ID());";
-                UnitOfWork.AddOperation(user.Profile, async connection => 
-                    await connection.ExecuteAsync(sql2, new
-                    {
-                        user.Profile.Age,
-                        user.Profile.Sex,
-                        user.Profile.Location,
-                        user.Id
-                    }));
+                AddProfile(user.Id, user.Profile);
                 user.ClearFlag(User.Flags.ProfileAdded);
             }
             else if (user.HasProfile)
             {
-                var sql3 = $@"UPDATE Profiles SET
-                            Age = @{nameof(Profile.Age)},
-                            Sex = @{nameof(Profile.Sex)},
-                            Location = @{nameof(Profile.Location)}
-                        WHERE Profiles.Id = @{nameof(user.Id)}";
-                UnitOfWork.AddOperation(user.Profile, async connection =>
-                    await connection.ExecuteAsync(sql3, new
-                    {
-                        user.Profile.Age,
-                        user.Profile.Sex,
-                        user.Profile.Location,
-                        user.Id
-                    }));
+                UpdateProfile(user.Profile);
             }
         }
 
@@ -132,6 +114,39 @@ namespace Chat.Infrastructure.Repositories
                 var resultList = result.ToList();
                 return (resultList[0], resultList[1]);
             }
+        }
+
+        private void AddProfile(string userId, Profile profile)
+        {
+            var sql = $@"INSERT INTO Profiles (Age, Sex, Location)
+                        VALUES (@{nameof(Profile.Age)}, @{nameof(Profile.Sex)}, @{nameof(Profile.Location)});
+                        INSERT INTO UserProfileMap (UserId, ProfileId)
+                        VALUES (@{nameof(userId)}, LAST_INSERT_ID());";
+            UnitOfWork.AddOperation(profile, async connection =>
+                await connection.ExecuteAsync(sql, new
+                {
+                    profile.Age,
+                    profile.Sex,
+                    profile.Location,
+                    userId
+                }));
+        }
+
+        private void UpdateProfile(Profile profile)
+        {
+            var sql = $@"UPDATE Profiles SET
+                            Age = @{nameof(Profile.Age)},
+                            Sex = @{nameof(Profile.Sex)},
+                            Location = @{nameof(Profile.Location)}
+                        WHERE Profiles.Id = @{nameof(profile.Id)}";
+            UnitOfWork.AddOperation(profile, async connection =>
+                await connection.ExecuteAsync(sql, new
+                {
+                    profile.Age,
+                    profile.Sex,
+                    profile.Location,
+                    profile.Id
+                }));
         }
     }
 }

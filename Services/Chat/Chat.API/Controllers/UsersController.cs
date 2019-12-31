@@ -29,7 +29,10 @@ namespace Chat.API.Controllers
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
         public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
         {
-            var testDto = new UserDto();
+            var testDto = new UserDto()
+            {
+                Profile = new ProfileDto()
+            };
             patch.ApplyTo(testDto, ModelState);
             TryValidateModel(testDto);
             if (!ModelState.IsValid)
