@@ -12,14 +12,20 @@ using Xunit;
 
 namespace Chat.FunctionalTests.Scenarios
 {
-    public class UserScenarios : ChatScenarioBase, IClassFixture<TestServerFixture>, IDisposable
+    public class UserScenarios : 
+        ChatScenarioBase, 
+        IClassFixture<TestServerFixture>,
+        IClassFixture<TestEventBusFixture>,
+        IDisposable
     {
         public TestServerFixture TestServerFixture { get; }
+        public TestEventBusFixture TestEventBusFixture { get; }
 
-        public UserScenarios(TestServerFixture testServerFixture)
+        public UserScenarios(TestServerFixture testServerFixture, TestEventBusFixture testEventBusFixture)
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             TestServerFixture = testServerFixture;
+            TestEventBusFixture = testEventBusFixture;
             if (TestServerFixture.TestServer == null)
             {
                 TestServerFixture.TestServer = CreateServer();
@@ -152,16 +158,43 @@ namespace Chat.FunctionalTests.Scenarios
             var user = new User("1", "Foo", "foo@foo.com");
             await CreateTestUserAsync(user);
 
+            string eventName = null;
+            TestEventBusFixture.EventBus.Subscribe(nameof(UserAccountUpdatedIntegrationEvent), (e, _) => eventName = e);
+            await Task.Delay(1000);
+
             var patch = new dynamic[]
             {
                 new {op, path, value}
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
             var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            await Task.Delay(1000);
 
-            ChatTestStartup.EventBusMock.Verify(mock =>
-                mock.Publish(It.IsAny<UserAccountUpdatedIntegrationEvent>()), Times.Once);
-            ChatTestStartup.EventBusMock.Reset();
+            Assert.True(eventName == nameof(UserAccountUpdatedIntegrationEvent));
+        }
+
+        [Fact]
+        public async Task AccountCreatedIntegrationEventHandler_ShouldCreateUserWithoutProfile_OnUserAccountCreatedIntegrationEvent()
+        {
+            var user = new
+            {
+                Id = "1",
+                UserName = "Foo",
+                Email = "foo@foo.com"
+            };
+            TestEventBusFixture.EventBus.Publish(
+                new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
+            await Task.Delay(1000);
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var createdUser = await userRepository.GetAsync(user.Id);
+                Assert.NotNull(createdUser);
+                Assert.True(!createdUser.HasProfile);
+                Assert.True(createdUser.UserName == user.UserName);
+                Assert.True(createdUser.Email == user.Email);
+            }
         }
 
         private HttpClient CreateClient()
@@ -183,6 +216,7 @@ namespace Chat.FunctionalTests.Scenarios
 
         public void Dispose()
         {
+            TestEventBusFixture.EventBus.ClearCallbacks();
             TestServerFixture.ClearUsers().Wait();
         }
     }

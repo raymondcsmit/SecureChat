@@ -27,7 +27,7 @@ namespace Chat.API.Infrastructure.Filters
                 context.Exception.Message);
             switch (context.Exception)
             {
-                case ChatApplicationException e:
+                case ChatApiException e:
                     if (e.ErrorCode == 404)
                     {
                         context.Result = new NotFoundResult();

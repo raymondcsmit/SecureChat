@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Account.API.Application.IntegrationEvents.Events;
 using Account.API.Dtos;
 using Account.API.Models;
 using Account.FunctionalTests.Extensions;
@@ -10,18 +11,25 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
+using SecureChat.Common.Events.EventBus.Abstractions;
 using Xunit;
 
 namespace Account.FunctionalTests
 {
-    public class AccountScenarios : AccountScenarioBase, IClassFixture<TestServerFixture>, IDisposable
+    public class AccountScenarios : 
+        AccountScenarioBase, 
+        IClassFixture<TestServerFixture>, 
+        IClassFixture<TestEventBusFixture>, 
+        IDisposable
     {
         public TestServerFixture TestServerFixture { get; }
+        public TestEventBusFixture TestEventBusFixture { get; }
 
-        public AccountScenarios(TestServerFixture testServerFixture)
+        public AccountScenarios(TestServerFixture testServerFixture, TestEventBusFixture testEventBusFixture)
         {
             Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
             TestServerFixture = testServerFixture;
+            TestEventBusFixture = testEventBusFixture;
             if (TestServerFixture.TestServer == null)
             {
                 TestServerFixture.TestServer = CreateServer();
@@ -404,8 +412,41 @@ namespace Account.FunctionalTests
             Assert.True(getResponse.StatusCode == HttpStatusCode.Unauthorized);
         }
 
+        [Theory]
+        [InlineData(null, "bar@bar.com")]
+        [InlineData("Bar", null)]
+        [InlineData("Bar", "foo@bar.com")]
+        public async Task AccountUpdatedIntegrationEventHandler_ShouldChangeUserNameEmail_OnUserAccountUpdatedIntegrationEvent(string userName, string email)
+        {
+            var client = CreateClient();
+            var user = new
+            {
+                UserName = "Foo",
+                Email = "foo@bar.com",
+                Password = "P@ssword1"
+            };
+
+            var userNameAfterUpdate = userName ?? user.UserName;
+            var emailAfterUpdate = email ?? user.Email;
+
+            var createUserResponse = await client.PostAsJsonAsync(Post.CreateUser, user);
+            var createUserResponseBody = await createUserResponse.DeserializeAsync<UserDto>();
+            TestEventBusFixture.EventBus.Publish(
+                new UserAccountUpdatedIntegrationEvent(createUserResponseBody.Id, userName, email));
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                await Task.Delay(1000);
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+                var createdUser = await userManager.FindByIdAsync(createUserResponseBody.Id);
+                Assert.True(createdUser.Email == emailAfterUpdate);
+                Assert.True(createdUser.UserName == userNameAfterUpdate);
+            }
+        }
+
         public void Dispose()
         {
+            TestEventBusFixture.EventBus.ClearCallbacks();
             TestServerFixture.ClearUsers().Wait();
             AccountTestStartup.EmailSenderMock.Reset();
         }

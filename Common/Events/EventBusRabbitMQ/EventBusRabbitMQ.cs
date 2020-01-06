@@ -160,11 +160,8 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
 
         public void Dispose()
         {
-            if (_consumerChannel != null)
-            {
-                _consumerChannel.Dispose();
-            }
-
+            _consumerChannel?.Dispose();
+            _persistentConnection?.Dispose();
             _subsManager.Clear();
         }
 

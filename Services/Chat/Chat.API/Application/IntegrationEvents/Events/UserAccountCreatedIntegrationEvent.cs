@@ -10,10 +10,10 @@ namespace Chat.API.Application.IntegrationEvents.Events
 
         public string Email { get; }
 
-        public UserAccountCreatedIntegrationEvent(string userName, string userId, string email)
+        public UserAccountCreatedIntegrationEvent(string userId, string userName, string email)
         {
-            UserName = userName;
             UserId = userId;
+            UserName = userName;
             Email = email;
         }
     }

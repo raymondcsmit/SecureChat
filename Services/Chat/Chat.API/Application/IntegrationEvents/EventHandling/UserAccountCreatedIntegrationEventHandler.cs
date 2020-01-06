@@ -21,12 +21,12 @@ namespace Chat.API.Application.IntegrationEvents.EventHandling
 
         public async Task Handle(UserAccountCreatedIntegrationEvent @event, bool redelivered)
         {
-            var existingUser = await _userRepository.GetAsync(@event.UserId);
-            if (existingUser != null)
+            if (await _userRepository.GetAsync(@event.UserId) != null)
             {
-                _userRepository.Add(new User(@event.UserId, @event.UserName, @event.Email));
-                await _userRepository.UnitOfWork.SaveChangesAsync();
+                _logger.LogWarning($"User account with id {@event.UserId} already exists. No action taken.");
             }
+            _userRepository.Add(new User(@event.UserId, @event.UserName, @event.Email));
+            await _userRepository.UnitOfWork.SaveChangesAsync();
         }
     }
 }

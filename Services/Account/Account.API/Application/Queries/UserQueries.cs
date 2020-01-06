@@ -10,12 +10,12 @@ using MySql.Data.MySqlClient;
 
 namespace Account.API.Application.Queries
 {
-    public class DefaultUsersQueries : IUsersQueries
+    public class UserQueries : IUserQueries
     {
         private readonly IMapper _mapper;
         private DbConnectionInfo _dbConnectionInfo;
 
-        public DefaultUsersQueries(
+        public UserQueries(
             IMapper mapper, 
             IOptions<DbConnectionInfo> dbConnectionInfo)
         {

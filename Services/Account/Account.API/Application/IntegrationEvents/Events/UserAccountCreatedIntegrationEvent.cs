@@ -2,7 +2,7 @@
 
 namespace Account.API.Application.IntegrationEvents.Events
 {
-    public class UserRegisteredIntegrationEvent : IntegrationEvent
+    public class UserAccountCreatedIntegrationEvent : IntegrationEvent
     {
         public string UserName { get; }
 
@@ -10,10 +10,10 @@ namespace Account.API.Application.IntegrationEvents.Events
 
         public string Email { get; }
 
-        public UserRegisteredIntegrationEvent(string userName, string userId, string email)
+        public UserAccountCreatedIntegrationEvent(string userId, string userName, string email)
         {
-            UserName = userName;
             UserId = userId;
+            UserName = userName;
             Email = email;
         }
     }

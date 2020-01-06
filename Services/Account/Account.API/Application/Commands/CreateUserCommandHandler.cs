@@ -4,6 +4,7 @@ using Account.API.Application.IntegrationEvents.Events;
 using Account.API.Dtos;
 using Account.API.Infrastructure.Exceptions;
 using Account.API.Models;
+using Account.API.Services;
 using Account.API.Services.Email;
 using AutoMapper;
 using MediatR;
@@ -22,6 +23,7 @@ namespace Account.API.Application.Commands
         private readonly IEmailGenerator _emailGenerator;
         private readonly IEmailSender _emailSender;
         private readonly IEventBus _eventBus;
+        private readonly RoleClaimsAdder _roleClaimsAdder;
 
         public CreateUserCommandHandler(
             UserManager<User> userManager,
@@ -29,7 +31,8 @@ namespace Account.API.Application.Commands
             IMapper mapper,
             IEmailGenerator emailGenerator,
             IEmailSender emailSender,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            RoleClaimsAdder roleClaimsAdder)
         {
             _userManager = userManager;
             _logger = logger;
@@ -37,6 +40,7 @@ namespace Account.API.Application.Commands
             _emailGenerator = emailGenerator;
             _emailSender = emailSender;
             _eventBus = eventBus;
+            _roleClaimsAdder = roleClaimsAdder;
         }
 
         public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -49,10 +53,10 @@ namespace Account.API.Application.Commands
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);
-            await _userManager.AddToRoleAsync(createdUser, "user");
+            await _roleClaimsAdder.AddRoleClaimsAsync(user, "user");
             _logger.LogInformation($"Successfully created user with id {createdUser.Id}");
 
-            _eventBus.Publish(new UserRegisteredIntegrationEvent(createdUser.Id, createdUser.UserName, createdUser.Email));
+            _eventBus.Publish(new UserAccountCreatedIntegrationEvent(createdUser.UserName, createdUser.Id, createdUser.Email));
 
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var (subject, body) =

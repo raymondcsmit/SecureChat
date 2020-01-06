@@ -18,16 +18,16 @@ namespace Account.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IUsersQueries _usersQueries;
+        private readonly IUserQueries _userQueries;
         private readonly IIdentityService _identityService;
 
         public UsersController(
             IMediator mediator,
-            IUsersQueries usersQueries,
+            IUserQueries userQueries,
             IIdentityService identityService)
         {
             _mediator = mediator;
-            _usersQueries = usersQueries;
+            _userQueries = userQueries;
             _identityService = identityService;
         }
 
@@ -50,14 +50,14 @@ namespace Account.API.Controllers
         {
             var id = _identityService.GetUserIdentity();
 
-            var user = await _usersQueries.GetUserByIdAsync(id);
+            var user = await _userQueries.GetUserByIdAsync(id);
             return Ok(user);
         }
 
         [HttpGet("{id}", Name = nameof(GetUserByIdAsync))]
         public async Task<IActionResult> GetUserByIdAsync([FromRoute] string id)
         {
-            var user = await _usersQueries.GetUserByIdAsync(id);
+            var user = await _userQueries.GetUserByIdAsync(id);
             return Ok(user);
         }
 

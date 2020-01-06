@@ -10,13 +10,13 @@ namespace Chat.API.Application.IntegrationEvents.Events
 {
     public class UserAccountUpdatedIntegrationEvent : IntegrationEvent
     {
-        public string Id { get; }
+        public string UserId { get; }
         public string Email { get; set; }
         public string UserName { get; set; }
 
-        public UserAccountUpdatedIntegrationEvent(string id)
+        public UserAccountUpdatedIntegrationEvent(string userId)
         {
-            Id = id;
+            UserId = userId;
         }
     }
 }

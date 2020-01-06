@@ -9,13 +9,17 @@ namespace Account.API.Application.IntegrationEvents.Events
 {
     public class UserAccountUpdatedIntegrationEvent : IntegrationEvent
     {
-        [JsonProperty]
-        public string Id { get; private set; }
+        public string UserId { get; }
 
-        [JsonProperty]
-        public string UserName { get; private set; }
+        public string UserName { get; }
 
-        [JsonProperty]
-        public string Email { get; private set; }
+        public string Email { get; }
+
+        public UserAccountUpdatedIntegrationEvent(string userId, string userName, string email)
+        {
+            UserId = userId;
+            UserName = userName;
+            Email = email;
+        }
     }
 }

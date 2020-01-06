@@ -51,7 +51,7 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
 
             try
             {
-                _connection.Dispose();
+                _connection?.Dispose();
             }
             catch (IOException ex)
             {

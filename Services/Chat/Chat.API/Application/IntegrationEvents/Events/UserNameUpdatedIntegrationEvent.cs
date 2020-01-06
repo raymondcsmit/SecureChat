@@ -10,12 +10,12 @@ namespace Chat.API.Application.IntegrationEvents.Events
 {
     public class UserNameUpdatedIntegrationEvent : IntegrationEvent, IMapFrom<UserNameUpdatedIntegrationEvent>
     {
-        public string Id { get; }
+        public string UserId { get; }
         public string NewUserName { get; }
 
-        public UserNameUpdatedIntegrationEvent(string id, string newUserName)
+        public UserNameUpdatedIntegrationEvent(string userId, string newUserName)
         {
-            Id = id;
+            UserId = userId;
             NewUserName = newUserName;
         }
     }

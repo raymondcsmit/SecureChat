@@ -3,7 +3,7 @@ using Account.API.Dtos;
 
 namespace Account.API.Application.Queries
 {
-    public interface IUsersQueries
+    public interface IUserQueries
     {
         Task<UserDto> GetUserByIdAsync(string id);
     }

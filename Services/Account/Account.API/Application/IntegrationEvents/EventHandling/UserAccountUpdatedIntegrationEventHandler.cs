@@ -28,10 +28,10 @@ namespace Account.API.Application.IntegrationEvents.EventHandling
 
         public async Task Handle(UserAccountUpdatedIntegrationEvent @event, bool redelivered)
         {
-            var user = await _userManager.FindByIdAsync(@event.Id);
+            var user = await _userManager.FindByIdAsync(@event.UserId);
             if (user == null)
             {
-                _logger.LogWarning($"User update failed (invalid id): {@event.Id}");
+                _logger.LogWarning($"User update failed (invalid id): {@event.UserId}");
                 return;
             }
 
@@ -48,10 +48,10 @@ namespace Account.API.Application.IntegrationEvents.EventHandling
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                _logger.LogError($"User update failed: {@event.Id}");
+                _logger.LogError($"User update failed: {@event.UserId}");
                 return;
             }
-            _logger.LogInformation($"User update succeeded: {@event.Id}");
+            _logger.LogInformation($"User update succeeded: {@event.UserId}");
         }
     }
 }

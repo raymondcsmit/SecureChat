@@ -96,7 +96,7 @@ namespace Chat.API
                 options.UserName = Configuration["EventBusUserName"];
                 options.Password = Configuration["EventBusPassword"];
                 options.QueueName = Configuration["EventBusQueueName"];
-            }, GetType().Assembly);
+            }, typeof(Startup).Assembly);
 
             services.AddScoped<DatabaseSeed>();
 
@@ -146,6 +146,8 @@ namespace Chat.API
             app.UseMvc();
 
             app.UseDiscoveryClient();
+
+            app.ConfigureEventBus();
         }
     }
 

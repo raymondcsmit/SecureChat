@@ -1,4 +1,4 @@
 [
-	{ "name": "user", "permissions": [ "users.viewprofile", "messages.create", "chats.create" ] },
+	{ "name": "user", "permissions": [ "users.get_others", "users.update_others", "messages.create", "chats.create" ] },
 	{ "name": "moderator", "permissions": [ "messages.delete" ] }
 ]

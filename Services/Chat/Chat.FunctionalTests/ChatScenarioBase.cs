@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Chat.FunctionalTests
+namespace Chat.FunctionalTests.Scenarios
 {
     public abstract class ChatScenarioBase
     {
         public TestServer CreateServer()
         {
             var hostBuilder = new WebHostBuilder()
-                .UseContentRoot(Account.FunctionalTests.Helpers.TestRoot)
+                .UseContentRoot(Helpers.TestRoot)
                 .ConfigureAppConfiguration((ctx, cb) =>
                 {
                     cb.SetBasePath(ctx.HostingEnvironment.ContentRootPath)

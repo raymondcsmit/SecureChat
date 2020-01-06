@@ -8,7 +8,6 @@ using Chat.Domain.AggregateModel.UserAggregate;
 using Helpers.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SecureChat.Common.Events.EventBus.Abstractions;
 using Profile = Chat.Domain.AggregateModel.UserAggregate.Profile;
 
 namespace Chat.API.Application.Commands
@@ -18,7 +17,6 @@ namespace Chat.API.Application.Commands
         private readonly ILogger<UpdateUserCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        private readonly IEventBus _eventBus;
 
         public UpdateUserCommandHandler(
             ILogger<UpdateUserCommandHandler> logger,
@@ -35,7 +33,7 @@ namespace Chat.API.Application.Commands
             var user = await _userRepository.GetAsync(command.Id);
             if (user == null)
             {
-                throw new ChatApplicationException("User update failed", new[] { "User not found" }, 404);
+                throw new ChatApiException("User update failed", new[] { "User not found" }, 404);
             }
 
             await EnsureUniqueUserNameEmail(command);
@@ -57,11 +55,11 @@ namespace Chat.API.Application.Commands
             var (userNameExists, emailExists) = await _userRepository.UserNameOrEmailExists(dto.UserName, dto.Email);
             if (userNameExists)
             {
-                throw new ChatApplicationException("User Update Failed", new[] { "UserName already in use" }, 400);
+                throw new ChatApiException("User Update Failed", new[] { "UserName already in use" }, 400);
             }
             if (emailExists)
             {
-                throw new ChatApplicationException("User Update Failed", new[] { "Email already in use" }, 400);
+                throw new ChatApiException("User Update Failed", new[] { "Email already in use" }, 400);
             }
         }
     }

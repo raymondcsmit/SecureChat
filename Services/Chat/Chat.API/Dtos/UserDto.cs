@@ -4,8 +4,10 @@ using Helpers.Mapping;
 
 namespace Chat.API.Dtos
 {
-    public class UserDto:  IMapTo<User>
+    public class UserDto:  IMapTo<User>, IMapFrom<User>
     {
+        public string Id { get; set; }
+
         [MinLength(3), MaxLength(20)]
         public string UserName { get; set; }
 

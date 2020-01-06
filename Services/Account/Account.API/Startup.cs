@@ -1,4 +1,6 @@
 ﻿using System;
+using Account.API.Application.IntegrationEvents.EventHandling;
+using Account.API.Application.IntegrationEvents.Events;
 using Account.API.Application.Queries;
 using Account.API.Infrastructure;
 using Account.API.Infrastructure.Filters;
@@ -25,6 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
 using Steeltoe.Discovery.Client;
 
@@ -107,7 +110,7 @@ namespace Account.API
                 options.UserName = Configuration["EventBusUserName"];
                 options.Password = Configuration["EventBusPassword"];
                 options.QueueName = Configuration["EventBusQueueName"];
-            }, GetType().Assembly);
+            }, typeof(Startup).Assembly);
 
             services.AddScoped<AccountDbContextSeed>();
             services.AddScoped<RoleClaimsAdder>();
@@ -131,7 +134,7 @@ namespace Account.API
 
             services.AddMediatR(typeof(Startup).Assembly);
 
-            services.AddScoped<IUsersQueries, DefaultUsersQueries>();
+            services.AddScoped<IUserQueries, UserQueries>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -162,6 +165,19 @@ namespace Account.API
             app.UseMvc();
 
             app.UseDiscoveryClient();
+
+            app.ConfigureEventBus();
+        }
+    }
+
+    internal static class CustomExtensionMethods
+    {
+        public static IApplicationBuilder ConfigureEventBus(this IApplicationBuilder app)
+        {
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus.Subscribe<UserAccountUpdatedIntegrationEvent, UserAccountUpdatedIntegrationEventHandler>();
+
+            return app;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Chat.API.Application.Commands;
+using Chat.API.Application.Queries;
 using Chat.API.Dtos;
 using Chat.API.Models;
 using Chat.API.Services;
@@ -17,13 +18,31 @@ namespace Chat.API.Controllers
     {
         private readonly IIdentityService _identityService;
         private readonly IMediator _mediator;
+        private readonly IUserQueries _userQueries;
 
         public UsersController(
             IIdentityService identityService,
-            IMediator mediator)
+            IMediator mediator,
+            IUserQueries userQueries)
         {
             _identityService = identityService;
             _mediator = mediator;
+            _userQueries = userQueries;
+        }
+
+        [HttpGet("{id}", Name = nameof(GetUserById))]
+        public async Task<IActionResult> GetUserById([FromRoute] string id)
+        {
+            var myId = _identityService.GetUserIdentity();
+            var myPermissions = _identityService.GetPermissions();
+
+            if (myId != "system" && myId != id && !myPermissions.Contains("users.get_others"))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userQueries.GetUserByIdAsync(id);
+            return Ok(user);
         }
 
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
@@ -42,7 +61,7 @@ namespace Chat.API.Controllers
 
             var myId = _identityService.GetUserIdentity();
             var myPermissions = _identityService.GetPermissions();
-            if (myId != "system" && myId != id && !myPermissions.Contains("users.update"))
+            if (myId != "system" && myId != id && !myPermissions.Contains("users.update_others"))
             {
                 return Unauthorized();
             }
