@@ -11,6 +11,7 @@ using Chat.Infrastructure.HealthChecks;
 using Chat.Infrastructure.Repositories;
 using Chat.Infrastructure.UnitOfWork;
 using HealthChecks.UI.Client;
+using Helpers.Auth;
 using Helpers.Extensions;
 using Helpers.Mapping;
 using Helpers.Resilience;

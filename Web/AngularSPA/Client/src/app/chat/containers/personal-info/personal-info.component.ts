@@ -5,7 +5,7 @@ import { getSelf } from '../../reducers';
 import { Observable, Subscription } from 'rxjs';
 import { User } from '../../models/User';
 import { getPermissions } from 'src/app/auth/reducers';
-import { map, filter } from 'rxjs/operators';
+import { map, filter, tap } from 'rxjs/operators';
 import { ConfirmEmail, UserActionTypes, UpdateUser, LoadSelf } from '../../actions/user.actions';
 import { Actions, ofType, Effect } from '@ngrx/effects';
 import { Success, CoreActionTypes, Failure } from 'src/app/core/actions/actions';
@@ -25,6 +25,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   permissions$: Observable<string>;
   editing: boolean = false;
   subscriptions: Subscription[] = [];
+  editProfileForm: FormGroup;
 
   constructor(
     private store: Store<any>, 
@@ -33,7 +34,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   { 
     this.editPersonalInfoForm = new FormGroup({
       userName: new FormControl({value: '', disabled: true}, [Validators.required]),
-      email: new FormControl({value: '', disabled: true}, [Validators.required, Validators.email])
+      email: new FormControl({value: '', disabled: true}, [Validators.required, Validators.email]),
     });
     this.editPersonalInfoForm.disable();
   }
@@ -58,10 +59,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
     let s2 = this.actions.pipe(
       ofType<Success>(CoreActionTypes.Success),
-      filter(action => {
-        let r = action.payload.action instanceof UpdateUser;
-        return r;
-      })
+      filter(action => action.payload.action instanceof UpdateUser)
     ).subscribe(_ => {
       this.snackBar.open("User successfully updated", 'Dismiss', {duration: 5000});
       this.store.dispatch(new LoadSelf());
@@ -77,6 +75,11 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
       this.stopEditing();
     });
     this.subscriptions.push(s3);
+
+    let s4 = this.user$.pipe(
+      filter(u => u.profile != null)
+    ).subscribe(u => this.createProfile());
+    this.subscriptions.push(s4);
   }
 
   ngOnDestroy() {
@@ -98,15 +101,26 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.store.dispatch(new ConfirmEmail());
   }
 
+  createProfile() {
+    this.editProfileForm = new FormGroup({
+      age: new FormControl({value: ''}, [Validators.required]),
+      sex: new FormControl({value: ''}, [Validators.required, Validators.pattern('^M|F|m|f$')]),
+      location: new FormControl({value: ''}, [Validators.required]),
+    });
+    this.editProfileForm.disable();
+  }
+
   private startEditing() {
     this.editing = true;
     this.editPersonalInfoForm.markAsUntouched();
     this.editPersonalInfoForm.enable();
+    this.editProfileForm?.enable();
   }
 
   private stopEditing() {
     this.editing = false;
     this.editPersonalInfoForm.markAsUntouched();
     this.editPersonalInfoForm.disable();
+    this.editProfileForm?.disable();
   }
 }

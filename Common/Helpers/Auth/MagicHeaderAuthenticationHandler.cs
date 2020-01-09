@@ -24,7 +24,7 @@ namespace Helpers.Auth
                 return await Task.FromResult(AuthenticateResult.NoResult());
             }
 
-            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "system") };
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, AuthorizationConstants.System) };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, Scheme.Name);

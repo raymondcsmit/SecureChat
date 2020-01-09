@@ -3,12 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Account.API.Application.IntegrationEvents.Events;
 using Account.API.Models;
 using Account.API.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using SecureChat.Common.Events.EventBus.Abstractions;
 
 namespace Account.API.Infrastructure
 {
@@ -34,6 +36,7 @@ namespace Account.API.Infrastructure
         private readonly ILogger<AccountDbContextSeed> _logger;
         private readonly IHostingEnvironment _environment;
         private readonly RoleClaimsAdder _roleClaimsAdder;
+        private readonly IEventBus _eventBus;
 
         public AccountDbContextSeed(
             AccountDbContext accountDbContext,
@@ -41,7 +44,8 @@ namespace Account.API.Infrastructure
             RoleManager<IdentityRole> roleManager,
             ILogger<AccountDbContextSeed> logger,
             IHostingEnvironment environment,
-            RoleClaimsAdder roleClaimsAdder)
+            RoleClaimsAdder roleClaimsAdder,
+            IEventBus eventBus)
         {
             _accountDbContext = accountDbContext;
             _userManager = userManager;
@@ -49,6 +53,7 @@ namespace Account.API.Infrastructure
             _logger = logger;
             _environment = environment;
             _roleClaimsAdder = roleClaimsAdder;
+            _eventBus = eventBus;
         }
 
         public async Task SeedAsync()
@@ -90,6 +95,7 @@ namespace Account.API.Infrastructure
                     await _userManager.CreateAsync(user, userInfo.Password);
                     user = await _userManager.FindByNameAsync(userInfo.UserName);
                     await _roleClaimsAdder.AddRoleClaimsAsync(user, userInfo.Roles.ToArray());
+                    _eventBus.Publish(new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
                 }
             }
         }

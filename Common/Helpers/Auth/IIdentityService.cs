@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace Chat.API.Services
+namespace Helpers.Auth
 {
     public interface IIdentityService
     {

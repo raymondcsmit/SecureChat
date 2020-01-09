@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from '../../models/User';
-import { UserSearchResultAction } from './UserSearchResultAction';
+import { ActionEvent } from '../../models/ActionEvent';
 
 @Component({
   selector: 'app-user-search-result',
@@ -14,7 +14,7 @@ export class UserSearchResultComponent implements OnInit {
   @Input()
   searchResult: User[];
   @Output()
-  action = new EventEmitter<UserSearchResultAction>();
+  action = new EventEmitter<ActionEvent>();
 
   actionIcon = {
     add: "person_add"

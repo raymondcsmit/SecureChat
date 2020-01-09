@@ -5,6 +5,8 @@ using Chat.API.Application.Queries;
 using Chat.API.Dtos;
 using Chat.API.Models;
 using Chat.API.Services;
+using Helpers.Auth;
+using Helpers.Auth.AuthHelper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -33,10 +35,13 @@ namespace Chat.API.Controllers
         [HttpGet("{id}", Name = nameof(GetUserById))]
         public async Task<IActionResult> GetUserById([FromRoute] string id)
         {
-            var myId = _identityService.GetUserIdentity();
-            var myPermissions = _identityService.GetPermissions();
+            var authHelper = new AuthHelperBuilder()
+                .AllowSystem()
+                .AllowId(id)
+                .RequirePermissions("users.get_others")
+                .Build();
 
-            if (myId != "system" && myId != id && !myPermissions.Contains("users.get_others"))
+            if (!authHelper.Authorize(_identityService))
             {
                 return Unauthorized();
             }
@@ -59,9 +64,13 @@ namespace Chat.API.Controllers
                 return BadRequest(new ErrorResponse(ModelState));
             }
 
-            var myId = _identityService.GetUserIdentity();
-            var myPermissions = _identityService.GetPermissions();
-            if (myId != "system" && myId != id && !myPermissions.Contains("users.update_others"))
+            var authHelper = new AuthHelperBuilder()
+                .AllowSystem()
+                .AllowId(id)
+                .RequirePermissions("users.update_others")
+                .Build();
+
+            if (!authHelper.Authorize(_identityService))
             {
                 return Unauthorized();
             }

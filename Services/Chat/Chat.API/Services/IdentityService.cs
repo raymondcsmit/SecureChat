@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Helpers.Auth;
 using Microsoft.AspNetCore.Http;
 
 namespace Chat.API.Services

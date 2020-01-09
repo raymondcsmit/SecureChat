@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Account.API.Extensions;
 using Account.API.Infrastructure.Exceptions;
@@ -56,6 +57,7 @@ namespace Account.API.Application.Commands
 
             if (result.Succeeded)
             {
+                await _userManager.AddClaimAsync(user, new Claim("email_verified", "true"));
                 _logger.LogInformation($"Email confirmation succeeded for user id {user.Id}");
             }
             else
