@@ -6,6 +6,7 @@ using Account.API.Infrastructure.Exceptions;
 using Account.API.Models;
 using Account.API.Services;
 using Account.API.Services.Email;
+using Account.API.Setup;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -53,7 +54,7 @@ namespace Account.API.Application.Commands
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);
-            await _roleClaimsAdder.AddRoleClaimsAsync(user, "user");
+            await _roleClaimsAdder.AddRoleClaimsAsync(user, Roles.UnconfirmedUser);
             _logger.LogInformation($"Successfully created user with id {createdUser.Id}");
 
             _eventBus.Publish(new UserAccountCreatedIntegrationEvent(createdUser.UserName, createdUser.Id, createdUser.Email));

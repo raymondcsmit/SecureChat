@@ -14,6 +14,14 @@ export class ChatService {
 
   constructor(private httpClient: HttpClient) { }
 
+  getSelf() {
+    const url = `${this.chatApi}/users/me`;
+    return this.httpClient.get<User>(url, {observe: 'response'}).pipe(
+      map(res => res.body),
+      catchError(res => throwError(this.resolveErrors(res)))
+    );
+  }
+
   updateUser(id: string, patch: any) {
     const url = `${this.chatApi}/users/${id}`;
     return this.httpClient.patch<User>(url, patch, {observe: 'response'}).pipe(

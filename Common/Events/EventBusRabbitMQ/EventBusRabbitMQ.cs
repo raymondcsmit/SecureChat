@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -215,19 +216,23 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                 var subscriptions = _subsManager.GetHandlersForEvent(eventName);
                 foreach (var subscription in subscriptions)
                 {
-                    if (subscription.IsDynamic)
+                    using (var scope = _serviceProvider.CreateScope())
                     {
-                        if (!(_serviceProvider.GetService(subscription.HandlerType) is IDynamicIntegrationEventHandler handler)) continue;
-                        dynamic integrationEvent = JObject.Parse(message);
-                        await handler.Handle(integrationEvent, redelivered);
-                    }
-                    else
-                    {
-                        dynamic handler = _serviceProvider.GetService(subscription.HandlerType);
-                        if (handler == null) continue;
-                        var eventType = _subsManager.GetEventTypeByName(eventName);
-                        dynamic integrationEvent = JsonConvert.DeserializeObject(message, eventType);
-                        await handler.Handle(integrationEvent, redelivered);
+                        var serviceProvider = scope.ServiceProvider;
+                        if (subscription.IsDynamic)
+                        {
+                            if (!(serviceProvider.GetService(subscription.HandlerType) is IDynamicIntegrationEventHandler handler)) continue;
+                            dynamic integrationEvent = JObject.Parse(message);
+                            await handler.Handle(integrationEvent, redelivered);
+                        }
+                        else
+                        {
+                            dynamic handler = serviceProvider.GetService(subscription.HandlerType);
+                            if (handler == null) continue;
+                            var eventType = _subsManager.GetEventTypeByName(eventName);
+                            dynamic integrationEvent = JsonConvert.DeserializeObject(message, eventType);
+                            await handler.Handle(integrationEvent, redelivered);
+                        }
                     }
 
                     _logger.LogTrace($"Consumed {eventName}");

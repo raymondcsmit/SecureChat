@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Account.API.Extensions;
 using Account.API.Infrastructure.Exceptions;
 using Account.API.Models;
+using Account.API.Services;
 using Account.API.Services.Email;
+using Account.API.Setup;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -17,17 +19,20 @@ namespace Account.API.Application.Commands
         private readonly ILogger<ConfirmEmailCommandHandler> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IEmailGenerator _emailGenerator;
+        private readonly RoleClaimsAdder _roleClaimsAdder;
 
         public ConfirmEmailCommandHandler(
             UserManager<User> userManager,
             ILogger<ConfirmEmailCommandHandler> logger,
             IEmailSender emailSender,
-            IEmailGenerator emailGenerator)
+            IEmailGenerator emailGenerator,
+            RoleClaimsAdder roleClaimsAdder)
         {
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
             _emailGenerator = emailGenerator;
+            _roleClaimsAdder = roleClaimsAdder;
         }
 
         public async Task Handle(ConfirmEmailCommand notification, CancellationToken cancellationToken)
@@ -49,7 +54,6 @@ namespace Account.API.Application.Commands
                 return;
             }
 
-
             var result = await _userManager.ConfirmEmailAsync(user, notification.Token);
             _logger.LogInformation(result.Succeeded
                 ? $"Email confirmation succeeded for user id {user.Id}"
@@ -57,7 +61,7 @@ namespace Account.API.Application.Commands
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(user, new Claim("email_verified", "true"));
+                await _roleClaimsAdder.AddRoleClaimsAsync(user, Roles.User);
                 _logger.LogInformation($"Email confirmation succeeded for user id {user.Id}");
             }
             else

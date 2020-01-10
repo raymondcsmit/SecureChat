@@ -38,12 +38,14 @@ services:
       dockerfile: Web/AngularSPA/Dockerfile
 
   account.apigw:
+    image: account.apigw
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
       - account.service
 
   chat.apigw:
+    image: chat.apigw
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:

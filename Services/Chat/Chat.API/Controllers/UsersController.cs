@@ -38,7 +38,7 @@ namespace Chat.API.Controllers
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
                 .AllowId(id)
-                .RequirePermissions("users.get_others")
+                .RequirePermissions("users.view_others")
                 .Build();
 
             if (!authHelper.Authorize(_identityService))
@@ -47,6 +47,25 @@ namespace Chat.API.Controllers
             }
 
             var user = await _userQueries.GetUserByIdAsync(id);
+            return Ok(user);
+        }
+
+        [HttpGet("{me}", Name = nameof(GetMe))]
+        public async Task<IActionResult> GetMe()
+        {
+            var myId = _identityService.GetUserIdentity();
+
+            var authHelper = new AuthHelperBuilder()
+                .AllowSystem()
+                .AllowId(myId)
+                .Build();
+
+            if (!authHelper.Authorize(_identityService))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _userQueries.GetUserByIdAsync(myId);
             return Ok(user);
         }
 

@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { getSelf } from '../../reducers';
 import { Observable, Subscription } from 'rxjs';
 import { User } from '../../models/User';
-import { getPermissions } from 'src/app/auth/reducers';
+import { getPermissions, getEmailConfirmed } from 'src/app/auth/reducers';
 import { map, filter, tap } from 'rxjs/operators';
 import { ConfirmEmail, UserActionTypes, UpdateUser, LoadSelf } from '../../actions/user.actions';
 import { Actions, ofType, Effect } from '@ngrx/effects';
@@ -26,6 +26,7 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   editing: boolean = false;
   subscriptions: Subscription[] = [];
   editProfileForm: FormGroup;
+  emailConfirmed$: Observable<boolean>;
 
   constructor(
     private store: Store<any>, 
@@ -42,6 +43,10 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user$ = this.store.pipe(
       select(getSelf)
+    );
+
+    this.emailConfirmed$ = this.store.pipe(
+      select(getEmailConfirmed)
     );
 
     this.permissions$ = this.store.pipe(
@@ -114,13 +119,15 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     this.editing = true;
     this.editPersonalInfoForm.markAsUntouched();
     this.editPersonalInfoForm.enable();
-    this.editProfileForm?.enable();
+    if (this.editProfileForm)
+      this.editProfileForm.enable();
   }
 
   private stopEditing() {
     this.editing = false;
     this.editPersonalInfoForm.markAsUntouched();
     this.editPersonalInfoForm.disable();
-    this.editProfileForm?.disable();
+    if (this.editProfileForm)
+      this.editProfileForm.disable();
   }
 }

@@ -65,7 +65,7 @@ namespace Chat.API
             services.AddAuthenticationWithBypass(opt =>
             {
                 opt.Authority = Configuration["AuthUrl"];
-                opt.Audience = "associations";
+                opt.Audience = "chat";
                 opt.RequireHttpsMetadata = false;
             }, opt =>
             {

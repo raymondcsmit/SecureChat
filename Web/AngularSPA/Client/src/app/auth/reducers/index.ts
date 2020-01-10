@@ -41,3 +41,8 @@ export const getPermissions = createSelector(
     selectAuthStatusState,
     fromAuth.selectPermissions
 )
+
+export const getEmailConfirmed = createSelector(
+    selectAuthStatusState,
+    fromAuth.selectEmailConfirmed
+)

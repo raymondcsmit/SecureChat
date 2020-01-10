@@ -32,3 +32,4 @@ export const selectSignedIn = (state: State) => state.oidcUser != null && !state
 export const selectOidcUser = (state: State) => state.oidcUser;
 export const selectId = (state: State) => state.oidcUser.profile.sub;
 export const selectPermissions = (state: State) => selectOidcUser(state).profile.permission as string[];
+export const selectEmailConfirmed = (state: State) => selectOidcUser(state).profile.email_confirmed != null

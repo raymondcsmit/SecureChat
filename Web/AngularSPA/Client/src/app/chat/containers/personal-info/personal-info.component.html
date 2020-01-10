@@ -20,7 +20,7 @@
             Email is <strong>invalid</strong>
           </mat-error>
         </mat-form-field>
-        <div *ngIf="!user.emailConfirmed" class="p-2">
+        <div *ngIf="emailConfirmed$ | async" class="p-2">
           <span>**Email Unconfirmed** (Click <a [routerLink]="" (click)="onConfirmEmail()">here</a> to confirm)</span>
         </div>
       </form>
