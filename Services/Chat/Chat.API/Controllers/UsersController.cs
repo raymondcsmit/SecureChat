@@ -50,13 +50,12 @@ namespace Chat.API.Controllers
             return Ok(user);
         }
 
-        [HttpGet("{me}", Name = nameof(GetMe))]
+        [HttpGet("me", Name = nameof(GetMe))]
         public async Task<IActionResult> GetMe()
         {
             var myId = _identityService.GetUserIdentity();
 
             var authHelper = new AuthHelperBuilder()
-                .AllowSystem()
                 .AllowId(myId)
                 .Build();
 
@@ -78,6 +77,7 @@ namespace Chat.API.Controllers
             };
             patch.ApplyTo(testDto, ModelState);
             TryValidateModel(testDto);
+            TryValidateModel(testDto.Profile);
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ErrorResponse(ModelState));

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Chat.API.Application.IntegrationEvents.Events;
+using Chat.API.Dtos;
 using Chat.Domain.AggregateModel.UserAggregate;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -195,6 +196,28 @@ namespace Chat.FunctionalTests.Scenarios
                 Assert.True(createdUser.UserName == user.UserName);
                 Assert.True(createdUser.Email == user.Email);
             }
+        }
+
+        [Fact]
+        public async Task GetUserById_ShouldReturnUser_OnValidId()
+        {
+            var client = CreateClient();
+            var user = new User("1", "Foo", "foo@foo.com");
+            await CreateTestUserAsync(user);
+
+            var response = await client.GetAsync(Get.GetUserById(user.Id));
+            var responseStr = await response.Content.ReadAsStringAsync();
+            dynamic responseObj = JsonConvert.DeserializeObject<UserDto>(responseStr);
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(responseObj.Id == user.Id);
+        }
+
+        [Fact]
+        public async Task GetUserById_ShouldReturnNotFound_OnInvalidId()
+        {
+            var client = CreateClient();
+            var response = await client.GetAsync(Get.GetUserById("gibberish"));
+            Assert.True(response.StatusCode == HttpStatusCode.NotFound);
         }
 
         private HttpClient CreateClient()

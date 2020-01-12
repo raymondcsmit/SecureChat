@@ -20,7 +20,7 @@
             Email is <strong>invalid</strong>
           </mat-error>
         </mat-form-field>
-        <div *ngIf="emailConfirmed$ | async" class="p-2">
+        <div *ngIf="!(emailConfirmed$ | async)" class="p-2">
           <span>**Email Unconfirmed** (Click <a [routerLink]="" (click)="onConfirmEmail()">here</a> to confirm)</span>
         </div>
       </form>
@@ -28,12 +28,30 @@
       <form *ngIf="editProfileForm; else noProfile" [formGroup]="editProfileForm" [connectForm]="user.profile" class="w-100">
         <mat-form-field class="w-100 p-2">
           <input matInput placeholder="Age" formControlName="age">
+          <mat-error *ngIf="editProfileForm.get('age').errors?.required && (editProfileForm.touched || editProfileForm.dirty)">
+            Age is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="editProfileForm.get('age').errors?.integer && (editProfileForm.touched || editProfileForm.dirty)">
+            Age is <strong>invalid</strong>
+          </mat-error>
         </mat-form-field>
         <mat-form-field class="w-100 p-2">
           <input matInput placeholder="Sex" formControlName="sex">
+          <mat-error *ngIf="editProfileForm.get('sex').errors?.required && (editProfileForm.touched || editProfileForm.dirty)">
+            Sex is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="editProfileForm.get('sex').errors?.pattern && (editProfileForm.touched || editProfileForm.dirty)">
+            Sex is <strong>invalid</strong>
+          </mat-error>
         </mat-form-field>
         <mat-form-field class="w-100 p-2">
           <input matInput placeholder="Location" formControlName="location">
+          <mat-error *ngIf="editProfileForm.get('location').errors?.required && (editProfileForm.touched || editProfileForm.dirty)">
+            Location is <strong>required</strong>
+          </mat-error>
+          <mat-error *ngIf="editProfileForm.get('location').errors?.location && (editProfileForm.touched || editProfileForm.dirty)">
+            Location must be non-empty
+          </mat-error>
         </mat-form-field>
       </form>
       <ng-template #noProfile>
@@ -43,7 +61,7 @@
       <div class="d-flex flex-row justify-content-center">
         <button mat-button routerLink="/chat" type="button">Return to Chat</button>
         <button mat-button (click)="onEdit()" *ngIf="!editing" type="button">Edit</button>
-        <button mat-button (click)="onSubmit(user.id)" *ngIf="editing">Submit</button>
+        <button mat-button (click)="onSubmit(user.id)" *ngIf="editing" [disabled]="!readyToSubmit()">Submit</button>
       </div>
     </mat-card-content>
   </mat-card>

@@ -11,7 +11,7 @@ import { map, catchError } from 'rxjs/operators';
 })
 export class AccountService {
 
-  private accountApi = environment.chatApi;
+  private accountApi = environment.accountApi;
 
   constructor(private httpClient: HttpClient) { }
 

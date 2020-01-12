@@ -40,13 +40,18 @@ namespace Chat.API.Application.Queries
                         Id = u.Id,
                         UserName = u.UserName,
                         Email = u.Email,
-                        Profile = p
+                        Profile = IsProfileEmpty(p) ? null : p
                     },
-                    new { id }, splitOn: "userId,id");
+                    new { id }, splitOn: "userId,id"); ;
 
                 return results.FirstOrDefault()
                            ?? throw new ChatApiException("Could not fetch user", new[] { "User not found" }, 404);
             }
+        }
+
+        private bool IsProfileEmpty(ProfileDto profile)
+        {
+            return profile.Age == null && profile.Location == null && profile.Sex == null;
         }
     }
 }

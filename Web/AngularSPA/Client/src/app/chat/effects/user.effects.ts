@@ -14,6 +14,7 @@ import { getSelf, getUserById } from "../reducers";
 import { Router } from "@angular/router";
 import { Success, NoOp, Failure } from "src/app/core/actions/actions";
 import * as jsonpatch from 'fast-json-patch';
+import { ChatService } from "../services/chat.service";
 
 @Injectable()
 export class UserEffects {
@@ -57,7 +58,7 @@ export class UserEffects {
                 return [action, patch];
             })
         )),
-        switchMap(([action, patch]: [UpdateUser, any]) => this.accountService.updateUser(action.payload.id, patch).pipe(
+        switchMap(([action, patch]: [UpdateUser, any]) => this.chatService.updateUser(action.payload.id, patch).pipe(
             map(_ => new Success({action: action})),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
@@ -67,6 +68,7 @@ export class UserEffects {
         private actions$: Actions,
         private store: Store<State>,
         private accountService: AccountService,
+        private chatService: ChatService,
         private router: Router
     ) {
     }

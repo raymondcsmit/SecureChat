@@ -6,7 +6,7 @@ namespace Chat.API.Dtos
 {
     public class ProfileDto : IMapTo<Profile>
     {
-        [Range(12, 120)]
+        [Required, Range(12, 120)]
         public int? Age { get; set; }
         [RegularExpression(@"^M|F|m|f$")]
         public string Sex { get; set; }

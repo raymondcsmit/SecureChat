@@ -10,6 +10,8 @@ import { ConfirmEmail, UserActionTypes, UpdateUser, LoadSelf } from '../../actio
 import { Actions, ofType, Effect } from '@ngrx/effects';
 import { Success, CoreActionTypes, Failure } from 'src/app/core/actions/actions';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Profile } from '../../models/Profile';
+import { validateInteger } from 'src/app/core/validators/validateInteger';
 
 @Component({
   selector: 'app-personal-info',
@@ -32,12 +34,12 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
     private store: Store<any>, 
     private actions: Actions,
     private snackBar: MatSnackBar) 
-  { 
+  {
     this.editPersonalInfoForm = new FormGroup({
-      userName: new FormControl({value: '', disabled: true}, [Validators.required]),
-      email: new FormControl({value: '', disabled: true}, [Validators.required, Validators.email]),
+      userName: new FormControl('', {validators: [Validators.required]}),
+      email: new FormControl('', {validators: [Validators.required, Validators.email]}),
     });
-    this.editPersonalInfoForm.disable();
+    this.editPersonalInfoForm.disable(); 
   }
 
   ngOnInit() {
@@ -98,7 +100,9 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(id: string) {
-    let user = this.editPersonalInfoForm.value;
+    let user = this.editPersonalInfoForm.value as User;
+    let profile = this.editProfileForm ? this.editProfileForm.value as Profile : null;
+    user.profile = profile;
     this.store.dispatch(new UpdateUser({id: id, user: user}));
   }
 
@@ -108,11 +112,21 @@ export class PersonalInfoComponent implements OnInit, OnDestroy {
 
   createProfile() {
     this.editProfileForm = new FormGroup({
-      age: new FormControl({value: ''}, [Validators.required]),
-      sex: new FormControl({value: ''}, [Validators.required, Validators.pattern('^M|F|m|f$')]),
-      location: new FormControl({value: ''}, [Validators.required]),
+      age: new FormControl('', {validators: [Validators.required, validateInteger(12, 120)]}),
+      sex: new FormControl('', {validators: [Validators.required, Validators.pattern(/^(M|F|m|f)$/)]}),
+      location: new FormControl('', {validators: [Validators.required, Validators.minLength(1)]}),
     });
-    this.editProfileForm.disable();
+
+    if (!this.editing) {
+      this.editProfileForm.disable();
+    }
+  }
+
+  readyToSubmit(): boolean {
+    if (!this.editProfileForm) {
+      return this.editPersonalInfoForm.valid;
+    }
+    return this.editPersonalInfoForm.valid && this.editProfileForm.valid;
   }
 
   private startEditing() {

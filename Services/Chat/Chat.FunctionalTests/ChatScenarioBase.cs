@@ -28,8 +28,10 @@ namespace Chat.FunctionalTests.Scenarios
         {
             public static string Users = UsersBaseUrl;
 
-            public static string UserById(string id) 
+            public static string GetUserById(string id) 
                 => $"{UsersBaseUrl}/{id}";
+            public static string GetMe()
+                => $"{UsersBaseUrl}/me";
         }
 
         public static class Patch

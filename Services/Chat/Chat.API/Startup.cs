@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Chat.API.Application.IntegrationEvents.EventHandling;
 using Chat.API.Application.IntegrationEvents.Events;
+using Chat.API.Application.Queries;
 using Chat.API.Infrastructure;
 using Chat.API.Infrastructure.Filters;
 using Chat.API.Services;
@@ -88,7 +89,7 @@ namespace Chat.API
             services.AddTransient<IDatabaseResiliencePolicy, DatabaseResiliencePolicy>();
             services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
             services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
-
+            services.AddTransient<IUserQueries, UserQueries>();
             services.AddScoped<IUserRepository, UserRepository>();
 
             services.AddEventBus(options =>

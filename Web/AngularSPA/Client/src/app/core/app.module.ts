@@ -30,6 +30,7 @@ export const COMPONENTS = [
 @NgModule({
   declarations: COMPONENTS,
   imports: [
+    AppRoutingModule,
     CommonModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -44,7 +45,6 @@ export const COMPONENTS = [
     EffectsModule.forRoot([]),
     AuthModule.forRoot(),
     MaterialModule,
-    AppRoutingModule,
   ],
   providers: [
     ChatGuardService,
