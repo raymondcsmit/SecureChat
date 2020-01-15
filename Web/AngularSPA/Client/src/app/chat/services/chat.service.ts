@@ -3,7 +3,10 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-import { User } from 'oidc-client';
+import { Pagination } from 'src/app/core/models/Pagination';
+import { ArrayResult } from 'src/app/core/models/ArrayResult';
+import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
+import { User } from '../models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +31,16 @@ export class ChatService {
       map(_ => true),
       catchError(res => throwError(this.resolveErrors(res)))
     )
+  }
+
+  getUsers(query: PaginatedQuery<User>) {
+    const url = `${this.chatApi}/users`;
+    let params = {...query.query, ...query.pagination};
+
+    return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: {}}).pipe(
+      map(res => res.body),
+      catchError(res => throwError(this.resolveErrors(res)))
+    );
   }
 
   private resolveErrors(res: HttpErrorResponse) {

@@ -20,6 +20,7 @@ import {MatCardModule} from '@angular/material/card';
 import {MatTreeModule} from '@angular/material/tree';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 const materialModules = [
   MatTabsModule,
@@ -39,7 +40,8 @@ const materialModules = [
   MatCardModule,
   MatTreeModule,
   MatCheckboxModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatPaginatorModule
 ];
 
 @NgModule({

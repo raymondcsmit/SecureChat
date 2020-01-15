@@ -1,7 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UserQuery } from '../../models/UserQuery';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { notEmptyArrayValidator } from 'src/app/core/helpers/notEmptyArrayValidator';
+import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
+import { User } from '../../models/User';
+import { PageEvent } from '@angular/material/paginator';
+import { Pagination } from 'src/app/core/models/Pagination';
 
 @Component({
   selector: 'app-user-search',
@@ -11,10 +14,16 @@ import { notEmptyArrayValidator } from 'src/app/core/helpers/notEmptyArrayValida
 export class UserSearchComponent implements OnInit {
 
   @Output()
-  search = new EventEmitter<UserQuery>();
+  search = new EventEmitter<PaginatedQuery<User>>();
 
+  paginationDefaults = {
+    length: 100,
+    pageSize: 10,
+    pageSizeOptions: [5, 10, 25, 100]
+  };
   searchForm: FormGroup;
   selectedId: string;
+  currentPage: PageEvent;
 
   constructor() { } 
 
@@ -26,8 +35,21 @@ export class UserSearchComponent implements OnInit {
   }
 
   onSearch() {
-    let query: UserQuery = this.searchForm.value;
+    let query: PaginatedQuery<User> = {
+      query: this.searchForm.value,
+      pagination: new Pagination(this.currentPage)
+    }
     this.search.emit(query);
+  }
+
+  onPageEvent(event: PageEvent) {
+    if (this.currentPage) {
+      this.currentPage = event;
+      this.onSearch();
+    }
+    else {
+      this.currentPage = event;
+    }
   }
 
   hasError(controlName?: string, error?: string) {

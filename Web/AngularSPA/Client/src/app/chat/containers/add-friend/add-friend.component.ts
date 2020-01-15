@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { User } from 'src/app/chat/models/User';
-import { UserQuery } from '../../models/UserQuery';
 import { switchMap, map, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AddFriend } from '../../actions/user.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
-import { AccountService } from '../../services/account.service';
 import { ActionEvent } from '../../models/ActionEvent';
+import { ChatService } from '../../services/chat.service';
+import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
 
 @Component({
   selector: 'app-add-friend',
@@ -21,7 +21,7 @@ import { ActionEvent } from '../../models/ActionEvent';
 })
 export class AddFriendComponent implements OnInit {
 
-  searchSubject = new Subject<UserQuery>();
+  searchSubject = new Subject<PaginatedQuery<User>>();
   searchResult$: Observable<User[]>;
   actions = ['add']
 
@@ -29,18 +29,18 @@ export class AddFriendComponent implements OnInit {
     private store: Store<any>, 
     private dialog: MatDialog, 
     private router: Router,
-    private userService: AccountService) { }
+    private chatService: ChatService) { }
 
   ngOnInit() {
     this.searchResult$ = this.searchSubject.pipe(
       debounceTime(1000),
-      switchMap(query => this.userService.getUsers(query).pipe(
-          map(result => result.items.users))
+      switchMap(query => this.chatService.getUsers(query).pipe(
+          map(result => result.items))
       )
     )
   }
 
-  onSearch(query: UserQuery) {
+  onSearch(query: PaginatedQuery<User>) {
     this.searchSubject.next(query)
   }
 
