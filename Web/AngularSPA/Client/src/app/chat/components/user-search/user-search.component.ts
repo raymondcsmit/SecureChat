@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { notEmptyArrayValidator } from 'src/app/core/helpers/notEmptyArrayValidator';
+import { notEmptyArrayValidator } from 'src/app/core/validators/notEmptyArrayValidator';
 import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
 import { User } from '../../models/User';
 import { PageEvent } from '@angular/material/paginator';

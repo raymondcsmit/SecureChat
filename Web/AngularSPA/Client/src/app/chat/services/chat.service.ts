@@ -7,6 +7,7 @@ import { Pagination } from 'src/app/core/models/Pagination';
 import { ArrayResult } from 'src/app/core/models/ArrayResult';
 import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
 import { User } from '../models/User';
+import { buildQueryParams } from 'src/app/core/helpers/buildQueryParams';
 
 @Injectable({
   providedIn: 'root'
@@ -35,9 +36,9 @@ export class ChatService {
 
   getUsers(query: PaginatedQuery<User>) {
     const url = `${this.chatApi}/users`;
-    let params = {...query.query, ...query.pagination};
+    let params = buildQueryParams({...query.query, ...query.pagination});
 
-    return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: {}}).pipe(
+    return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: params}).pipe(
       map(res => res.body),
       catchError(res => throwError(this.resolveErrors(res)))
     );

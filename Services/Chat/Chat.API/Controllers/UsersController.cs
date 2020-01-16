@@ -97,5 +97,22 @@ namespace Chat.API.Controllers
             await _mediator.Publish(new UpdateUserCommand(id, patch));
             return NoContent();
         }
+
+        [HttpGet(Name = nameof(GetUsers))]
+        public async Task<IActionResult> GetUsers([FromQuery] UserQuery userQuery, [FromQuery] Pagination pagination)
+        {
+            var authHelper = new AuthHelperBuilder()
+                .AllowSystem()
+                .RequirePermissions("users.view_others")
+                .Build();
+
+            if (!authHelper.Authorize(_identityService))
+            {
+                return Unauthorized();
+            }
+
+            var users = await _userQueries.GetUsersAsync(userQuery, pagination);
+            return users;
+        }
     }
 }

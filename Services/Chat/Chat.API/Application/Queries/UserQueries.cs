@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Chat.API.Dtos;
 using Chat.API.Infrastructure.Exceptions;
+using Chat.API.Models;
 using Chat.Infrastructure;
 using Dapper;
 using Microsoft.Extensions.Options;
@@ -47,6 +48,11 @@ namespace Chat.API.Application.Queries
                 return results.FirstOrDefault()
                            ?? throw new ChatApiException("Could not fetch user", new[] { "User not found" }, 404);
             }
+        }
+
+        public async Task<ArrayResponse<UserDto>> GetUsersAsync(UserQuery userQuery, Pagination pagination)
+        {
+            throw new NotImplementedException();
         }
 
         private bool IsProfileEmpty(ProfileDto profile)
