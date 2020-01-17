@@ -6,8 +6,10 @@ namespace Helpers.Specifications
 {
     public interface ISpecification<T>
     {
-        dynamic PreparedStatementObject { get; }
+        object PreparedStatementObject { get; }
+        string Criteria { get; }
+        string OrderBy { get; }
+        string Pagination { get; }
         bool IsPagingEnabled { get; }
-        string Apply(string baseQuery);
     }
 }

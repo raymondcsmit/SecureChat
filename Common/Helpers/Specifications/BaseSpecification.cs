@@ -23,27 +23,35 @@ namespace Helpers.Specifications
         }
     }
 
-    public class BaseSpecification<T> : ISpecification<T>
+    public class OrderByColumn
     {
-        public dynamic PreparedStatementObject { get; } = new ExpandoObject();
-        private string _criteria;
-        private string _orderBy;
-        private int _take;
-        private int _skip;
-        public bool IsPagingEnabled { get; private set; } = false;
+        public string ColumnName { get; }
 
-        public string Apply(string baseQuery)
+        public string Mode { get; }
+
+        public OrderByColumn(string columnName, string mode)
         {
-            var pagination = IsPagingEnabled ? $"LIMIT {_take} OFFSET {_skip}" : "";
-            return $@"{baseQuery} 
-                      {_criteria} 
-                      {_orderBy}
-                      {pagination}";
+            if (!new[] { OrderByMode.Ascending, OrderByMode.Descending }.Contains(mode))
+            {
+                throw new ArgumentException();
+            }
+
+            ColumnName = columnName;
+            Mode = mode;
         }
+    }
+
+    public abstract class BaseSpecification<T> : ISpecification<T>
+    {
+        public object PreparedStatementObject { get; } = new ExpandoObject();
+        public string Criteria { get; private set; } = "WHERE TRUE";
+        public string OrderBy { get; private set; } = string.Empty;
+        public string Pagination { get; private set; } = string.Empty;
+        public bool IsPagingEnabled => !string.IsNullOrEmpty(Pagination);
 
         protected virtual void AddCriteria(IEnumerable<Criteria> criteria)
         {
-            var sb = new StringBuilder("TRUE");
+            var sb = new StringBuilder(Criteria);
             var searchableProperties = GetSearchableProperties().ToArray();
             foreach (var c in criteria)
             {
@@ -51,43 +59,42 @@ namespace Helpers.Specifications
                 {
                     continue;
                 }
-                var currentCount = PreparedStatementObject.Count;
+                var preparedStatementObject = PreparedStatementObject as IDictionary<string, object>;
+                var currentCount = preparedStatementObject.Count;
                 sb.Append($@" AND {c.TableName}.{c.ColumnName} = @val{currentCount}");
-                PreparedStatementObject[c.ColumnName] = c.Value;
+                preparedStatementObject[c.ColumnName] = c.Value;
             }
 
-            _criteria = sb.ToString();
+            Criteria = sb.ToString();
         }
 
-        protected virtual void AddOrderBy(IEnumerable<string> columns, string mode)
+        protected virtual void AddOrderBy(IEnumerable<OrderByColumn> columns)
         {
             var sortableProperties = GetSortableProperties().ToArray();
-            var validColumns = columns.Where(col => sortableProperties.Contains(col));
-            var orderByStr = string.Join(",", validColumns.Select(col => $"{col} {mode}"));
+            var validColumns = columns
+                .Where(col => sortableProperties.Contains(col.ColumnName))
+                .Select(col => $"{col.ColumnName} {col.Mode}");
+            var orderByStr = string.Join(",", validColumns);
             if (string.IsNullOrEmpty(orderByStr))
             {
                 return;
             }
 
-            _orderBy = _orderBy == null ? $"ORDER BY {orderByStr}" : $"{_orderBy} {orderByStr}";
+            OrderBy = string.IsNullOrEmpty(OrderBy) ? $"ORDER BY {orderByStr}" : $"{OrderBy} {orderByStr}";
         }
 
-        protected virtual void AddPagination(int take, int skip)
-        {
-            _take = take;
-            _skip = skip;
-            IsPagingEnabled = true;
-        }
+        protected virtual void AddPaging(int take, int skip) 
+            => Pagination = $"LIMIT {take} OFFSET {skip}";
 
         private IEnumerable<string> GetSearchableProperties() =>
             typeof(T)
-                .GetProperties(BindingFlags.Public)
+                .GetProperties()
                 .Where(prop => prop.GetCustomAttribute<Searchable>() != null)
                 .Select(prop => prop.Name);
 
         private IEnumerable<string> GetSortableProperties() =>
             typeof(T)
-                .GetProperties(BindingFlags.Public)
+                .GetProperties()
                 .Where(prop => prop.GetCustomAttribute<Sortable>() != null)
                 .Select(prop => prop.Name);
     }
