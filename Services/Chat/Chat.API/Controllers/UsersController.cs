@@ -1,12 +1,15 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Chat.API.Application;
 using Chat.API.Application.Commands;
 using Chat.API.Application.Queries;
+using Chat.API.Application.Specifications;
 using Chat.API.Dtos;
 using Chat.API.Models;
 using Chat.API.Services;
 using Helpers.Auth;
 using Helpers.Auth.AuthHelper;
+using Helpers.Specifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -99,7 +102,7 @@ namespace Chat.API.Controllers
         }
 
         [HttpGet(Name = nameof(GetUsers))]
-        public async Task<IActionResult> GetUsers([FromQuery] UserQuery userQuery, [FromQuery] Pagination pagination)
+        public async Task<IActionResult> GetUsers(QueryDto query)
         {
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
@@ -111,8 +114,9 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var users = await _userQueries.GetUsersAsync(userQuery, pagination);
-            return users;
+            var spec = new UserSpecification(query);
+            var users = await _userQueries.GetUsersAsync(spec);
+            return Ok(new ArrayResponse<UserDto>(users));
         }
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { notEmptyArrayValidator } from 'src/app/core/validators/notEmptyArrayValidator';
-import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
+import { Query } from 'src/app/core/models/Query';
 import { User } from '../../models/User';
 import { PageEvent } from '@angular/material/paginator';
 import { Pagination } from 'src/app/core/models/Pagination';
@@ -14,7 +14,7 @@ import { Pagination } from 'src/app/core/models/Pagination';
 export class UserSearchComponent implements OnInit {
 
   @Output()
-  search = new EventEmitter<PaginatedQuery<User>>();
+  search = new EventEmitter<Query<User>>();
 
   paginationDefaults = {
     length: 100,
@@ -35,8 +35,8 @@ export class UserSearchComponent implements OnInit {
   }
 
   onSearch() {
-    let query: PaginatedQuery<User> = {
-      query: this.searchForm.value,
+    let query: Query<User> = {
+      criteria: this.searchForm.value,
       pagination: new Pagination(this.currentPage)
     }
     this.search.emit(query);

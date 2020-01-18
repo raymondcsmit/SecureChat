@@ -5,7 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Pagination } from 'src/app/core/models/Pagination';
 import { ArrayResult } from 'src/app/core/models/ArrayResult';
-import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
+import { Query } from 'src/app/core/models/Query';
 import { User } from '../models/User';
 import { buildQueryParams } from 'src/app/core/helpers/buildQueryParams';
 
@@ -34,11 +34,13 @@ export class ChatService {
     )
   }
 
-  getUsers(query: PaginatedQuery<User>) {
+  getUsers(query: Query<User>) {
     const url = `${this.chatApi}/users`;
-    let params = buildQueryParams({...query.query, ...query.pagination});
+    let queryParams = {
+      query: JSON.stringify(query)
+    };
 
-    return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: params}).pipe(
+    return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: queryParams}).pipe(
       map(res => res.body),
       catchError(res => throwError(this.resolveErrors(res)))
     );

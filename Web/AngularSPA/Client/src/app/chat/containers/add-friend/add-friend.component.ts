@@ -9,7 +9,7 @@ import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/c
 import { Router } from '@angular/router';
 import { ActionEvent } from '../../models/ActionEvent';
 import { ChatService } from '../../services/chat.service';
-import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
+import { Query } from 'src/app/core/models/Query';
 
 @Component({
   selector: 'app-add-friend',
@@ -21,7 +21,7 @@ import { PaginatedQuery } from 'src/app/core/models/PaginatedQuery';
 })
 export class AddFriendComponent implements OnInit {
 
-  searchSubject = new Subject<PaginatedQuery<User>>();
+  searchSubject = new Subject<Query<User>>();
   searchResult$: Observable<User[]>;
   actions = ['add']
 
@@ -40,7 +40,7 @@ export class AddFriendComponent implements OnInit {
     )
   }
 
-  onSearch(query: PaginatedQuery<User>) {
+  onSearch(query: Query<User>) {
     this.searchSubject.next(query)
   }
 

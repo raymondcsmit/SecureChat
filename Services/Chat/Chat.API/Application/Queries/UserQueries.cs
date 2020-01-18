@@ -8,7 +8,9 @@ using Chat.API.Infrastructure.Exceptions;
 using Chat.API.Models;
 using Chat.Infrastructure;
 using Dapper;
+using Helpers.Specifications;
 using Microsoft.Extensions.Options;
+using Helpers.Specifications.Extensions;
 
 namespace Chat.API.Application.Queries
 {
@@ -50,9 +52,27 @@ namespace Chat.API.Application.Queries
             }
         }
 
-        public async Task<ArrayResponse<UserDto>> GetUsersAsync(UserQuery userQuery, Pagination pagination)
+        public async Task<IReadOnlyList<UserDto>> GetUsersAsync(ISpecification<UserDto> spec)
         {
-            throw new NotImplementedException();
+            var baseSql = $@"SELECT * FROM Users
+                        LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
+                        LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id;";
+
+            var (sql, param) = spec.Apply(baseSql);
+            using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
+            {
+                var results = await connection.QueryAsync<dynamic, dynamic, ProfileDto, UserDto>(sql,
+                    (u, _, p) => new UserDto
+                    {
+                        Id = u.Id,
+                        UserName = u.UserName,
+                        Email = u.Email,
+                        Profile = IsProfileEmpty(p) ? null : p
+                    },
+                    param, splitOn: "userId,id"); ;
+
+                return results.ToList();
+            }
         }
 
         private bool IsProfileEmpty(ProfileDto profile)

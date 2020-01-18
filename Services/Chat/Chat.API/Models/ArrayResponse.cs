@@ -7,8 +7,13 @@ namespace Chat.API.Models
 {
     public class ArrayResponse<T>
     {
-        public int Total { get; set; }
+        public int Total => Items.Count;
 
-        public IEnumerable<T> Items { get; set; }
+        public IReadOnlyList<T> Items { get; }
+
+        public ArrayResponse(IReadOnlyList<T> items)
+        {
+            Items = items;
+        }
     }
 }

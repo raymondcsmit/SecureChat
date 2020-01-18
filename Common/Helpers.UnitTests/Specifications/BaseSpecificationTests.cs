@@ -16,11 +16,10 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddCriteria(new[] { new Criteria("Foo", "Table", "a"), new Criteria("Baz", "Table", "b") });
-            var query = spec.Apply(baseQuery);
+            (var query, dynamic preparedStatementObject) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize("SELECT * FROM Table WHERE TRUE AND Table.Foo = @val0 AND Table.Baz = @val1;"));
-            dynamic preparedStatementObject = spec.PreparedStatementObject;
+                Normalize("SELECT * FROM Table WHERE Table.Foo = @val0 AND Table.Baz = @val1;"));
             Assert.True(preparedStatementObject.Foo == "a");
             Assert.True(preparedStatementObject.Baz == "b");
         }
@@ -31,13 +30,12 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddCriteria(new[] { new Criteria("Foo", "Table", "a"), new Criteria("Bar", "Table", "b") });
-            var query = spec.Apply(baseQuery);
+            (var query, dynamic preparedStatementObject) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize("SELECT * FROM Table WHERE TRUE AND Table.Foo = @val0;"));
-            dynamic preparedStatementObject = spec.PreparedStatementObject;
+                Normalize("SELECT * FROM Table WHERE Table.Foo = @val0;"));
             Assert.True(preparedStatementObject.Foo == "a");
-            // Bar property does not exist
+            // Bar property should not exist
             Assert.ThrowsAny<Exception>(() => preparedStatementObject.Bar);
         }
 
@@ -49,10 +47,10 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddOrderBy(new[] { new OrderByColumn("Bar", mode), new OrderByColumn("Baz", mode)});
-            var query = spec.Apply(baseQuery);
+            var (query, _) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize($"SELECT * FROM Table WHERE TRUE ORDER BY Bar {mode}, Baz {mode};"));
+                Normalize($"SELECT * FROM Table ORDER BY Bar {mode}, Baz {mode};"));
         }
 
         [Theory]
@@ -63,10 +61,10 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddOrderBy(new[] { new OrderByColumn("Foo", mode), new OrderByColumn("Baz", mode) });
-            var query = spec.Apply(baseQuery);
+            var (query, _) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize($"SELECT * FROM Table WHERE TRUE ORDER BY Baz {mode};"));
+                Normalize($"SELECT * FROM Table ORDER BY Baz {mode};"));
         }
 
         [Theory]
@@ -77,10 +75,10 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddOrderBy(new[] { new OrderByColumn("gibberish1", mode), new OrderByColumn("gibberish2", mode) });
-            var query = spec.Apply(baseQuery);
+            var (query, _) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize($"SELECT * FROM Table WHERE TRUE;"));
+                Normalize($"SELECT * FROM Table;"));
         }
 
         [Fact]
@@ -89,10 +87,10 @@ namespace Helpers.UnitTests.Specifications
             var spec = new TestSpecification();
             var baseQuery = $@"SELECT * FROM Table;";
             spec.AddPaging(10, 3);
-            var query = spec.Apply(baseQuery);
+            var (query, _) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize($"SELECT * FROM Table WHERE TRUE LIMIT 10 OFFSET 3;"));
+                Normalize($"SELECT * FROM Table LIMIT 10 OFFSET 3;"));
         }
 
         [Theory]
@@ -105,14 +103,13 @@ namespace Helpers.UnitTests.Specifications
             spec.AddCriteria(new[] { new Criteria("Foo", "Table", "a"), new Criteria("Baz", "Table", "b") });
             spec.AddOrderBy(new[] { new OrderByColumn("Bar", mode), new OrderByColumn("Baz", mode) });
             spec.AddPaging(10, 3);
-            var query = spec.Apply(baseQuery);
+            (var query, dynamic preparedStatementObject) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
                 Normalize($@"SELECT * FROM Table 
-                            WHERE TRUE AND Table.Foo = @val0 AND Table.Baz = @val1
+                            WHERE Table.Foo = @val0 AND Table.Baz = @val1
                             ORDER BY Bar {mode}, Baz {mode}
                             LIMIT 10 OFFSET 3;"));
-            dynamic preparedStatementObject = spec.PreparedStatementObject;
             Assert.True(preparedStatementObject.Foo == "a");
             Assert.True(preparedStatementObject.Baz == "b");
         }

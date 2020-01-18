@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Chat.API.Dtos;
 using Chat.API.Models;
+using Helpers.Specifications;
 
 namespace Chat.API.Application.Queries
 {
@@ -11,6 +12,6 @@ namespace Chat.API.Application.Queries
     {
         Task<UserDto> GetUserByIdAsync(string id);
 
-        Task<ArrayResponse<UserDto>> GetUsersAsync(UserQuery userQuery, Pagination pagination);
+        Task<IReadOnlyList<UserDto>> GetUsersAsync(ISpecification<UserDto> spec);
     }
 }

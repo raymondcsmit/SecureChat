@@ -43,56 +43,43 @@ namespace Helpers.Specifications
 
     public abstract class BaseSpecification<T> : ISpecification<T>
     {
-        public object PreparedStatementObject { get; } = new ExpandoObject();
-        public string Criteria { get; private set; } = "WHERE TRUE";
-        public string OrderBy { get; private set; } = string.Empty;
-        public string Pagination { get; private set; } = string.Empty;
-        public bool IsPagingEnabled => !string.IsNullOrEmpty(Pagination);
+        private readonly List<Criteria> _criteria = new List<Criteria>();
+        public IReadOnlyCollection<Criteria> Criteria => _criteria;
+
+        private readonly List<OrderByColumn> _orderBy = new List<OrderByColumn>();
+        public IReadOnlyCollection<OrderByColumn> OrderBy => _orderBy;
+        public bool IsPagingEnabled { get; private set; }
+        public int Limit { get; private set; }
+        public int Offset { get; private set; }
 
         protected virtual void AddCriteria(IEnumerable<Criteria> criteria)
         {
-            var sb = new StringBuilder(Criteria);
             var searchableProperties = GetSearchableProperties().ToArray();
-            foreach (var c in criteria)
-            {
-                if (!searchableProperties.Contains(c.ColumnName))
-                {
-                    continue;
-                }
-                var preparedStatementObject = PreparedStatementObject as IDictionary<string, object>;
-                var currentCount = preparedStatementObject.Count;
-                sb.Append($@" AND {c.TableName}.{c.ColumnName} = @val{currentCount}");
-                preparedStatementObject[c.ColumnName] = c.Value;
-            }
-
-            Criteria = sb.ToString();
+            var validCriteria = criteria.Where(c => searchableProperties.Contains(c.ColumnName));
+            _criteria.AddRange(validCriteria);
         }
 
         protected virtual void AddOrderBy(IEnumerable<OrderByColumn> columns)
         {
             var sortableProperties = GetSortableProperties().ToArray();
-            var validColumns = columns
-                .Where(col => sortableProperties.Contains(col.ColumnName))
-                .Select(col => $"{col.ColumnName} {col.Mode}");
-            var orderByStr = string.Join(",", validColumns);
-            if (string.IsNullOrEmpty(orderByStr))
-            {
-                return;
-            }
-
-            OrderBy = string.IsNullOrEmpty(OrderBy) ? $"ORDER BY {orderByStr}" : $"{OrderBy} {orderByStr}";
+            var validOrderBy = columns.Where(c => sortableProperties.Contains(c.ColumnName));
+            _orderBy.AddRange(validOrderBy);
         }
 
-        protected virtual void AddPaging(int take, int skip) 
-            => Pagination = $"LIMIT {take} OFFSET {skip}";
+        protected virtual void AddPaging(int limit, int offset)
+        {
+            IsPagingEnabled = true;
+            Limit = limit;
+            Offset = offset;
+        }
 
-        private IEnumerable<string> GetSearchableProperties() =>
+        private static IEnumerable<string> GetSearchableProperties() =>
             typeof(T)
                 .GetProperties()
                 .Where(prop => prop.GetCustomAttribute<Searchable>() != null)
                 .Select(prop => prop.Name);
 
-        private IEnumerable<string> GetSortableProperties() =>
+        private static IEnumerable<string> GetSortableProperties() =>
             typeof(T)
                 .GetProperties()
                 .Where(prop => prop.GetCustomAttribute<Sortable>() != null)
