@@ -14,7 +14,7 @@ namespace Chat.API.Dtos
     [ModelBinder(BinderType = typeof(QueryDtoBinder))]
     public class QueryDto
     {
-        public IDictionary<string, dynamic> Criteria { get; set; }
+        public IDictionary<string, string> Criteria { get; set; }
 
         public PaginationDto Pagination { get; set; }
     }

@@ -52,11 +52,13 @@ namespace Chat.API.Application.Queries
             }
         }
 
-        public async Task<IReadOnlyList<UserDto>> GetUsersAsync(ISpecification<UserDto> spec)
+        public async Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec)
         {
             var baseSql = $@"SELECT * FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id;";
+
+            var totalSql = $@"SELECT COUNT(*) FROM Users";
 
             var (sql, param) = spec.Apply(baseSql);
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
@@ -69,9 +71,11 @@ namespace Chat.API.Application.Queries
                         Email = u.Email,
                         Profile = IsProfileEmpty(p) ? null : p
                     },
-                    param, splitOn: "userId,id"); ;
+                    param, splitOn: "userId,id");
 
-                return results.ToList();
+                var count = await connection.QueryFirstAsync<int>(totalSql);
+
+                return (results, count);
             }
         }
 

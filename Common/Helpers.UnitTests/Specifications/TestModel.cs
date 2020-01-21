@@ -7,7 +7,7 @@ namespace Helpers.UnitTests.Specifications
 {
     public class TestModel
     {
-        [Searchable]
+        [Searchable(ColumnName = "foo")]
         public string Foo { get; }
 
         [Sortable]

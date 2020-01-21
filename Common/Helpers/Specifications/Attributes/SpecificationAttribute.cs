@@ -11,6 +11,6 @@ namespace Helpers.Specifications.Attributes
             ColumnName = columnName;
         }
 
-        public string ColumnName { get; }
+        public string ColumnName { get; set; }
     }
 }

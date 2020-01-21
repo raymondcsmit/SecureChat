@@ -11,13 +11,13 @@ namespace Helpers.Specifications
 {
     public class Criteria
     {
-        public string ColumnName { get; }
+        public string ColumnName { get; set; }
         public string TableName { get; }
         public string Value { get; }
 
-        public Criteria(string columnName, string tableName, string value)
+        public Criteria(string propertyName, string tableName, string value)
         {
-            ColumnName = columnName;
+            ColumnName = propertyName.ToLowerInvariant();
             TableName = tableName;
             Value = value;
         }
@@ -25,7 +25,7 @@ namespace Helpers.Specifications
 
     public class OrderByColumn
     {
-        public string ColumnName { get; }
+        public string ColumnName { get; set; }
 
         public string Mode { get; }
 
@@ -36,7 +36,7 @@ namespace Helpers.Specifications
                 throw new ArgumentException();
             }
 
-            ColumnName = columnName;
+            ColumnName = columnName.ToLowerInvariant();
             Mode = mode;
         }
     }
@@ -54,15 +54,33 @@ namespace Helpers.Specifications
 
         protected virtual void AddCriteria(IEnumerable<Criteria> criteria)
         {
-            var searchableProperties = GetSearchableProperties().ToArray();
-            var validCriteria = criteria.Where(c => searchableProperties.Contains(c.ColumnName));
+            var searchableProperties = GetProperties<Searchable>()
+                .ToDictionary(tup => tup.propName, tup => tup.colName);
+            
+            var validCriteria = criteria
+                .Where(crit => searchableProperties.ContainsKey(crit.ColumnName))
+                .Select(crit =>
+                {
+                    crit.ColumnName = searchableProperties[crit.ColumnName] ?? crit.ColumnName;
+                    return crit;
+                });
+
             _criteria.AddRange(validCriteria);
         }
 
         protected virtual void AddOrderBy(IEnumerable<OrderByColumn> columns)
         {
-            var sortableProperties = GetSortableProperties().ToArray();
-            var validOrderBy = columns.Where(c => sortableProperties.Contains(c.ColumnName));
+            var sortableProperties = GetProperties<Sortable>()
+                .ToDictionary(tup => tup.propName, tup => tup.colName);
+            
+            var validOrderBy = columns
+                .Where(oby => sortableProperties.ContainsKey(oby.ColumnName))
+                .Select(oby =>
+                {
+                    oby.ColumnName = sortableProperties[oby.ColumnName] ?? oby.ColumnName;
+                    return oby;
+                });
+
             _orderBy.AddRange(validOrderBy);
         }
 
@@ -73,16 +91,10 @@ namespace Helpers.Specifications
             Offset = offset;
         }
 
-        private static IEnumerable<string> GetSearchableProperties() =>
+        private static IEnumerable<(string propName, string colName)> GetProperties<TAttribute>() where TAttribute: SpecificationAttribute =>
             typeof(T)
                 .GetProperties()
-                .Where(prop => prop.GetCustomAttribute<Searchable>() != null)
-                .Select(prop => prop.Name);
-
-        private static IEnumerable<string> GetSortableProperties() =>
-            typeof(T)
-                .GetProperties()
-                .Where(prop => prop.GetCustomAttribute<Sortable>() != null)
-                .Select(prop => prop.Name);
+                .Where(prop => prop.GetCustomAttribute<TAttribute>() != null)
+                .Select(prop => (prop.Name.ToLowerInvariant(), prop.GetCustomAttribute<TAttribute>().ColumnName));
     }
 }

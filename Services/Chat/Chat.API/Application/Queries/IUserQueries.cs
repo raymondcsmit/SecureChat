@@ -12,6 +12,6 @@ namespace Chat.API.Application.Queries
     {
         Task<UserDto> GetUserByIdAsync(string id);
 
-        Task<IReadOnlyList<UserDto>> GetUsersAsync(ISpecification<UserDto> spec);
+        Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec);
     }
 }

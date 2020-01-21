@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Chat.API.Application.IntegrationEvents.Events;
 using Chat.API.Dtos;
+using Chat.API.Models;
 using Chat.Domain.AggregateModel.UserAggregate;
+using Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
@@ -218,6 +221,75 @@ namespace Chat.FunctionalTests.Scenarios
             var client = CreateClient();
             var response = await client.GetAsync(Get.GetUserById("gibberish"));
             Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task GetUsers_ShouldReturnListOfUsers_OnMatchingCriteria()
+        {
+            var client = CreateClient();
+            var users = new[]
+            {
+                new User("1", "Foo", "foo@foo.com"),
+                new User("2", "Bar", "bar@bar.com"),
+                new User("3", "Baz", "baz@baz.com")
+            };
+            foreach (var user in users)
+            {
+                await CreateTestUserAsync(user);
+            }
+
+            var query = new
+            {
+                criteria = new { id = 1 },
+                pagination = new
+                {
+                    limit = 10,
+                    offset = 0
+                }
+            };
+
+            var uri = UriHelpers.BuildUri(Get.GetUsers(), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseObj = JsonConvert.DeserializeObject<ArrayResponse<UserDto>>(responseStr);
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(responseObj.Items.Count() == 1);
+            Assert.Contains(users.First().Id, responseObj.Items.Select(u => u.Id));
+            Assert.True(responseObj.Total == 3);
+        }
+
+        [Fact]
+        public async Task GetUsers_ShouldReturnEmptyList_OnNonmatchingCriteria()
+        {
+            var client = CreateClient();
+            var users = new[]
+            {
+                new User("1", "Foo", "foo@foo.com"),
+                new User("2", "Bar", "bar@bar.com"),
+                new User("3", "Baz", "baz@baz.com")
+            };
+            foreach (var user in users)
+            {
+                await CreateTestUserAsync(user);
+            }
+
+            var query = new
+            {
+                criteria = new { id = 4, userName = "gibberish" },
+                pagination = new
+                {
+                    limit = 10,
+                    offset = 0
+                }
+            };
+
+            var uri = UriHelpers.BuildUri(Get.GetUsers(), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseObj = JsonConvert.DeserializeObject<ArrayResponse<UserDto>>(responseStr);
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(!responseObj.Items.Any());
+            Assert.True(responseObj.Total == 3);
         }
 
         private HttpClient CreateClient()

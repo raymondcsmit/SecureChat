@@ -19,9 +19,9 @@ namespace Helpers.UnitTests.Specifications
             (var query, dynamic preparedStatementObject) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize("SELECT * FROM Table WHERE Table.Foo = @val0 AND Table.Baz = @val1;"));
-            Assert.True(preparedStatementObject.Foo == "a");
-            Assert.True(preparedStatementObject.Baz == "b");
+                Normalize("SELECT * FROM Table WHERE Table.foo = @val0 AND Table.Baz = @val1;"));
+            Assert.True(preparedStatementObject.val0 == "a");
+            Assert.True(preparedStatementObject.val1 == "b");
         }
 
         [Fact]
@@ -33,10 +33,10 @@ namespace Helpers.UnitTests.Specifications
             (var query, dynamic preparedStatementObject) = spec.Apply(baseQuery);
             Assert.Equal(
                 Normalize(query),
-                Normalize("SELECT * FROM Table WHERE Table.Foo = @val0;"));
-            Assert.True(preparedStatementObject.Foo == "a");
+                Normalize("SELECT * FROM Table WHERE Table.foo = @val0;"));
+            Assert.True(preparedStatementObject.val0 == "a");
             // Bar property should not exist
-            Assert.ThrowsAny<Exception>(() => preparedStatementObject.Bar);
+            Assert.ThrowsAny<Exception>(() => preparedStatementObject.val1);
         }
 
         [Theory]
@@ -107,11 +107,11 @@ namespace Helpers.UnitTests.Specifications
             Assert.Equal(
                 Normalize(query),
                 Normalize($@"SELECT * FROM Table 
-                            WHERE Table.Foo = @val0 AND Table.Baz = @val1
+                            WHERE Table.foo = @val0 AND Table.Baz = @val1
                             ORDER BY Bar {mode}, Baz {mode}
                             LIMIT 10 OFFSET 3;"));
-            Assert.True(preparedStatementObject.Foo == "a");
-            Assert.True(preparedStatementObject.Baz == "b");
+            Assert.True(preparedStatementObject.val0 == "a");
+            Assert.True(preparedStatementObject.val1 == "b");
         }
 
         private string Normalize(string query)

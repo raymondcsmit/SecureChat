@@ -28,6 +28,9 @@ namespace Chat.FunctionalTests.Scenarios
         {
             public static string Users = UsersBaseUrl;
 
+            public static string GetUsers()
+                => UsersBaseUrl;
+
             public static string GetUserById(string id) 
                 => $"{UsersBaseUrl}/{id}";
             public static string GetMe()

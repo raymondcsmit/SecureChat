@@ -35,11 +35,11 @@ namespace Helpers.Specifications.Extensions
             {
                 var currentCount = preparedStatementObject.Count;
                 clauses.Add($@"{c.TableName}.{c.ColumnName} = @val{currentCount}");
-                preparedStatementObject[c.ColumnName] = c.Value;
+                preparedStatementObject[$"val{currentCount}"] = c.Value;
             }
 
             return ($@"{baseQuery.Trim(';')} 
-                       WHERE{string.Join(" AND ", clauses)};", preparedStatementObject);
+                       WHERE {string.Join(" AND ", clauses)};", preparedStatementObject);
         }
 
         private static string ApplyOrderBy(IReadOnlyCollection<OrderByColumn> columns, string baseQuery)

@@ -80,7 +80,7 @@ namespace Chat.API.Controllers
             };
             patch.ApplyTo(testDto, ModelState);
             TryValidateModel(testDto);
-            TryValidateModel(testDto.Profile);
+            //TryValidateModel(testDto.Profile);
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ErrorResponse(ModelState));
@@ -115,8 +115,15 @@ namespace Chat.API.Controllers
             }
 
             var spec = new UserSpecification(query);
-            var users = await _userQueries.GetUsersAsync(spec);
-            return Ok(new ArrayResponse<UserDto>(users));
+            var myId = _identityService.GetUserIdentity();
+            var (users, total) = await _userQueries.GetUsersAsync(spec);
+            if (myId != AuthorizationConstants.System)
+            {
+                users = users.Where(u => u.Id != myId);
+                total -= 1;
+            }
+
+            return Ok(new ArrayResponse<UserDto>(users, total));
         }
     }
 }
