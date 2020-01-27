@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
   auth.service:
+    container_name: auth.service
     build: 
       context: .
       dockerfile: Services/Auth/Dockerfile
@@ -11,6 +12,7 @@ services:
       - account.service
 
   account.service:
+    container_name: account.service
     build: 
       context: .
       dockerfile: Services/Account/Account.API/Dockerfile
@@ -19,6 +21,7 @@ services:
       - mysql
 
   chat.service:
+    container_name: chat.service
     build: 
       context: .
       dockerfile: Services/Chat/Chat.API/Dockerfile
@@ -28,16 +31,19 @@ services:
       - account.service
 
   registration.app:
+    container_name: registration.app
     build: 
       context: .
       dockerfile: Web/Registration/Dockerfile
 
   angularspa.app:
+    container_name: angularspa.app
     build: 
       context: .
       dockerfile: Web/AngularSPA/Dockerfile
 
   account.apigw:
+    container_name: account.apigw
     image: account.apigw
     build:
       context: ./ApiGateways/OcelotApiGw
@@ -45,6 +51,7 @@ services:
       - account.service
 
   chat.apigw:
+    container_name: chat.apigw
     image: chat.apigw
     build:
       context: ./ApiGateways/OcelotApiGw

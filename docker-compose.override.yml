@@ -157,14 +157,3 @@ services:
         MYSQL_USERNAME: root
         MYSQL_ROOT_PASSWORD: "12345"
         PMA_HOST: mysql
-
-  portainer:
-    image: portainer/portainer
-    command: -H unix:///var/run/docker.sock
-    restart: always
-    ports:
-      - "9000:9000"
-      - "8000:8000"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --no-auth
