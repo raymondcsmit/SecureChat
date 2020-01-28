@@ -1,4 +1,14 @@
 [
-	{ "name": "user", "permissions": [ "users.get_others", "users.update_others", "messages.create", "chats.create" ] },
-	{ "name": "moderator", "permissions": [ "messages.delete" ] }
+  {
+    "name": "unconfirmed_user",
+    "permissions": []
+  },
+  {
+    "name": "user",
+    "permissions": [ "users.view_others", "users.update_self", "users.update_others", "messages.create", "chats.create" ]
+  },
+  {
+    "name": "moderator",
+    "permissions": [ "messages.delete" ]
+  }
 ]

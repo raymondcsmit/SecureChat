@@ -35,7 +35,7 @@ namespace Account.API.Infrastructure
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<AccountDbContextSeed> _logger;
         private readonly IHostingEnvironment _environment;
-        private readonly RoleClaimsAdder _roleClaimsAdder;
+        private readonly RolePermissionsService _rolePermissionsService;
         private readonly IEventBus _eventBus;
 
         public AccountDbContextSeed(
@@ -44,7 +44,7 @@ namespace Account.API.Infrastructure
             RoleManager<IdentityRole> roleManager,
             ILogger<AccountDbContextSeed> logger,
             IHostingEnvironment environment,
-            RoleClaimsAdder roleClaimsAdder,
+            RolePermissionsService rolePermissionsService,
             IEventBus eventBus)
         {
             _accountDbContext = accountDbContext;
@@ -52,7 +52,7 @@ namespace Account.API.Infrastructure
             _roleManager = roleManager;
             _logger = logger;
             _environment = environment;
-            _roleClaimsAdder = roleClaimsAdder;
+            _rolePermissionsService = rolePermissionsService;
             _eventBus = eventBus;
         }
 
@@ -94,7 +94,7 @@ namespace Account.API.Infrastructure
                     };
                     await _userManager.CreateAsync(user, userInfo.Password);
                     user = await _userManager.FindByNameAsync(userInfo.UserName);
-                    await _roleClaimsAdder.AddRoleClaimsAsync(user, userInfo.Roles.ToArray());
+                    await _rolePermissionsService.AddRolePermissionsAsync(user, userInfo.Roles.ToArray());
                     _eventBus.Publish(new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
                 }
             }

@@ -46,8 +46,7 @@ namespace Auth
                         IdentityServerConstants.StandardScopes.Email,
                         "permissions",
                         "account",
-                        "chat",
-                        "email_confirmed"
+                        "chat"
                     }
                 }
             };
@@ -63,7 +62,6 @@ namespace Auth
                 new IdentityResources.Email(),
                 new IdentityResources.Address(),
                 new IdentityResource("permissions", "Permissions", new[] {"permission"}),
-                new IdentityResource("email_confirmed", "Email Confirmation Status", new[] {"email_confirmed"})
             };
         }
     }

@@ -24,7 +24,7 @@ namespace Account.API.Application.Commands
         private readonly IEmailGenerator _emailGenerator;
         private readonly IEmailSender _emailSender;
         private readonly IEventBus _eventBus;
-        private readonly RoleClaimsAdder _roleClaimsAdder;
+        private readonly RolePermissionsService _rolePermissionsService;
 
         public CreateUserCommandHandler(
             UserManager<User> userManager,
@@ -33,7 +33,7 @@ namespace Account.API.Application.Commands
             IEmailGenerator emailGenerator,
             IEmailSender emailSender,
             IEventBus eventBus,
-            RoleClaimsAdder roleClaimsAdder)
+            RolePermissionsService rolePermissionsService)
         {
             _userManager = userManager;
             _logger = logger;
@@ -41,7 +41,7 @@ namespace Account.API.Application.Commands
             _emailGenerator = emailGenerator;
             _emailSender = emailSender;
             _eventBus = eventBus;
-            _roleClaimsAdder = roleClaimsAdder;
+            _rolePermissionsService = rolePermissionsService;
         }
 
         public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ namespace Account.API.Application.Commands
             }
                 
             var createdUser = await _userManager.FindByNameAsync(user.UserName);
-            await _roleClaimsAdder.AddRoleClaimsAsync(user, Roles.UnconfirmedUser);
+            await _rolePermissionsService.AddRolePermissionsAsync(user, Roles.UnconfirmedUser);
             _logger.LogInformation($"Successfully created user with id {createdUser.Id}");
 
             _eventBus.Publish(new UserAccountCreatedIntegrationEvent(createdUser.UserName, createdUser.Id, createdUser.Email));

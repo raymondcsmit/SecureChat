@@ -19,20 +19,20 @@ namespace Account.API.Application.Commands
         private readonly ILogger<ConfirmEmailCommandHandler> _logger;
         private readonly IEmailSender _emailSender;
         private readonly IEmailGenerator _emailGenerator;
-        private readonly RoleClaimsAdder _roleClaimsAdder;
+        private readonly RolePermissionsService _rolePermissionsService;
 
         public ConfirmEmailCommandHandler(
             UserManager<User> userManager,
             ILogger<ConfirmEmailCommandHandler> logger,
             IEmailSender emailSender,
             IEmailGenerator emailGenerator,
-            RoleClaimsAdder roleClaimsAdder)
+            RolePermissionsService rolePermissionsService)
         {
             _userManager = userManager;
             _logger = logger;
             _emailSender = emailSender;
             _emailGenerator = emailGenerator;
-            _roleClaimsAdder = roleClaimsAdder;
+            _rolePermissionsService = rolePermissionsService;
         }
 
         public async Task Handle(ConfirmEmailCommand notification, CancellationToken cancellationToken)
@@ -61,7 +61,7 @@ namespace Account.API.Application.Commands
 
             if (result.Succeeded)
             {
-                await _roleClaimsAdder.AddRoleClaimsAsync(user, Roles.User);
+                await _rolePermissionsService.AddRolePermissionsAsync(user, Roles.User);
                 _logger.LogInformation($"Email confirmation succeeded for user id {user.Id}");
             }
             else

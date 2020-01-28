@@ -5,24 +5,24 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Account.API.Services
 {
-    public class RoleClaimsAdder
+    public class RolePermissionsService
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RoleClaimsAdder(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public RolePermissionsService(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
-        public async Task AddRoleClaimsAsync(string userId, params string[] roleNames)
+        public async Task AddRolePermissionsAsync(string userId, params string[] roleNames)
         {
             var user = await _userManager.FindByIdAsync(userId) ?? throw new InvalidOperationException();
-            await AddRoleClaimsAsync(user, roleNames);
+            await AddRolePermissionsAsync(user, roleNames);
         }
 
-        public async Task AddRoleClaimsAsync(User user, params string[] roleNames)
+        public async Task AddRolePermissionsAsync(User user, params string[] roleNames)
         {
             foreach (var roleName in roleNames)
             {

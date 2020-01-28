@@ -45,7 +45,7 @@ export class AuthModule {
               redirect_uri: `${window.location.origin}/auth/sign-in-callback`,
               post_logout_redirect_uri: `${window.location.origin}/auth/sign-out-callback`,
               response_type:"id_token token",
-              scope:"openid profile account chat permissions email email_confirmed",
+              scope:"openid profile account chat permissions email",
               filterProtocolClaims: true,
               loadUserInfo: true,
               checkSessionInterval: 2000

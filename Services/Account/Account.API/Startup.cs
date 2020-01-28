@@ -113,7 +113,7 @@ namespace Account.API
             }, typeof(Startup).Assembly);
 
             services.AddScoped<AccountDbContextSeed>();
-            services.AddScoped<RoleClaimsAdder>();
+            services.AddScoped<RolePermissionsService>();
 
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IIdentityService, IdentityService>();
