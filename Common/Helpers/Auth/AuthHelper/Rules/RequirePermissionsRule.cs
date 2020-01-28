@@ -24,6 +24,10 @@ namespace Helpers.Auth.AuthHelper.Rules
             var hasPermissions = !_requiredPermissions.Except(permissions).Any();
             if (hasPermissions)
             {
+                if (Next == null)
+                {
+                    return true;
+                }
                 return await Next.ApplyAsync(identityService);
             }
             return false;

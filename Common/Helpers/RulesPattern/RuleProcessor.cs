@@ -5,22 +5,22 @@ namespace Helpers.RulesPattern
 {
     public static class RuleProcessor
     {
-        public static Rule<TInput> Initialize<TInput>()
+        public static RuleProcessor<TInput> Initialize<TInput>()
         {
             var processor = new RuleProcessor<TInput>();
             processor.AddRule(new DefaultRule<TInput>());
             return processor;
         }
 
-        public static Rule<TInput, TOutput> Initialize<TInput, TOutput>()
+        public static RuleProcessor<TInput, TOutput> Initialize<TInput, TOutput>(TOutput defaultOutput = default)
         {
             var processor = new RuleProcessor<TInput, TOutput>();
-            processor.AddRule(new DefaultRule<TInput, TOutput>());
+            processor.AddRule(new DefaultRule<TInput, TOutput>(defaultOutput));
             return processor;
         }
     }
 
-    internal class RuleProcessor<TInput> : Rule<TInput>
+    public class RuleProcessor<TInput> : Rule<TInput>
     {
         public override async Task ApplyAsync(TInput input, CancellationToken ct = default)
         {
@@ -28,7 +28,7 @@ namespace Helpers.RulesPattern
         }
     }
 
-    internal class RuleProcessor<TInput, TOutput> : Rule<TInput, TOutput>
+    public class RuleProcessor<TInput, TOutput> : Rule<TInput, TOutput>
     {
         public override async Task<TOutput> ApplyAsync(TInput input, CancellationToken ct = default)
         {

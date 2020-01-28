@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from '../../models/User';
 import { ActionEvent } from '../../models/ActionEvent';
+import { Pagination } from 'src/app/core/models/Pagination';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-user-search-result',
@@ -12,9 +14,16 @@ export class UserSearchResultComponent implements OnInit {
   @Input()
   actions: string[];
   @Input()
-  searchResult: User[];
+  searchResult: User[] = [];
   @Output()
   action = new EventEmitter<ActionEvent>();
+  @Output()
+  paging = new EventEmitter<PageEvent>();
+
+  paginationDefaults = {
+    pageSize: Pagination.Default.limit,
+    pageSizeOptions: [5, 10, 25, 100]
+  };
 
   actionIcon = {
     add: "person_add"
@@ -43,6 +52,10 @@ export class UserSearchResultComponent implements OnInit {
 
   isActionDisplayed(id: string) {
     return id === this.selectedId;
+  }
+
+  onPageEvent(pageEvent: PageEvent) {
+    this.paging.emit(pageEvent);
   }
 
 }

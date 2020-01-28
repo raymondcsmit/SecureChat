@@ -10,11 +10,11 @@ namespace Helpers.Specifications.Extensions
 {
     public static class SpecificationExtensions
     {
-        public static (string, object) Apply<T>(this ISpecification<T> spec, string baseQuery)
+        public static (string, object) Apply<T>(this ISpecification<T> spec, string baseQuery, bool withPagination = true)
         {
-            var (query, preparedStatementObj) = ApplyCriteria(spec.Criteria, baseQuery);
+            var (query, preparedStatementObj) = ApplyCriteria(spec.Criteria, spec.CriteriaNot, baseQuery);
             query = ApplyOrderBy(spec.OrderBy, query);
-            if (spec.IsPagingEnabled)
+            if (spec.IsPagingEnabled && withPagination)
             {
                 query = ApplyPaging(spec.Limit, spec.Offset, query);
             }
@@ -22,7 +22,7 @@ namespace Helpers.Specifications.Extensions
             return (query, preparedStatementObj);
         }
 
-        private static (string, object) ApplyCriteria(IReadOnlyCollection<Criteria> criteria, string baseQuery)
+        private static (string, object) ApplyCriteria(IReadOnlyCollection<Criteria> criteria, IReadOnlyCollection<Criteria> criteriaNot, string baseQuery)
         {
             var preparedStatementObject = new ExpandoObject() as IDictionary<string, object>;
             if (!criteria.Any())
@@ -33,9 +33,15 @@ namespace Helpers.Specifications.Extensions
             var clauses = new List<string>();
             foreach (var c in criteria)
             {
-                var currentCount = preparedStatementObject.Count;
-                clauses.Add($@"{c.TableName}.{c.ColumnName} = @val{currentCount}");
-                preparedStatementObject[$"val{currentCount}"] = c.Value;
+                var currentCount = preparedStatementObject.Count - 1;
+                clauses.Add($@"{c.TableName}.{c.ColumnName} = @val{currentCount + 1}");
+                preparedStatementObject[$"val{currentCount + 1}"] = c.Value;
+            }
+            foreach (var c in criteriaNot)
+            {
+                var currentCount = preparedStatementObject.Count - 1;
+                clauses.Add($@"{c.TableName}.{c.ColumnName} != @val{currentCount + 1}");
+                preparedStatementObject[$"val{currentCount + 1}"] = c.Value;
             }
 
             return ($@"{baseQuery.Trim(';')} 

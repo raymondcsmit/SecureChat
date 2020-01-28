@@ -37,7 +37,9 @@ export class ChatService {
   getUsers(query: Query<User>) {
     const url = `${this.chatApi}/users`;
     let queryParams = {
-      query: JSON.stringify(query)
+      query: JSON.stringify(query, (_, value) => {
+        if (value !== null && value !== "") return value
+      })
     };
 
     return this.httpClient.get<ArrayResult<User>>(url, {observe: 'response', params: queryParams}).pipe(

@@ -2,7 +2,7 @@
     <mat-card class="w-50">
         <mat-card-content class="d-flex flex-column align-items-center justify-content-center">
             <app-user-search (search)="onSearch($event)" class="w-100 d-flex flex-grow-1 p-4"></app-user-search>
-            <app-user-search-result [searchResult]="searchResult$ | async" [actions]="actions" (action)="onAction($event)" class="w-100 d-flex flex-grow-1 p-4"></app-user-search-result>
+            <app-user-search-result (paging)="onPaging($event)" [searchResult]="searchResult$ | async" [actions]="actions" (action)="onAction($event)" class="w-100 d-flex flex-grow-1 p-4"></app-user-search-result>
             <button mat-raised-button routerLink="../" class="m-4">Return to Chat</button>
         </mat-card-content>
     </mat-card>

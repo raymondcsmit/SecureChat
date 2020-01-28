@@ -13,9 +13,16 @@ namespace Helpers.RulesPattern
 
     internal class DefaultRule<TInput, TOutput> : Rule<TInput, TOutput>
     {
+        private readonly TOutput _defaultOutput;
+
+        public DefaultRule(TOutput defaultOutput = default)
+        {
+            _defaultOutput = defaultOutput;
+        }
+
         public override async Task<TOutput> ApplyAsync(TInput input, CancellationToken ct = default)
         {
-            return await Task.FromResult(default(TOutput));
+            return await Task.FromResult(_defaultOutput);
         }
     }
 }

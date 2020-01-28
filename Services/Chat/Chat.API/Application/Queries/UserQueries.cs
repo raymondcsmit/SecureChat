@@ -57,13 +57,14 @@ namespace Chat.API.Application.Queries
             var baseSql = $@"SELECT * FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id;";
+            var baseTotalSql = $@"SELECT COUNT(*) FROM Users";
 
-            var totalSql = $@"SELECT COUNT(*) FROM Users";
+            var (querySql, queryParam) = spec.Apply(baseSql);
+            var (totalSql, totalParam) = spec.Apply(baseTotalSql, false);
 
-            var (sql, param) = spec.Apply(baseSql);
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var results = await connection.QueryAsync<dynamic, dynamic, ProfileDto, UserDto>(sql,
+                var results = await connection.QueryAsync<dynamic, dynamic, ProfileDto, UserDto>(querySql,
                     (u, _, p) => new UserDto
                     {
                         Id = u.Id,
@@ -71,9 +72,9 @@ namespace Chat.API.Application.Queries
                         Email = u.Email,
                         Profile = IsProfileEmpty(p) ? null : p
                     },
-                    param, splitOn: "userId,id");
+                    queryParam, splitOn: "userId,id");
 
-                var count = await connection.QueryFirstAsync<int>(totalSql);
+                var count = await connection.QueryFirstAsync<int>(totalSql, totalParam);
 
                 return (results, count);
             }

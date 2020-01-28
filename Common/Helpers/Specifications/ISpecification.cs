@@ -7,6 +7,7 @@ namespace Helpers.Specifications
     public interface ISpecification<T>
     {
         IReadOnlyCollection<Criteria> Criteria { get; }
+        IReadOnlyCollection<Criteria> CriteriaNot { get; }
         IReadOnlyCollection<OrderByColumn> OrderBy { get; }
         bool IsPagingEnabled { get; }
         int Limit { get; }

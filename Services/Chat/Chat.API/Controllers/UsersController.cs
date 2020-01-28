@@ -114,15 +114,10 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var spec = new UserSpecification(query);
             var myId = _identityService.GetUserIdentity();
-            var (users, total) = await _userQueries.GetUsersAsync(spec);
-            if (myId != AuthorizationConstants.System)
-            {
-                users = users.Where(u => u.Id != myId);
-                total -= 1;
-            }
+            var spec = myId == AuthorizationConstants.System ? new UserSpecification(query) : new UserSpecification(query, new[] {myId});
 
+            var (users, total) = await _userQueries.GetUsersAsync(spec);
             return Ok(new ArrayResponse<UserDto>(users, total));
         }
     }

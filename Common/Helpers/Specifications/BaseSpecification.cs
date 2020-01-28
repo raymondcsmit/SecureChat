@@ -45,6 +45,8 @@ namespace Helpers.Specifications
     {
         private readonly List<Criteria> _criteria = new List<Criteria>();
         public IReadOnlyCollection<Criteria> Criteria => _criteria;
+        private readonly List<Criteria> _criteriaNot = new List<Criteria>();
+        public IReadOnlyCollection<Criteria> CriteriaNot => _criteriaNot;
 
         private readonly List<OrderByColumn> _orderBy = new List<OrderByColumn>();
         public IReadOnlyCollection<OrderByColumn> OrderBy => _orderBy;
@@ -66,6 +68,22 @@ namespace Helpers.Specifications
                 });
 
             _criteria.AddRange(validCriteria);
+        }
+
+        protected virtual void AddCriteriaNot(IEnumerable<Criteria> criteria)
+        {
+            var searchableProperties = GetProperties<Searchable>()
+                .ToDictionary(tup => tup.propName, tup => tup.colName);
+
+            var validCriteria = criteria
+                .Where(crit => searchableProperties.ContainsKey(crit.ColumnName))
+                .Select(crit =>
+                {
+                    crit.ColumnName = searchableProperties[crit.ColumnName] ?? crit.ColumnName;
+                    return crit;
+                });
+
+            _criteriaNot.AddRange(validCriteria);
         }
 
         protected virtual void AddOrderBy(IEnumerable<OrderByColumn> columns)

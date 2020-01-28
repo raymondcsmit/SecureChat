@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, merge, of } from 'rxjs';
 import { User } from 'src/app/chat/models/User';
 import { switchMap, map, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
 import { ActionEvent } from '../../models/ActionEvent';
 import { ChatService } from '../../services/chat.service';
 import { Query } from 'src/app/core/models/Query';
+import { PageEvent } from '@angular/material/paginator';
+import { Pagination } from 'src/app/core/models/Pagination';
 
 @Component({
   selector: 'app-add-friend',
@@ -25,6 +27,9 @@ export class AddFriendComponent implements OnInit {
   searchResult$: Observable<User[]>;
   actions = ['add']
 
+  pagination: Pagination = Pagination.Default;
+  previousQuery: Partial<User>;
+
   constructor(
     private store: Store<any>, 
     private dialog: MatDialog, 
@@ -32,16 +37,28 @@ export class AddFriendComponent implements OnInit {
     private chatService: ChatService) { }
 
   ngOnInit() {
-    this.searchResult$ = this.searchSubject.pipe(
+    this.searchResult$ = merge(of([]), this.searchSubject.pipe(
       debounceTime(1000),
       switchMap(query => this.chatService.getUsers(query).pipe(
           map(result => result.items))
       )
-    )
+    ));
   }
 
-  onSearch(query: Query<User>) {
-    this.searchSubject.next(query)
+  onSearch(query: Partial<User>) {
+    let paginatedQuery: Query<User> = {
+      criteria: query,
+      pagination: this.pagination
+    }
+    this.previousQuery = query;
+    this.searchSubject.next(paginatedQuery);
+  }
+
+  onPaging(pageEvent: PageEvent) {
+    this.pagination = new Pagination(pageEvent);
+    if (this.previousQuery) {
+      this.onSearch(this.previousQuery);
+    }
   }
 
   onAction(actionEvent: ActionEvent) {
