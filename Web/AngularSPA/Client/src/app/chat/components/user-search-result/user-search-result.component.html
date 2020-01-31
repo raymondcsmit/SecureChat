@@ -1,12 +1,14 @@
 <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1">
   <table mat-table [dataSource]="searchResult" class="w-100 p-2">
     <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef class="width-10"></th>
-        <td mat-cell *matCellDef="let user" (mouseover)="onMouseOver(user.id)">
-          <ng-container *ngIf="isActionDisplayed(user.id)">
-              <mat-icon *ngFor="let action of actions" class="clickable align-self-center" (click)="onAction(action, user)">{{actionIcon[action]}}</mat-icon> 
-          </ng-container>
-        </td>
+      <th mat-header-cell *matHeaderCellDef>
+        Actions
+      </th>
+      <td mat-cell *matCellDef="let user">
+        <div *ngIf="isActionDisplayed(user.id)">
+          <mat-icon *ngFor="let action of actions" class="clickable align-self-center" (click)="onAction(action, user)">{{actionIcon[action]}}</mat-icon>
+        </div>
+      </td>
     </ng-container>
   
     <ng-container matColumnDef="userName">
@@ -26,6 +28,7 @@
                 [pageSize]="paginationDefaults.pageSize"
                 [pageSizeOptions]="paginationDefaults.pageSizeOptions"
                 (page)="onPageEvent($event)" 
-                class="w-100 p-2">
+                class="p-2">
   </mat-paginator>
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 </div>

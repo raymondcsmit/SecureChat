@@ -26,6 +26,7 @@ export class AddFriendComponent implements OnInit {
   searchSubject = new Subject<Query<User>>();
   searchResult$: Observable<User[]>;
   actions = ['add']
+  displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
 
   pagination: Pagination = Pagination.Default;
   previousQuery: Partial<User>;

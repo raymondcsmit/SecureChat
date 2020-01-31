@@ -3,6 +3,7 @@ import { User } from '../../models/User';
 import { ActionEvent } from '../../models/ActionEvent';
 import { Pagination } from 'src/app/core/models/Pagination';
 import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-user-search-result',
@@ -13,8 +14,20 @@ export class UserSearchResultComponent implements OnInit {
 
   @Input()
   actions: string[];
+
+  _searchResult: User[] = [];
   @Input()
-  searchResult: User[] = [];
+  get searchResult() {
+    return this._searchResult;
+  }
+  set searchResult(result: User[]) {
+    if (result) {
+      this._searchResult = result;
+      this.dataSource = new MatTableDataSource<User>(result);
+    }
+  }
+
+
   @Output()
   action = new EventEmitter<ActionEvent>();
   @Output()
@@ -29,6 +42,8 @@ export class UserSearchResultComponent implements OnInit {
     add: "person_add"
   }
   selectedId: string;
+  dataSource: MatTableDataSource<User>;
+  displayedColumns = ['action', 'userName', 'email'];
 
   constructor() { }
 
@@ -40,10 +55,6 @@ export class UserSearchResultComponent implements OnInit {
       action: action,
       data: user
     });
-  }
-
-  get displayedColumns() {
-    return ['userName', 'email'];
   }
 
   onMouseOver(id: string) {

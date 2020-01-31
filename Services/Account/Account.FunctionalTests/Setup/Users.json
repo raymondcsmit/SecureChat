@@ -1,3 +1,14 @@
 [
-	{ "userName": "alice", "email": "alice@alice.com", "password": "SuperSecretPassword123!!!", "roles": [ "user", "moderator" ] }
+	{
+		"userName": "alice",
+		"email": "alice@alice.com",
+		"password": "SuperSecretPassword123!!!",
+		"roles": [ "user", "moderator" ]
+	},
+  {
+    "userName": "bob",
+    "email": "bob@bob.com",
+    "password": "SuperSecretPassword123!!!",
+    "roles": [ "user" ]
+  }
 ]
