@@ -1,4 +1,6 @@
-﻿using Chat.Domain.Events;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Chat.Domain.Events;
 using Chat.Domain.Exceptions;
 using Chat.Domain.SeedWork;
 
@@ -50,7 +52,27 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         public Session Session { get; private set; }
 
-        protected User() {}
+        private List<FriendshipRequest> _friendshipRequests = new List<FriendshipRequest>();
+
+        public IEnumerable<FriendshipRequest> PendingFriendshipRequests =>
+            _friendshipRequests.Where(assoc => assoc is FriendshipRequest req && req.RequesteeId == Id && req.IsPending)
+                .Cast<FriendshipRequest>();
+
+        public IEnumerable<FriendshipRequest> MyPendingFriendshipRequests =>
+            _friendshipRequests.Where(assoc => assoc is FriendshipRequest req && req.RequesterId == Id && req.IsPending)
+                .Cast<FriendshipRequest>();
+
+        public User(string id, string userName, string email, Profile profile, IEnumerable<FriendshipRequest> friendshipRequests)
+        {
+            _userName = userName;
+            _email = email;
+            _profile = profile;
+            if (friendshipRequests != null)
+            {
+                _friendshipRequests.AddRange(friendshipRequests);
+            }
+            Id = id;
+        }
 
         public User(string id, string userName, string email, Profile profile = null)
         {
@@ -78,5 +100,17 @@ namespace Chat.Domain.AggregateModel.UserAggregate
         }
 
         public bool HasProfile => Profile != null;
+
+        public void MakeFriendshipRequest(FriendshipRequest friendshipRequest)
+        {
+            if (_friendshipRequests.Any(req =>
+                (req.RequesteeId.GetHashCode() ^ req.RequesterId.GetHashCode()) ==
+                (friendshipRequest.RequesteeId.GetHashCode() ^ friendshipRequest.RequesterId.GetHashCode())))
+            {
+                throw new ChatDomainException("Friendship request already exists");
+            }
+
+            _friendshipRequests.Add(friendshipRequest);
+        }
     }
 }

@@ -5,10 +5,10 @@
 	},
 	{
 		"name": "user",
-		"permissions": [ "users.view_others", "users.update_self", "users.update_others", "messages.create", "chats.create" ]
+		"permissions": [ "users.view_others", "users.update_self", "messages.create", "chats.create" ]
 	},
 	{
 		"name": "moderator",
-		"permissions": [ "messages.delete" ]
+		"permissions": [ "messages.delete", "users.manage", "chats.delete" ]
 	}
 ]

@@ -8,6 +8,7 @@ import { ArrayResult } from 'src/app/core/models/ArrayResult';
 import { Query } from 'src/app/core/models/Query';
 import { User } from '../models/User';
 import { buildQueryParams } from 'src/app/core/helpers/buildQueryParams';
+import { FriendshipRequest } from '../models/FriendshipRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,11 @@ export class ChatService {
       map(res => res.body),
       catchError(res => throwError(this.resolveErrors(res)))
     );
+  }
+
+  addFriend(myId: string, friendId: string) {
+    const url = `${this.chatApi}/users/${myId}/friendship-requests`;
+    
   }
 
   private resolveErrors(res: HttpErrorResponse) {

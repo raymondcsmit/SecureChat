@@ -53,7 +53,9 @@ export class UserSearchResultComponent implements OnInit {
   onAction(action: string, user: User) {
     this.action.emit({
       action: action,
-      data: user
+      data: {
+        user: user
+      }
     });
   }
 

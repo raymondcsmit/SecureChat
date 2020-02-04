@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { Store, select } from "@ngrx/store";
 import { HttpClient } from "@angular/common/http";
 import { apiConfig } from "../apiConfig";
-import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser } from "../actions/user.actions";
+import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser, AddFriend } from "../actions/user.actions";
 import { State } from "../reducers/user.reducer";
 import { AccountService } from "../services/account.service";
 import { AddEntity } from "../actions/entity.actions";
@@ -60,6 +60,17 @@ export class UserEffects {
         )),
         switchMap(([action, patch]: [UpdateUser, any]) => this.chatService.updateUser(action.payload.id, patch).pipe(
             map(_ => new Success({action: action})),
+            catchError(errors => of(new Failure({action: action, errors: errors})))
+        ))
+    );
+
+    @Effect()
+    AddFriend$ = this.actions$.pipe(
+        ofType<AddFriend>(UserActionTypes.AddFriend),
+        throttleTime(5000),
+        withLatestFrom(this.store.select(getSelf)),
+        switchMap(([action, self]) => this.chatService.addFriend(self.id, action.payload.user.id).pipe(
+            map(_ => [new Success({action: action}), new AddEntity(User.name, {entity: action.payload.user})]),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
     );

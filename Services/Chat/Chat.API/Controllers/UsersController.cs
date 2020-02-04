@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Chat.API.Application;
 using Chat.API.Application.Commands;
@@ -74,6 +75,7 @@ namespace Chat.API.Controllers
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
         public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
         {
+            // TODO - refactor
             var testDto = new UserDto()
             {
                 Profile = new ProfileDto()
