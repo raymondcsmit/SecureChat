@@ -33,11 +33,11 @@ namespace Chat.API.Controllers
         }
 
         [HttpPost("friendship-requests", Name = nameof(CreateFriendshipRequest))]
-        public async Task<IActionResult> CreateFriendshipRequest(CreateFriendshipRequestCommand createFriendshipRequestCommand)
+        public async Task<IActionResult> CreateFriendshipRequest(MakeFriendshipRequestCommand makeFriendshipRequestCommand)
         {
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
-                .AllowId(createFriendshipRequestCommand.RequesterId)
+                .AllowId(makeFriendshipRequestCommand.RequesterId)
                 .RequirePermissions("users.view_others")
                 .Build();
 
@@ -46,8 +46,8 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var friendshipRequestOutput = await _mediator.Send(createFriendshipRequestCommand);
-            var url = Url.Action(nameof(GetFriendshipRequestsByRequesterId),new { id = createFriendshipRequestCommand.RequesterId });
+            var friendshipRequestOutput = await _mediator.Send(makeFriendshipRequestCommand);
+            var url = Url.Action(nameof(GetFriendshipRequestsByRequesterId),new { id = makeFriendshipRequestCommand.RequesterId });
             return Created(url, friendshipRequestOutput);
         }
 

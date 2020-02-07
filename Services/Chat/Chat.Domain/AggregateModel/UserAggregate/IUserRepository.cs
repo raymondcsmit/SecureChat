@@ -12,5 +12,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
         Task<User> GetAsync(string userId);
 
         Task<(bool userNameExists, bool emailExists)> UserNameOrEmailExists(string userName, string email);
+        void CreateFriendshipRequest(FriendshipRequest request);
     }
 }

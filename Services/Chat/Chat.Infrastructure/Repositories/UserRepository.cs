@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -74,22 +75,29 @@ namespace Chat.Infrastructure.Repositories
 
         public async Task<User> GetAsync(string userId)
         {
-            var sql = $@"SELECT * FROM Users
+            var friendshipRequestsSql = $@"SELECT * FROM FriendshipRequests
+                                                WHERE FriendshipRequests.RequesterId = @{nameof(userId)} OR FriendshipRequests.RequesteeId = @{nameof(userId)}";
+            var usersSql = $@"SELECT * FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id
                         WHERE Users.Id = @{nameof(userId)}
                         LIMIT 1";
+
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var user = await connection.QueryAsync<dynamic, dynamic, Profile, User>(
-                    sql, 
-                    (u, _, p) => new User(u.Id, u.UserName, u.Email, p),
+                var frienshipRequests = await connection.QueryAsync<FriendshipRequest>(friendshipRequestsSql, new { userId });
+
+                var result = await connection.QueryAsync<dynamic, dynamic, Profile, (dynamic, Profile)>(
+                    usersSql,
+                    (u, _, p) => (u, p),
                     new
                     {
                         userId
                     },
                     splitOn: "userId,id");
-                return user.FirstOrDefault();
+                var (user, profile) = result.FirstOrDefault();
+
+                return user == null ? null : new User(user.Id, user.UserName, user.Email, profile, frienshipRequests);
             }
         }
 
@@ -114,6 +122,19 @@ namespace Chat.Infrastructure.Repositories
                 var resultList = result.ToList();
                 return (resultList[0], resultList[1]);
             }
+        }
+
+        public void CreateFriendshipRequest(FriendshipRequest request)
+        {
+            var sql = $@"INSERT INTO FriendshipRequests (RequesterId, RequesteeId, Outcome, CreatedAt, ModifiedAt)
+                            VALUES (@{nameof(FriendshipRequest.RequesterId)}, 
+                                    @{nameof(FriendshipRequest.RequesteeId)}, 
+                                    @{nameof(FriendshipRequest.Outcome)}, 
+                                    @{nameof(FriendshipRequest.CreatedAt)}, 
+                                    @{nameof(FriendshipRequest.ModifiedAt)})";
+
+            UnitOfWork.AddOperation(request, async connection =>
+                await connection.ExecuteAsync(sql, request));
         }
 
         private void AddProfile(string userId, Profile profile)

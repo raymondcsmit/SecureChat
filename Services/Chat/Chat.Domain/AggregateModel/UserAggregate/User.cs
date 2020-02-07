@@ -62,8 +62,9 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             _friendshipRequests.Where(assoc => assoc is FriendshipRequest req && req.RequesterId == Id && req.IsPending)
                 .Cast<FriendshipRequest>();
 
-        public User(string id, string userName, string email, Profile profile, IEnumerable<FriendshipRequest> friendshipRequests)
+        public User(string id, string userName, string email, Profile profile = null, IEnumerable<FriendshipRequest> friendshipRequests = null)
         {
+            Id = id;
             _userName = userName;
             _email = email;
             _profile = profile;
@@ -71,15 +72,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             {
                 _friendshipRequests.AddRange(friendshipRequests);
             }
-            Id = id;
-        }
-
-        public User(string id, string userName, string email, Profile profile = null)
-        {
-            Id = id;
-            _userName = userName;
-            _email = email;
-            _profile = profile;
         }
 
         public void EndSession()
@@ -101,16 +93,15 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         public bool HasProfile => Profile != null;
 
-        public void MakeFriendshipRequest(FriendshipRequest friendshipRequest)
+        public void MakeFriendshipRequest(User user)
         {
-            if (_friendshipRequests.Any(req =>
-                (req.RequesteeId.GetHashCode() ^ req.RequesterId.GetHashCode()) ==
-                (friendshipRequest.RequesteeId.GetHashCode() ^ friendshipRequest.RequesterId.GetHashCode())))
+            if (_friendshipRequests.Any(req => req.RequesterId == user.Id || req.RequesteeId == user.Id))
             {
                 throw new ChatDomainException("Friendship request already exists");
             }
 
-            _friendshipRequests.Add(friendshipRequest);
+            var friendshipRequest = new FriendshipRequest(Id, user.Id);
+            _friendshipRequests.Add(new FriendshipRequest(Id, user.Id));
         }
     }
 }

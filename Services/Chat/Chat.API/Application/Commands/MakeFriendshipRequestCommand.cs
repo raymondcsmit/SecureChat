@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Chat.API.Application.Commands
 {
-    public class CreateFriendshipRequestCommand : IRequest<FriendshipRequestDto>
+    public class MakeFriendshipRequestCommand : IRequest<FriendshipRequestDto>
     {
         [Required]
         public string RequesterId { get; }
