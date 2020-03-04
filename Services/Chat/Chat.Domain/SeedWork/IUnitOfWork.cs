@@ -8,5 +8,6 @@ namespace Chat.Domain.SeedWork
     {
         Task SaveChangesAsync();
         void AddOperation(object entity, Func<IDbConnection, Task> operation);
+        void AddOperation(Func<Task> operation);
     }
 }

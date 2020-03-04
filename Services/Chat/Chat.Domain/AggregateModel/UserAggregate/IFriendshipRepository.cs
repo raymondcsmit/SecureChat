@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Chat.Domain.SeedWork;
 
 namespace Chat.Domain.AggregateModel.UserAggregate
 {
-    public interface IAssociation
+    public interface IFriendshipRepository : IRepository<Friendship>
     {
-        string RequesterId { get; }
-
-        string RequesteeId { get; }
     }
 }

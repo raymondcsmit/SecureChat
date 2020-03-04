@@ -7,7 +7,7 @@ using Chat.Domain.SeedWork;
 
 namespace Chat.Domain.AggregateModel.UserAggregate
 {
-    public class FriendshipRequest : Entity, IAuditable, IAssociation
+    public class FriendshipRequest : Entity, IAuditable
     {
         public class Outcomes
         {

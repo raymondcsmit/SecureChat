@@ -17,21 +17,24 @@ namespace Chat.API.Application.Commands
         private readonly ILogger<UpdateUserCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IFriendshipRequestRepository _friendshipRequestRepository;
 
         public MakeFriendshipRequestCommandHandler(
             ILogger<UpdateUserCommandHandler> logger,
             IMapper mapper,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IFriendshipRequestRepository friendshipRequestRepository)
         {
             _logger = logger;
             _mapper = mapper;
             _userRepository = userRepository;
+            _friendshipRequestRepository = friendshipRequestRepository;
         }
 
         public async Task<FriendshipRequestDto> Handle(MakeFriendshipRequestCommand command, CancellationToken cancellationToken)
         {
-            var requester = await _userRepository.GetAsync(command.RequesterId);
-            var requestee = await _userRepository.GetAsync(command.RequesteeId);
+            var requester = await _userRepository.GetByIdAsync(command.RequesterId);
+            var requestee = await _userRepository.GetByIdAsync(command.RequesteeId);
             if (requester == null || requestee == null)
             {
                 throw new ChatApiException("Friendship request failed", new[] { $"User {requester ?? requestee} not found" }, 404);
@@ -39,18 +42,12 @@ namespace Chat.API.Application.Commands
 
             requester.MakeFriendshipRequest(requestee);
             var request = requester.MyPendingFriendshipRequests.First(req => req.RequesteeId == requestee.Id);
-            _userRepository.CreateFriendshipRequest(request);
+            _friendshipRequestRepository.Create(request);
             await _userRepository.UnitOfWork.SaveChangesAsync();
 
             _logger.LogInformation($"User {requester.Id} successfully made friendship request with {requestee.Id}");
 
-            return new FriendshipRequestDto
-            {
-                Id = request.Id,
-                Requester = _mapper.Map<UserDto>(requester),
-                Requestee = _mapper.Map<UserDto>(requestee),
-                CreatedAt = request.CreatedAt
-            };
+            return _mapper.Map<FriendshipRequestDto>(request);
         }
     }
 }

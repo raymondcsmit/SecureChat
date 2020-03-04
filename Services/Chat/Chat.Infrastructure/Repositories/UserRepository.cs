@@ -14,19 +14,22 @@ namespace Chat.Infrastructure.Repositories
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
         private readonly IMapper _mapper;
+        private readonly IFriendshipRequestRepository _friendshipRequestRepository;
         public IUnitOfWork UnitOfWork { get; }
 
         public UserRepository(
             IUnitOfWork unitOfWork, 
             IDbConnectionFactory dbConnectionFactory,
-            IMapper mapper)
+            IMapper mapper,
+            IFriendshipRequestRepository friendshipRequestRepository)
         {
             _dbConnectionFactory = dbConnectionFactory;
             _mapper = mapper;
+            _friendshipRequestRepository = friendshipRequestRepository;
             UnitOfWork = unitOfWork;
         }
 
-        public void Add(User user)
+        public void Create(User user)
         {
             var sql = $@"INSERT INTO Users (Id, UserName, Email)
                         VALUES (@{nameof(user.Id)}, @{nameof(user.UserName)}, @{nameof(user.Email)});";
@@ -73,11 +76,11 @@ namespace Chat.Infrastructure.Repositories
             }
         }
 
-        public async Task<User> GetAsync(string userId)
+        public async Task<User> GetByIdAsync(string userId)
         {
-            var friendshipRequestsSql = $@"SELECT * FROM FriendshipRequests
-                                                WHERE FriendshipRequests.RequesterId = @{nameof(userId)} OR FriendshipRequests.RequesteeId = @{nameof(userId)}";
-            var usersSql = $@"SELECT * FROM Users
+            var friendshipRequests = await _friendshipRequestRepository.GetByUserIdAsync(userId);
+
+            var sql = $@"SELECT * FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id
                         WHERE Users.Id = @{nameof(userId)}
@@ -85,10 +88,8 @@ namespace Chat.Infrastructure.Repositories
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var frienshipRequests = await connection.QueryAsync<FriendshipRequest>(friendshipRequestsSql, new { userId });
-
                 var result = await connection.QueryAsync<dynamic, dynamic, Profile, (dynamic, Profile)>(
-                    usersSql,
+                    sql,
                     (u, _, p) => (u, p),
                     new
                     {
@@ -97,7 +98,7 @@ namespace Chat.Infrastructure.Repositories
                     splitOn: "userId,id");
                 var (user, profile) = result.FirstOrDefault();
 
-                return user == null ? null : new User(user.Id, user.UserName, user.Email, profile, frienshipRequests);
+                return user == null ? null : new User(user.Id, user.UserName, user.Email, profile, friendshipRequests);
             }
         }
 
@@ -124,17 +125,9 @@ namespace Chat.Infrastructure.Repositories
             }
         }
 
-        public void CreateFriendshipRequest(FriendshipRequest request)
+        public void DeleteById(string id)
         {
-            var sql = $@"INSERT INTO FriendshipRequests (RequesterId, RequesteeId, Outcome, CreatedAt, ModifiedAt)
-                            VALUES (@{nameof(FriendshipRequest.RequesterId)}, 
-                                    @{nameof(FriendshipRequest.RequesteeId)}, 
-                                    @{nameof(FriendshipRequest.Outcome)}, 
-                                    @{nameof(FriendshipRequest.CreatedAt)}, 
-                                    @{nameof(FriendshipRequest.ModifiedAt)})";
-
-            UnitOfWork.AddOperation(request, async connection =>
-                await connection.ExecuteAsync(sql, request));
+            throw new NotImplementedException();
         }
 
         private void AddProfile(string userId, Profile profile)

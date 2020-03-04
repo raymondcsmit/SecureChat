@@ -56,7 +56,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var updatedUser = await userRepository.GetAsync(user.Id);
+                var updatedUser = await userRepository.GetByIdAsync(user.Id);
                 Assert.True(updatedUser.Email == "bar@bar.com");
                 Assert.True(updatedUser.UserName == "bar");
             }
@@ -86,7 +86,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var updatedUser = await userRepository.GetAsync(user1.Id);
+                var updatedUser = await userRepository.GetByIdAsync(user1.Id);
                 Assert.True(updatedUser.Email == "foo@foo.com");
                 Assert.True(updatedUser.UserName == "Foo");
             }
@@ -117,7 +117,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var updatedUser = await userRepository.GetAsync(user.Id);
+                var updatedUser = await userRepository.GetByIdAsync(user.Id);
                 Assert.True(updatedUser.HasProfile);
                 Assert.True(updatedUser.Profile.Age == profile.age && 
                             updatedUser.Profile.Sex == profile.sex &&
@@ -147,7 +147,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var updatedUser = await userRepository.GetAsync(user.Id);
+                var updatedUser = await userRepository.GetByIdAsync(user.Id);
                 Assert.True(updatedUser.HasProfile);
                 Assert.True(updatedUser.Profile.Age == 21);
             }
@@ -193,7 +193,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                var createdUser = await userRepository.GetAsync(user.Id);
+                var createdUser = await userRepository.GetByIdAsync(user.Id);
                 Assert.NotNull(createdUser);
                 Assert.True(!createdUser.HasProfile);
                 Assert.True(createdUser.UserName == user.UserName);
@@ -304,7 +304,7 @@ namespace Chat.FunctionalTests.Scenarios
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
                 var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-                userRepository.Add(user);
+                userRepository.Create(user);
                 await userRepository.UnitOfWork.SaveChangesAsync();
             }
         }

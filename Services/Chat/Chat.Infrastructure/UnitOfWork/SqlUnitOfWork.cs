@@ -73,6 +73,11 @@ namespace Chat.Infrastructure.UnitOfWork
             _operations.Add(new OperationDescriptor(obj, operation));
         }
 
+        public void AddOperation(Func<Task> operation)
+        {
+            _operations.Add(new OperationDescriptor(new object(), _ => operation()));
+        }
+
         private async Task DispatchDomainEventsAsync(Entity entity)
         {
             if (entity.DomainEvents.Any())

@@ -88,9 +88,12 @@ namespace Chat.API
             services.Configure<DbConnectionInfo>(Configuration);
             services.AddTransient<IDatabaseResiliencePolicy, DatabaseResiliencePolicy>();
             services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
-            services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
+            
             services.AddTransient<IUserQueries, UserQueries>();
+
+            services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IFriendshipRequestRepository, FriendshipRequestRepository>();
 
             services.AddEventBus(options =>
             {

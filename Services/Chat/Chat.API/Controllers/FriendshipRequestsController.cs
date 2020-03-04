@@ -20,16 +20,16 @@ namespace Chat.API.Controllers
     {
         private readonly IIdentityService _identityService;
         private readonly IMediator _mediator;
-        private readonly IAssociationQueries _associationQueries;
+        private readonly IFriendshipRequestQueries _friendshipRequestQueries;
 
         public FriendshipRequestsController(
             IIdentityService identityService,
             IMediator mediator,
-            IAssociationQueries associationQueries)
+            IFriendshipRequestQueries friendshipRequestQueries)
         {
             _identityService = identityService;
             _mediator = mediator;
-            _associationQueries = associationQueries;
+            _friendshipRequestQueries = friendshipRequestQueries;
         }
 
         [HttpPost("friendship-requests", Name = nameof(CreateFriendshipRequest))]
@@ -64,7 +64,7 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var friendshipRequest = await _associationQueries.GetFriendshipRequestById(id);
+            var friendshipRequest = await _friendshipRequestQueries.GetFriendshipRequestById(id);
             return Ok(friendshipRequest);
         }
 
@@ -82,7 +82,7 @@ namespace Chat.API.Controllers
             }
 
             var spec = new FriendshipRequestSpecification(query);
-            var friendshipRequest = await _associationQueries.GetFriendshipRequests(spec);
+            var friendshipRequest = await _friendshipRequestQueries.GetFriendshipRequests(spec);
             return Ok(friendshipRequest);
         }
 
@@ -100,7 +100,7 @@ namespace Chat.API.Controllers
             }
 
             var spec = new FriendshipRequestSpecification(queryDto, requesterId);
-            var friendshipRequests = await _associationQueries.GetFriendshipRequests(spec);
+            var friendshipRequests = await _friendshipRequestQueries.GetFriendshipRequests(spec);
             return Ok(friendshipRequests);
         }
 
@@ -118,7 +118,7 @@ namespace Chat.API.Controllers
             }
 
             var spec = new FriendshipRequestSpecification(requesterId, requesteeId);
-            var friendshipRequest = await _associationQueries.GetFriendshipRequests(spec);
+            var friendshipRequest = await _friendshipRequestQueries.GetFriendshipRequests(spec);
             return Ok(friendshipRequest);
         }
     }

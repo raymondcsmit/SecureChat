@@ -7,7 +7,7 @@ using Helpers.Mapping;
 
 namespace Chat.API.Dtos
 {
-    public class FriendshipRequestDto
+    public class FriendshipRequestDto : IMapFrom<FriendshipRequest>
     {
         public string Id { get; set; }
 

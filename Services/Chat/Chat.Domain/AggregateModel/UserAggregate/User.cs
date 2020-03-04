@@ -55,12 +55,12 @@ namespace Chat.Domain.AggregateModel.UserAggregate
         private List<FriendshipRequest> _friendshipRequests = new List<FriendshipRequest>();
 
         public IEnumerable<FriendshipRequest> PendingFriendshipRequests =>
-            _friendshipRequests.Where(assoc => assoc is FriendshipRequest req && req.RequesteeId == Id && req.IsPending)
-                .Cast<FriendshipRequest>();
+            _friendshipRequests.Where(assoc =>
+                assoc is FriendshipRequest req && req.RequesteeId == Id && req.IsPending);
 
         public IEnumerable<FriendshipRequest> MyPendingFriendshipRequests =>
-            _friendshipRequests.Where(assoc => assoc is FriendshipRequest req && req.RequesterId == Id && req.IsPending)
-                .Cast<FriendshipRequest>();
+            _friendshipRequests.Where(assoc =>
+                assoc is FriendshipRequest req && req.RequesterId == Id && req.IsPending);
 
         public User(string id, string userName, string email, Profile profile = null, IEnumerable<FriendshipRequest> friendshipRequests = null)
         {
@@ -74,22 +74,22 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
         }
 
-        public void EndSession()
-        {
-            Session = null;
-            AddDomainEvent(new SessionEndedDomainEvent(Id));
-        }
+        //public void EndSession()
+        //{
+        //    Session = null;
+        //    AddDomainEvent(new SessionEndedDomainEvent(Id));
+        //}
 
-        public void RefreshSession()
-        {
-            if (Session == null)
-            {
-                throw new ChatDomainException("Could not refresh session",
-                    new[] { "No session exists" });
-            }
+        //public void RefreshSession()
+        //{
+        //    if (Session == null)
+        //    {
+        //        throw new ChatDomainException("Could not refresh session",
+        //            new[] { "No session exists" });
+        //    }
 
-            Session.Refresh();
-        }
+        //    Session.Refresh();
+        //}
 
         public bool HasProfile => Profile != null;
 

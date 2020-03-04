@@ -30,7 +30,7 @@ namespace Chat.API.Application.Commands
 
         public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetAsync(command.Id);
+            var user = await _userRepository.GetByIdAsync(command.Id);
             if (user == null)
             {
                 throw new ChatApiException("User update failed", new[] { "User not found" }, 404);
