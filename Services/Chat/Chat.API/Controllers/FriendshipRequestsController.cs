@@ -6,6 +6,7 @@ using Chat.API.Application.Commands;
 using Chat.API.Application.Queries;
 using Chat.API.Application.Specifications;
 using Chat.API.Dtos;
+using Chat.API.Models;
 using Helpers.Auth;
 using Helpers.Auth.AuthHelper;
 using MediatR;
@@ -82,12 +83,12 @@ namespace Chat.API.Controllers
             }
 
             var spec = new FriendshipRequestSpecification(query);
-            var friendshipRequest = await _friendshipRequestQueries.GetFriendshipRequests(spec);
-            return Ok(friendshipRequest);
+            var (friendshipRequests, count) = await _friendshipRequestQueries.GetFriendshipRequests(spec);
+            return Ok(new ArrayResponse<FriendshipRequestDto>(friendshipRequests, count));
         }
 
-        [HttpGet("users/{requesterId}/friendship-requests", Name = nameof(GetFriendshipRequestsByRequesterId))]
-        public async Task<IActionResult> GetFriendshipRequestsByRequesterId(string requesterId, QueryDto queryDto)
+        [HttpGet("users/{requesteeId}/friendship-requests", Name = nameof(GetFriendshipRequestsByRequesterId))]
+        public async Task<IActionResult> GetFriendshipRequestsByRequesterId(string requesteeId, QueryDto queryDto)
         {
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
@@ -99,12 +100,12 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var spec = new FriendshipRequestSpecification(queryDto, requesterId);
-            var friendshipRequests = await _friendshipRequestQueries.GetFriendshipRequests(spec);
-            return Ok(friendshipRequests);
+            var spec = new FriendshipRequestSpecification(queryDto, requesteeId);
+            var (friendshipRequests, count) = await _friendshipRequestQueries.GetFriendshipRequests(spec);
+            return Ok(new ArrayResponse<FriendshipRequestDto>(friendshipRequests, count));
         }
 
-        [HttpGet("users/{requesterId}/friendship-requests/{requesteeId}", Name = nameof(GetFriendshipRequestByRequesterAndRequesteeIds))]
+        [HttpGet("users/{requesteeId}/friendship-requests/{requesterId}", Name = nameof(GetFriendshipRequestByRequesterAndRequesteeIds))]
         public async Task<IActionResult> GetFriendshipRequestByRequesterAndRequesteeIds(string requesterId, string requesteeId)
         {
             var authHelper = new AuthHelperBuilder()

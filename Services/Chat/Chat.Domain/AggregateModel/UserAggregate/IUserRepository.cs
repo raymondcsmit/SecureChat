@@ -5,8 +5,5 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 {
     public interface IUserRepository : IRepository<User>
     {
-        void Update(User user);
-
-        Task<(bool userNameExists, bool emailExists)> UserNameOrEmailExists(string userName, string email);
     }
 }

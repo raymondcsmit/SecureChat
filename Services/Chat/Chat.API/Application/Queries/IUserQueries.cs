@@ -13,5 +13,7 @@ namespace Chat.API.Application.Queries
         Task<UserDto> GetUserByIdAsync(string id);
 
         Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec);
+
+        Task<(bool userNameExists, bool emailExists)> UserNameOrEmailExists(string userName, string email);
     }
 }

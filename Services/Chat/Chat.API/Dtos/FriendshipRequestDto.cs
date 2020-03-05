@@ -16,5 +16,7 @@ namespace Chat.API.Dtos
         public UserDto Requestee { get; set; }
 
         public DateTimeOffset CreatedAt { get; set; }
+
+        public DateTimeOffset ModifiedAt { get; set; }
     }
 }

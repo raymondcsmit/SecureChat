@@ -9,14 +9,14 @@ namespace Chat.API.Application.Specifications
 {
     public class FriendshipRequestSpecification : BaseSpecification<FriendshipRequestDto>
     {
-        public FriendshipRequestSpecification(QueryDto query, string requesterId = null)
+        public FriendshipRequestSpecification(QueryDto query, string requesteeId = null)
         {
             var criteria = query.Criteria.Select(kvp => new Criteria(kvp.Key, "FriendshipRequests", kvp.Value));
             base.AddCriteria(criteria);
 
-            if (requesterId != null)
+            if (requesteeId != null)
             {
-                var requesterCriteria = new Criteria(nameof(UserDto.Id), "FriendshipRequests", requesterId);
+                var requesterCriteria = new Criteria("RequesteeId", "FriendshipRequests", requesteeId);
                 base.AddCriteria(new[] {requesterCriteria});
             }
 
@@ -33,8 +33,8 @@ namespace Chat.API.Application.Specifications
                 throw new InvalidOperationException();
             }
 
-            var requesterCriteria = new Criteria(nameof(UserDto.Id), "FriendshipRequests", requesterId);
-            var requesteeCriteria = new Criteria(nameof(UserDto.Id), "FriendshipRequests", requesteeId);
+            var requesterCriteria = new Criteria("RequesteeId", "FriendshipRequests", requesteeId);
+            var requesteeCriteria = new Criteria("RequesterId", "FriendshipRequests", requesterId);
             base.AddCriteria(new[] { requesterCriteria, requesteeCriteria });
         }
     }

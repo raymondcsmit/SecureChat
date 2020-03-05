@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Chat.API.Application.Queries;
 using Chat.API.Dtos;
 using Chat.API.Infrastructure.Exceptions;
 using Chat.Domain.AggregateModel.UserAggregate;
@@ -17,15 +18,18 @@ namespace Chat.API.Application.Commands
         private readonly ILogger<UpdateUserCommandHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
+        private readonly IUserQueries _userQueries;
 
         public UpdateUserCommandHandler(
             ILogger<UpdateUserCommandHandler> logger,
             IMapper mapper,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IUserQueries userQueries)
         {
             _logger = logger;
             _mapper = mapper;
             _userRepository = userRepository;
+            _userQueries = userQueries;
         }
 
         public async Task Handle(UpdateUserCommand command, CancellationToken cancellationToken)
@@ -52,7 +56,7 @@ namespace Chat.API.Application.Commands
                 Profile = new ProfileDto()
             };
             command.Patch.ApplyTo(dto);
-            var (userNameExists, emailExists) = await _userRepository.UserNameOrEmailExists(dto.UserName, dto.Email);
+            var (userNameExists, emailExists) = await _userQueries.UserNameOrEmailExists(dto.UserName, dto.Email);
             if (userNameExists)
             {
                 throw new ChatApiException("User Update Failed", new[] { "UserName already in use" }, 400);

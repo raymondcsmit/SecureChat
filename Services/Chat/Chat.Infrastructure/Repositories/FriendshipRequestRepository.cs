@@ -52,7 +52,7 @@ namespace Chat.Infrastructure.Repositories
         public async Task<FriendshipRequest> GetByIdAsync(string id)
         {
             var sql = $@"SELECT * FROM FriendshipRequests
-                                                WHERE FriendshipRequests.RequesterId = @{nameof(id)};";
+                                                WHERE FriendshipRequests.Id = @{nameof(id)};";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
@@ -65,9 +65,21 @@ namespace Chat.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public void Update(FriendshipRequest entity)
+        public void Update(FriendshipRequest friendshipRequest)
         {
-            throw new NotImplementedException();
+            var sql = $@"UPDATE FriendshipRequests SET
+                            Outcome = @{nameof(FriendshipRequest.Outcome)},
+                            ModifiedAt = @{nameof(FriendshipRequest.ModifiedAt)}
+                        WHERE FriendshipRequests.Id = @{nameof(friendshipRequest.Id)}";
+            UnitOfWork.AddOperation(friendshipRequest, async connection =>
+            {
+                await connection.ExecuteAsync(sql, new
+                {
+                    friendshipRequest.Outcome,
+                    friendshipRequest.ModifiedAt,
+                    friendshipRequest.Id
+                });
+            });
         }
     }
 }

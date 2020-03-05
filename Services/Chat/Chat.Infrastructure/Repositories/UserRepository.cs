@@ -102,29 +102,6 @@ namespace Chat.Infrastructure.Repositories
             }
         }
 
-        public async Task<(bool, bool)> UserNameOrEmailExists(string userName, string email)
-        {
-            var userNameQuery = userName == null
-                ? @"(SELECT COUNT(*) FROM Users WHERE false)"
-                : $@"(SELECT COUNT(*) FROM Users WHERE Users.UserName = @{nameof(userName)})";
-
-            var emailQuery = email == null
-                ? @"(SELECT COUNT(*) FROM Users WHERE false)"
-                : $@"(SELECT COUNT(*) FROM Users WHERE Users.Email = @{nameof(email)})";
-
-            var sql = string.Join("UNION ALL", userNameQuery, emailQuery);
-            using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
-            {
-                var result = await connection.QueryAsync<bool>(sql, new
-                {
-                    userName,
-                    email
-                });
-                var resultList = result.ToList();
-                return (resultList[0], resultList[1]);
-            }
-        }
-
         public void DeleteById(string id)
         {
             throw new NotImplementedException();
