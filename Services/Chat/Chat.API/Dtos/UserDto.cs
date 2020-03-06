@@ -19,5 +19,10 @@ namespace Chat.API.Dtos
         public string Email { get; set; }
 
         public ProfileDto Profile { get; set; }
+
+        public UserDto()
+        {
+            
+        }
     }
 }

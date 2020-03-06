@@ -29,7 +29,7 @@ namespace Chat.API.Application.Queries
         public async Task<FriendshipRequestDto> GetFriendshipRequestById(string id)
         {
             var sql = $@"SELECT * FROM FriendshipRequests
-                                                WHERE FriendshipRequests.Id = @{nameof(id)};";
+                              WHERE FriendshipRequests.Id = @{nameof(id)};";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
@@ -39,28 +39,28 @@ namespace Chat.API.Application.Queries
 
         public async Task<(IEnumerable<FriendshipRequestDto>, int)> GetFriendshipRequests(ISpecification<FriendshipRequestDto> spec)
         {
-            var baseSql = $@"SELECT FriendshipRequests.*, user1.Id, user2.Id FROM FriendshipRequests
+            var baseTotalSql = $@"SELECT COUNT(*) FROM FriendshipRequests";
+            var (totalSql, _) = spec.Apply(baseTotalSql, false);
+
+            var baseSql = $@"SELECT FriendshipRequests.*, user1.Id, user2.Id, ({totalSql.Trim(';')}) total
+                        FROM FriendshipRequests
                         JOIN Users user1 ON FriendshipRequests.RequesterId = user1.Id
                         JOIN Users user2 ON FriendshipRequests.RequesteeId = user2.Id;";
-            var baseTotalSql = $@"SELECT COUNT(*) FROM FriendshipRequests";
-
             var (querySql, queryParam) = spec.Apply(baseSql);
-            var (totalSql, totalParam) = spec.Apply(baseTotalSql, false);
 
             var dict = new Dictionary<FriendshipRequestDto, (string, string)>();
             var count = 0;
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                await connection.QueryAsync<FriendshipRequestDto, string, string, FriendshipRequestDto>(querySql,
-                    (req, uId1, uId2) =>
+                await connection.QueryAsync<FriendshipRequestDto, string, string, int, FriendshipRequestDto>(querySql,
+                    (req, uId1, uId2, total) =>
                     {
+                        count = total;
                         dict.Add(req, (uId1, uId2));
                         return req;
                     },
-                    queryParam, splitOn: "user1.Id,user2.Id");
-
-                count = await connection.QueryFirstAsync<int>(totalSql, totalParam);
+                    queryParam, splitOn: "user1.Id,user2.Id,total");
             }
 
 

@@ -54,27 +54,32 @@ namespace Chat.API.Application.Queries
 
         public async Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec)
         {
-            var baseSql = $@"SELECT * FROM Users
+            var baseTotalSql = $@"SELECT COUNT(*) FROM Users";
+            var (totalSql, _) = spec.Apply(baseTotalSql, false);
+
+            var baseSql = $@"SELECT User.*, Profiles.*, ({totalSql.Trim(';')}) total
+                        FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id;";
-            var baseTotalSql = $@"SELECT COUNT(*) FROM Users";
 
             var (querySql, queryParam) = spec.Apply(baseSql);
-            var (totalSql, totalParam) = spec.Apply(baseTotalSql, false);
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var results = await connection.QueryAsync<dynamic, dynamic, ProfileDto, UserDto>(querySql,
-                    (u, _, p) => new UserDto
+                var count = 0;
+                var results = await connection.QueryAsync<dynamic, ProfileDto, int, UserDto>(querySql,
+                    (u, p, total) =>
                     {
-                        Id = u.Id,
-                        UserName = u.UserName,
-                        Email = u.Email,
-                        Profile = IsProfileEmpty(p) ? null : p
+                        count = total;
+                        return new UserDto
+                        {
+                            Id = u.Id,
+                            UserName = u.UserName,
+                            Email = u.Email,
+                            Profile = IsProfileEmpty(p) ? null : p
+                        };
                     },
-                    queryParam, splitOn: "userId,id");
-
-                var count = await connection.QueryFirstAsync<int>(totalSql, totalParam);
+                    queryParam, splitOn: "id,total");
 
                 return (results, count);
             }
