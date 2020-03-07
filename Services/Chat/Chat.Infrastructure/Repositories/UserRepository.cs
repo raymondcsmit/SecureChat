@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Chat.Domain.AggregateModel.UserAggregate;
 using Chat.Domain.SeedWork;
 using Dapper;
@@ -13,39 +12,36 @@ namespace Chat.Infrastructure.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
-        private readonly IMapper _mapper;
         private readonly IFriendshipRequestRepository _friendshipRequestRepository;
         public IUnitOfWork UnitOfWork { get; }
 
         public UserRepository(
             IUnitOfWork unitOfWork, 
             IDbConnectionFactory dbConnectionFactory,
-            IMapper mapper,
             IFriendshipRequestRepository friendshipRequestRepository)
         {
             _dbConnectionFactory = dbConnectionFactory;
-            _mapper = mapper;
             _friendshipRequestRepository = friendshipRequestRepository;
             UnitOfWork = unitOfWork;
         }
 
-        public void Create(User user)
+        public void Create(User friendship)
         {
             var sql = $@"INSERT INTO Users (Id, UserName, Email)
-                        VALUES (@{nameof(user.Id)}, @{nameof(user.UserName)}, @{nameof(user.Email)});";
-            UnitOfWork.AddOperation(user, async connection =>
+                        VALUES (@{nameof(friendship.Id)}, @{nameof(friendship.UserName)}, @{nameof(friendship.Email)});";
+            UnitOfWork.AddOperation(friendship, async connection =>
             {
                 await connection.ExecuteAsync(sql, new
                 {
-                    user.Id,
-                    user.UserName,
-                    user.Email
+                    friendship.Id,
+                    friendship.UserName,
+                    friendship.Email
                 });
             });
 
-            if (user.Profile != null)
+            if (friendship.Profile != null)
             {
-                AddProfile(user.Id, user.Profile);
+                AddProfile(friendship.Id, friendship.Profile);
             }
         }
 

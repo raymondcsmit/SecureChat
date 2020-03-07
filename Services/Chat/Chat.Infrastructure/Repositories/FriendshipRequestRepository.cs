@@ -28,7 +28,7 @@ namespace Chat.Infrastructure.Repositories
         public async Task<IEnumerable<FriendshipRequest>> GetByUserIdAsync(string userId)
         {
             var sql = $@"SELECT * FROM FriendshipRequests
-                                                WHERE FriendshipRequests.RequesterId = @{nameof(userId)} OR FriendshipRequests.RequesteeId = @{nameof(userId)};";
+                              WHERE FriendshipRequests.RequesterId = @{nameof(userId)} OR FriendshipRequests.RequesteeId = @{nameof(userId)};";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
@@ -36,23 +36,21 @@ namespace Chat.Infrastructure.Repositories
             }
         }
 
-        public void Create(FriendshipRequest request)
+        public void Create(FriendshipRequest friendship)
         {
-            var sql = $@"INSERT INTO FriendshipRequests (RequesterId, RequesteeId, Outcome, CreatedAt, ModifiedAt)
+            var sql = $@"INSERT INTO FriendshipRequests (RequesterId, RequesteeId, Outcome)
                             VALUES (@{nameof(FriendshipRequest.RequesterId)}, 
                                     @{nameof(FriendshipRequest.RequesteeId)}, 
-                                    @{nameof(FriendshipRequest.Outcome)}, 
-                                    @{nameof(FriendshipRequest.CreatedAt)}, 
-                                    @{nameof(FriendshipRequest.ModifiedAt)})";
+                                    @{nameof(FriendshipRequest.Outcome)});";
 
-            UnitOfWork.AddOperation(request, async connection =>
-                await connection.ExecuteAsync(sql, request));
+            UnitOfWork.AddOperation(friendship, async connection =>
+                await connection.ExecuteAsync(sql, friendship));
         }
 
         public async Task<FriendshipRequest> GetByIdAsync(string id)
         {
             var sql = $@"SELECT * FROM FriendshipRequests
-                                                WHERE FriendshipRequests.Id = @{nameof(id)};";
+                                WHERE FriendshipRequests.Id = @{nameof(id)};";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
@@ -68,17 +66,11 @@ namespace Chat.Infrastructure.Repositories
         public void Update(FriendshipRequest friendshipRequest)
         {
             var sql = $@"UPDATE FriendshipRequests SET
-                            Outcome = @{nameof(FriendshipRequest.Outcome)},
-                            ModifiedAt = @{nameof(FriendshipRequest.ModifiedAt)}
-                        WHERE FriendshipRequests.Id = @{nameof(friendshipRequest.Id)}";
+                            Outcome = @{nameof(FriendshipRequest.Outcome)}
+                        WHERE FriendshipRequests.Id = @{nameof(friendshipRequest.Id)};";
             UnitOfWork.AddOperation(friendshipRequest, async connection =>
             {
-                await connection.ExecuteAsync(sql, new
-                {
-                    friendshipRequest.Outcome,
-                    friendshipRequest.ModifiedAt,
-                    friendshipRequest.Id
-                });
+                await connection.ExecuteAsync(sql, friendshipRequest);
             });
         }
     }

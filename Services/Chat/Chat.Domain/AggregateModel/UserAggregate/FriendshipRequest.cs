@@ -25,6 +25,8 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         public DateTimeOffset ModifiedAt { get; private set; }
 
+        private FriendshipRequest() { }
+
         public FriendshipRequest(string requesterId, string requesteeId)
         {
             if (requesteeId == RequesterId)
@@ -34,9 +36,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
             RequesterId = requesterId;
             RequesteeId = requesteeId;
-
-            CreatedAt = DateTimeOffset.Now;
-            ModifiedAt = DateTimeOffset.Now;
         }
 
         public void Accept()
@@ -47,7 +46,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
 
             Outcome = Outcomes.Accepted;
-            ModifiedAt = DateTimeOffset.Now;
             AddDomainEvent(new FriendshipRequestAcceptedDomainEvent(this));
         }
 
@@ -59,7 +57,6 @@ namespace Chat.Domain.AggregateModel.UserAggregate
             }
 
             Outcome = Outcomes.Rejected;
-            ModifiedAt = DateTimeOffset.Now;
         }
 
         public bool IsPending => Outcome == null;

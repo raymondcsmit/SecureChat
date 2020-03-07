@@ -94,6 +94,7 @@ namespace Chat.API
             services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IFriendshipRequestRepository, FriendshipRequestRepository>();
+            services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 
             services.AddEventBus(options =>
             {

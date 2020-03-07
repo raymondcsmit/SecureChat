@@ -12,23 +12,19 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         public DateTimeOffset ModifiedAt { get; private set; }
 
-        public string FirstFriendId { get; private set; }
+        public string UserId1 { get; private set; }
 
-        public string SecondFriendId { get; private set; }
+        public string UserId2 { get; private set; }
 
-        public Friendship(string firstFriendId, string secondFriendId)
+        public Friendship(string userId1, string userId2)
         {
-            if (firstFriendId == secondFriendId)
+            if (userId1 == userId2)
             {
                 throw new ChatDomainException("Friend ids cannot be equal");
             }
 
-            FirstFriendId = firstFriendId;
-            SecondFriendId = secondFriendId;
-
-
-            CreatedAt = DateTimeOffset.Now;
-            ModifiedAt = DateTimeOffset.Now;
+            UserId1 = userId1;
+            UserId2 = userId2;
         }
     }
 }

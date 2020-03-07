@@ -7,7 +7,7 @@ namespace Chat.Domain.SeedWork
     {
         IUnitOfWork UnitOfWork { get; }
 
-        void Create(T entity);
+        void Create(T friendship);
 
         Task<T> GetByIdAsync(string id);
 

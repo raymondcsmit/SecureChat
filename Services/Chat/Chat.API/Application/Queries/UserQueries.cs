@@ -54,20 +54,22 @@ namespace Chat.API.Application.Queries
 
         public async Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec)
         {
-            var baseTotalSql = $@"SELECT COUNT(*) FROM Users";
-            var (totalSql, _) = spec.Apply(baseTotalSql, false);
+            var totalSql = $@"SELECT COUNT(*) as count FROM Users";
+            var (totalSpecSql, _) = spec.Apply(totalSql, false);
 
-            var baseSql = $@"SELECT User.*, Profiles.*, ({totalSql.Trim(';')}) total
+            var querySql = $@"SELECT Users.*, Profiles.*
                         FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id;";
 
-            var (querySql, queryParam) = spec.Apply(baseSql);
+            var (querySpecSql, queryParam) = spec.Apply(querySql);
+
+            var finalQuery = $@"SELECT * FROM ({querySpecSql.Trim(';')}) CROSS JOIN ({totalSpecSql.Trim(';')})";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
                 var count = 0;
-                var results = await connection.QueryAsync<dynamic, ProfileDto, int, UserDto>(querySql,
+                var results = await connection.QueryAsync<dynamic, ProfileDto, int, UserDto>(querySpecSql,
                     (u, p, total) =>
                     {
                         count = total;
@@ -79,7 +81,7 @@ namespace Chat.API.Application.Queries
                             Profile = IsProfileEmpty(p) ? null : p
                         };
                     },
-                    queryParam, splitOn: "id,total");
+                    queryParam, splitOn: "id,count");
 
                 return (results, count);
             }
