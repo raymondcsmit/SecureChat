@@ -36,15 +36,21 @@ namespace Chat.Infrastructure.Repositories
             }
         }
 
-        public void Create(FriendshipRequest friendship)
+        public void Create(FriendshipRequest friendshipRequest)
         {
             var sql = $@"INSERT INTO FriendshipRequests (RequesterId, RequesteeId, Outcome)
                             VALUES (@{nameof(FriendshipRequest.RequesterId)}, 
                                     @{nameof(FriendshipRequest.RequesteeId)}, 
-                                    @{nameof(FriendshipRequest.Outcome)});";
+                                    @{nameof(FriendshipRequest.Outcome)});
+                         SELECT * 
+                         FROM FriendshipRequests f
+                         WHERE f.Id = LAST_INSERT_ID();";
 
-            UnitOfWork.AddOperation(friendship, async connection =>
-                await connection.ExecuteAsync(sql, friendship));
+            UnitOfWork.AddOperation(friendshipRequest, async connection =>
+            {
+                var createdFriendshipRequest = await connection.QueryFirstAsync<FriendshipRequest>(sql, friendshipRequest);
+                _mapper.Map(createdFriendshipRequest, friendshipRequest);
+            });
         }
 
         public async Task<FriendshipRequest> GetByIdAsync(string id)

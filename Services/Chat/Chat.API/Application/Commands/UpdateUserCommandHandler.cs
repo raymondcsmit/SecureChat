@@ -51,10 +51,7 @@ namespace Chat.API.Application.Commands
 
         private async Task EnsureUniqueUserNameEmail(UpdateUserCommand command)
         {
-            var dto = new UserDto()
-            {
-                Profile = new ProfileDto()
-            };
+            var dto = UserDto.ValidationUser;
             command.Patch.ApplyTo(dto);
             var (userNameExists, emailExists) = await _userQueries.UserNameOrEmailExists(dto.UserName, dto.Email);
             if (userNameExists)

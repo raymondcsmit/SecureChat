@@ -90,6 +90,7 @@ namespace Chat.API
             services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
             
             services.AddTransient<IUserQueries, UserQueries>();
+            services.AddTransient<IFriendshipRequestQueries, FriendshipRequestQueries>();
 
             services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -118,6 +119,7 @@ namespace Chat.API
                 config.AddProfile(new AutoMapperConfig(new[] { typeof(Startup).Assembly }));
                 config.CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
                 config.CreateMap(typeof(Operation<>), typeof(Operation<>));
+                config.CreateMap<FriendshipRequest, FriendshipRequest>();
                 config.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
             }, typeof(Startup).Assembly);
 

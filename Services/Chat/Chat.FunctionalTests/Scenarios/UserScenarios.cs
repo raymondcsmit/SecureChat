@@ -50,7 +50,7 @@ namespace Chat.FunctionalTests.Scenarios
                 new {op = "replace", path = "/username", value = "bar"}
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
-            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            var patchResponse = await client.PatchAsync(Patch.UserById(user.Id), content);
             var responseStr = await patchResponse.Content.ReadAsStringAsync();
 
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
@@ -80,7 +80,7 @@ namespace Chat.FunctionalTests.Scenarios
                 new {op, path, value}
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
-            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user1.Id), content);
+            var patchResponse = await client.PatchAsync(Patch.UserById(user1.Id), content);
             Assert.True(patchResponse.StatusCode == HttpStatusCode.BadRequest);
 
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
@@ -111,7 +111,7 @@ namespace Chat.FunctionalTests.Scenarios
                 new {op = "add", path = "/profile", value = profile},
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
-            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            var patchResponse = await client.PatchAsync(Patch.UserById(user.Id), content);
             var responseStr = await patchResponse.Content.ReadAsStringAsync();
 
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
@@ -141,8 +141,7 @@ namespace Chat.FunctionalTests.Scenarios
                 new {op = "replace", path = "/profile/age", value = 21},
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
-            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
-            var responseStr = await patchResponse.Content.ReadAsStringAsync();
+            var patchResponse = await client.PatchAsync(Patch.UserById(user.Id), content);
 
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
@@ -171,7 +170,7 @@ namespace Chat.FunctionalTests.Scenarios
                 new {op, path, value}
             };
             var content = new StringContent(JsonConvert.SerializeObject(patch), Encoding.UTF8, "application/json");
-            var patchResponse = await client.PatchAsync(Patch.UpdateUserById(user.Id), content);
+            var patchResponse = await client.PatchAsync(Patch.UserById(user.Id), content);
             await Task.Delay(1000);
 
             Assert.True(eventName == nameof(UserAccountUpdatedIntegrationEvent));
@@ -188,7 +187,7 @@ namespace Chat.FunctionalTests.Scenarios
             };
             TestEventBusFixture.EventBus.Publish(
                 new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
-            await Task.Delay(1000);
+            await Task.Delay(3000);
 
             using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
             {
@@ -208,7 +207,7 @@ namespace Chat.FunctionalTests.Scenarios
             var user = new User("1", "Foo", "foo@foo.com");
             await CreateTestUserAsync(user);
 
-            var response = await client.GetAsync(Get.GetUserById(user.Id));
+            var response = await client.GetAsync(Get.UserById(user.Id));
             var responseStr = await response.Content.ReadAsStringAsync();
             dynamic responseObj = JsonConvert.DeserializeObject<UserDto>(responseStr);
             Assert.True(response.StatusCode == HttpStatusCode.OK);
@@ -219,7 +218,7 @@ namespace Chat.FunctionalTests.Scenarios
         public async Task GetUserById_ShouldReturnNotFound_OnInvalidId()
         {
             var client = CreateClient();
-            var response = await client.GetAsync(Get.GetUserById("gibberish"));
+            var response = await client.GetAsync(Get.UserById("gibberish"));
             Assert.True(response.StatusCode == HttpStatusCode.NotFound);
         }
 
@@ -248,7 +247,7 @@ namespace Chat.FunctionalTests.Scenarios
                 }
             };
 
-            var uri = UriHelpers.BuildUri(Get.GetUsers(), new { query = JsonConvert.SerializeObject(query) });
+            var uri = UriHelpers.BuildUri(Get.Users(), new { query = JsonConvert.SerializeObject(query) });
             var response = await client.GetAsync(uri);
             var responseStr = await response.Content.ReadAsStringAsync();
             var responseObj = JsonConvert.DeserializeObject<ArrayResponse<UserDto>>(responseStr);
@@ -283,7 +282,7 @@ namespace Chat.FunctionalTests.Scenarios
                 }
             };
 
-            var uri = UriHelpers.BuildUri(Get.GetUsers(), new { query = JsonConvert.SerializeObject(query) });
+            var uri = UriHelpers.BuildUri(Get.Users(), new { query = JsonConvert.SerializeObject(query) });
             var response = await client.GetAsync(uri);
             var responseStr = await response.Content.ReadAsStringAsync();
             var responseObj = JsonConvert.DeserializeObject<ArrayResponse<UserDto>>(responseStr);

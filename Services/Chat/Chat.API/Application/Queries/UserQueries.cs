@@ -29,7 +29,8 @@ namespace Chat.API.Application.Queries
 
         public async Task<UserDto> GetUserByIdAsync(string id)
         {
-            var sql = $@"SELECT * FROM Users
+            var sql = $@"SELECT Users.*, Profiles.* 
+                        FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id
                         WHERE Users.Id = @{nameof(id)}
@@ -37,15 +38,13 @@ namespace Chat.API.Application.Queries
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var results = await connection.QueryAsync<dynamic, dynamic, ProfileDto, UserDto>(sql,
-                    (u, _, p) => new UserDto
+                var results = await connection.QueryAsync<UserDto, ProfileDto, UserDto>(sql,
+                    (u, p) =>
                     {
-                        Id = u.Id,
-                        UserName = u.UserName,
-                        Email = u.Email,
-                        Profile = IsProfileEmpty(p) ? null : p
+                        u.Profile = p;
+                        return u;
                     },
-                    new { id }, splitOn: "userId,id"); ;
+                    new { id }, splitOn: "id");
 
                 return results.FirstOrDefault()
                            ?? throw new ChatApiException("Could not fetch user", new[] { "User not found" }, 404);
@@ -55,7 +54,6 @@ namespace Chat.API.Application.Queries
         public async Task<(IEnumerable<UserDto>, int)> GetUsersAsync(ISpecification<UserDto> spec)
         {
             var totalSql = $@"SELECT COUNT(*) as count FROM Users";
-            var (totalSpecSql, _) = spec.Apply(totalSql, false);
 
             var querySql = $@"SELECT Users.*, Profiles.*
                         FROM Users
@@ -64,24 +62,16 @@ namespace Chat.API.Application.Queries
 
             var (querySpecSql, queryParam) = spec.Apply(querySql);
 
-            var finalQuery = $@"SELECT * FROM ({querySpecSql.Trim(';')}) CROSS JOIN ({totalSpecSql.Trim(';')})";
-
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var count = 0;
-                var results = await connection.QueryAsync<dynamic, ProfileDto, int, UserDto>(querySpecSql,
-                    (u, p, total) =>
+                var count = await connection.QuerySingleAsync<int>(totalSql, queryParam);
+                var results = await connection.QueryAsync<UserDto, ProfileDto, UserDto>(querySpecSql,
+                    (u, p) =>
                     {
-                        count = total;
-                        return new UserDto
-                        {
-                            Id = u.Id,
-                            UserName = u.UserName,
-                            Email = u.Email,
-                            Profile = IsProfileEmpty(p) ? null : p
-                        };
+                        u.Profile = p;
+                        return u;
                     },
-                    queryParam, splitOn: "id,count");
+                    queryParam, splitOn: "id");
 
                 return (results, count);
             }
@@ -108,11 +98,6 @@ namespace Chat.API.Application.Queries
                 var resultList = result.ToList();
                 return (resultList[0], resultList[1]);
             }
-        }
-
-        private bool IsProfileEmpty(ProfileDto profile)
-        {
-            return profile.Age == null && profile.Location == null && profile.Sex == null;
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Chat.API.Application.Specifications;
 using Chat.API.Dtos;
 using Chat.Infrastructure;
 using Dapper;
@@ -28,49 +29,43 @@ namespace Chat.API.Application.Queries
 
         public async Task<FriendshipRequestDto> GetFriendshipRequestById(string id)
         {
-            var sql = $@"SELECT * FROM FriendshipRequests
-                              WHERE FriendshipRequests.Id = @{nameof(id)};";
-
-            using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
-            {
-                return await connection.QueryFirstAsync<FriendshipRequestDto>(sql, new { id });
-            }
+            var spec = new FriendshipRequestSpecification(id);
+            return (await GetFriendshipRequests(spec)).Item1.FirstOrDefault();
         }
 
         public async Task<(IEnumerable<FriendshipRequestDto>, int)> GetFriendshipRequests(ISpecification<FriendshipRequestDto> spec)
         {
-            var baseTotalSql = $@"SELECT COUNT(*) FROM FriendshipRequests";
-            var (totalSql, _) = spec.Apply(baseTotalSql, false);
+            var totalSql = $@"SELECT COUNT(*) FROM FriendshipRequests";
+            var (totalSpecSql, _) = spec.Apply(totalSql);
 
-            var baseSql = $@"SELECT FriendshipRequests.*, user1.Id, user2.Id, ({totalSql.Trim(';')}) total
+            var querySql = $@"SELECT FriendshipRequests.*, user1.*, p1.*, user2.*, p2.*
                         FROM FriendshipRequests
                         JOIN Users user1 ON FriendshipRequests.RequesterId = user1.Id
-                        JOIN Users user2 ON FriendshipRequests.RequesteeId = user2.Id;";
-            var (querySql, queryParam) = spec.Apply(baseSql);
+                            LEFT JOIN UserProfileMap up1 ON up1.UserId = user1.Id
+                                LEFT JOIN Profiles p1 ON p1.Id = up1.ProfileId
+                        JOIN Users user2 ON FriendshipRequests.RequesteeId = user2.Id
+                            LEFT JOIN UserProfileMap up2 ON up2.UserId = user2.Id
+                                LEFT JOIN Profiles p2 ON p2.Id = up2.ProfileId;";
+            var (querySpecSql, queryParam) = spec.Apply(querySql);
 
             var dict = new Dictionary<FriendshipRequestDto, (string, string)>();
             var count = 0;
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                await connection.QueryAsync<FriendshipRequestDto, string, string, int, FriendshipRequestDto>(querySql,
-                    (req, uId1, uId2, total) =>
+                count = await connection.QuerySingleAsync<int>(totalSpecSql, queryParam);
+                var results = await connection.QueryAsync<FriendshipRequestDto, UserDto, ProfileDto, UserDto, ProfileDto, FriendshipRequestDto>(querySpecSql,
+                    (r, u1, p1, u2, p2) =>
                     {
-                        count = total;
-                        dict.Add(req, (uId1, uId2));
-                        return req;
+                        u1.Profile = p1;
+                        u2.Profile = p2;
+                        r.Requester = u1;
+                        r.Requestee = u2;
+                        return r;
                     },
-                    queryParam, splitOn: "user1.Id,user2.Id,total");
+                    queryParam, splitOn: "Id,Id,Id,Id,Id");
+                return (results, count);
             }
-
-
-            foreach (var (req, ids) in dict)
-            {
-                req.Requester = await _userQueries.GetUserByIdAsync(ids.Item1);
-                req.Requestee = await _userQueries.GetUserByIdAsync(ids.Item2); 
-            }
-
-            return (dict.Select((kvp) => kvp.Key), count);
         }
     }
 }

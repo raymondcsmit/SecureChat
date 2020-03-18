@@ -76,10 +76,7 @@ namespace Chat.API.Controllers
         public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
         {
             // TODO - refactor
-            var testDto = new UserDto()
-            {
-                Profile = new ProfileDto()
-            };
+            var testDto = UserDto.ValidationUser;
             patch.ApplyTo(testDto, ModelState);
             TryValidateModel(testDto);
             //TryValidateModel(testDto.Profile);

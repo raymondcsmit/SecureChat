@@ -9,9 +9,15 @@ namespace Chat.API.Application.Specifications
 {
     public class FriendshipRequestSpecification : BaseSpecification<FriendshipRequestDto>
     {
+        public FriendshipRequestSpecification(string id)
+        {
+            var criteria = new[] { new Criteria("id", "FriendshipRequests", id) };
+            base.AddCriteria(criteria);
+        }
+
         public FriendshipRequestSpecification(QueryDto query, string requesteeId = null)
         {
-            var criteria = query.Criteria.Select(kvp => new Criteria(kvp.Key, "FriendshipRequests", kvp.Value));
+            var criteria = query.Criteria?.Select(kvp => new Criteria(kvp.Key, "FriendshipRequests", kvp.Value));
             base.AddCriteria(criteria);
 
             if (requesteeId != null)

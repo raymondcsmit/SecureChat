@@ -4,6 +4,7 @@ using System.Text;
 using Chat.Domain.Events;
 using Chat.Domain.Exceptions;
 using Chat.Domain.SeedWork;
+using Helpers.Mapping;
 
 namespace Chat.Domain.AggregateModel.UserAggregate
 {

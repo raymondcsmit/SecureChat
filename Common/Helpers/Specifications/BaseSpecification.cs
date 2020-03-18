@@ -56,6 +56,11 @@ namespace Helpers.Specifications
 
         protected virtual void AddCriteria(IEnumerable<Criteria> criteria)
         {
+            if (criteria == null)
+            {
+                return;
+            }
+
             var searchableProperties = GetProperties<Searchable>()
                 .ToDictionary(tup => tup.propName, tup => tup.colName);
             
@@ -72,6 +77,11 @@ namespace Helpers.Specifications
 
         protected virtual void AddCriteriaNot(IEnumerable<Criteria> criteria)
         {
+            if (criteria == null)
+            {
+                return;
+            }
+
             var searchableProperties = GetProperties<Searchable>()
                 .ToDictionary(tup => tup.propName, tup => tup.colName);
 
@@ -88,6 +98,11 @@ namespace Helpers.Specifications
 
         protected virtual void AddOrderBy(IEnumerable<OrderByColumn> columns)
         {
+            if (columns == null)
+            {
+                return;
+            }
+
             var sortableProperties = GetProperties<Sortable>()
                 .ToDictionary(tup => tup.propName, tup => tup.colName);
             
