@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace Chat.Infrastructure.UnitOfWork
         private readonly IMediator _mediator;
         private readonly IDbConnectionFactory _dbConnectionFactory;
 
-        private List<OperationDescriptor> _operations = new List<OperationDescriptor>();
+        private ConcurrentQueue<OperationDescriptor> _operations = new ConcurrentQueue<OperationDescriptor>();
 
         public SqlUnitOfWork(IMediator mediator, IDbConnectionFactory dbConnectionFactory)
         {
@@ -50,12 +51,15 @@ namespace Chat.Infrastructure.UnitOfWork
                 using (var conn = await _dbConnectionFactory.OpenConnectionAsync())
                 using (var transaction = conn.BeginTransaction())
                 {
-                    foreach (var operation in _operations)
+                    if (!_operations.IsEmpty)
                     {
-                        await operation.Operation(conn);
-                        if (operation.IsDispatching)
+                        while (_operations.TryDequeue(out var operation))
                         {
-                            await DispatchDomainEventsAsync(operation.Object as Entity);
+                            await operation.Operation(conn).ConfigureAwait(false);
+                            if (operation.IsDispatching)
+                            {
+                                await DispatchDomainEventsAsync(operation.Object as Entity).ConfigureAwait(false);
+                            }
                         }
                     }
 
@@ -64,18 +68,18 @@ namespace Chat.Infrastructure.UnitOfWork
             }
             finally
             {
-                _operations.Clear();
+                _operations = new ConcurrentQueue<OperationDescriptor>();
             }
         }
 
         public void AddOperation(object obj, Func<IDbConnection, Task> operation)
         {
-            _operations.Add(new OperationDescriptor(obj, operation));
+            _operations.Enqueue(new OperationDescriptor(obj, operation));
         }
 
         public void AddOperation(Func<Task> operation)
         {
-            _operations.Add(new OperationDescriptor(new object(), _ => operation()));
+            _operations.Enqueue(new OperationDescriptor(new object(), _ => operation()));
         }
 
         private async Task DispatchDomainEventsAsync(Entity entity)

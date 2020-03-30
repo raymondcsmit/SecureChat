@@ -13,18 +13,12 @@ namespace Chat.API.Application.Queries
 {
     public class FriendshipRequestQueries: IFriendshipRequestQueries
     {
-        private readonly IMapper _mapper;
         private readonly IDbConnectionFactory _dbConnectionFactory;
-        private readonly IUserQueries _userQueries;
 
         public FriendshipRequestQueries(
-            IMapper mapper,
-            IDbConnectionFactory dbConnectionFactory,
-            IUserQueries userQueries)
+            IDbConnectionFactory dbConnectionFactory)
         {
-            _mapper = mapper;
             _dbConnectionFactory = dbConnectionFactory;
-            _userQueries = userQueries;
         }
 
         public async Task<FriendshipRequestDto> GetFriendshipRequestById(string id)
@@ -48,12 +42,9 @@ namespace Chat.API.Application.Queries
                                 LEFT JOIN Profiles p2 ON p2.Id = up2.ProfileId;";
             var (querySpecSql, queryParam) = spec.Apply(querySql);
 
-            var dict = new Dictionary<FriendshipRequestDto, (string, string)>();
-            var count = 0;
-
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                count = await connection.QuerySingleAsync<int>(totalSpecSql, queryParam);
+                var count = await connection.QuerySingleAsync<int>(totalSpecSql, queryParam);
                 var results = await connection.QueryAsync<FriendshipRequestDto, UserDto, ProfileDto, UserDto, ProfileDto, FriendshipRequestDto>(querySpecSql,
                     (r, u1, p1, u2, p2) =>
                     {
@@ -63,7 +54,7 @@ namespace Chat.API.Application.Queries
                         r.Requestee = u2;
                         return r;
                     },
-                    queryParam, splitOn: "Id,Id,Id,Id,Id");
+                    queryParam, splitOn: "Id,Id,Id,Id");
                 return (results, count);
             }
         }

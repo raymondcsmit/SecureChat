@@ -75,16 +75,6 @@ namespace Chat.API.Controllers
         [HttpPatch("{id}", Name = nameof(UpdateUserById))]
         public async Task<IActionResult> UpdateUserById([FromRoute] string id, [FromBody] JsonPatchDocument<UserDto> patch)
         {
-            // TODO - refactor
-            var testDto = UserDto.ValidationUser;
-            patch.ApplyTo(testDto, ModelState);
-            TryValidateModel(testDto);
-            //TryValidateModel(testDto.Profile);
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(new ErrorResponse(ModelState));
-            }
-
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
                 .AllowId(id)
@@ -94,6 +84,16 @@ namespace Chat.API.Controllers
             if (!authHelper.Authorize(_identityService))
             {
                 return Unauthorized();
+            }
+
+            // TODO - refactor
+            var testDto = UserDto.ValidationUser;
+            patch.ApplyTo(testDto, ModelState);
+            TryValidateModel(testDto);
+            //TryValidateModel(testDto.Profile);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse(ModelState));
             }
 
             await _mediator.Publish(new UpdateUserCommand(id, patch));

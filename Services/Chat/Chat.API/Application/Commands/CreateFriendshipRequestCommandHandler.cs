@@ -41,11 +41,11 @@ namespace Chat.API.Application.Commands
             var requestee = await _userRepository.GetByIdAsync(command.RequesteeId);
             if (requester == null || requestee == null)
             {
-                throw new ChatApiException("Could not create friendship request", new[] { $"User(s) not found" });
+                throw new ChatApiException("Could not create friendship request", new[] { "User(s) not found" });
             }
 
             requester.MakeFriendshipRequest(requestee);
-            var request = requester.RequesterFriendshipRequests.First(req => req.RequesteeId == requestee.Id);
+            var request = requester.FriendshipRequests.First(req => req.RequesteeId == requestee.Id);
             _friendshipRequestRepository.Create(request);
             await _userRepository.UnitOfWork.SaveChangesAsync();
 

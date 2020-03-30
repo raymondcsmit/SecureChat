@@ -13,16 +13,20 @@ namespace Chat.Infrastructure.Repositories
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
         private readonly IFriendshipRequestRepository _friendshipRequestRepository;
+        private readonly IFriendshipRepository _friendshipRepository;
+
         public IUnitOfWork UnitOfWork { get; }
 
         public UserRepository(
             IUnitOfWork unitOfWork, 
             IDbConnectionFactory dbConnectionFactory,
-            IFriendshipRequestRepository friendshipRequestRepository)
+            IFriendshipRequestRepository friendshipRequestRepository,
+            IFriendshipRepository friendshipRepository)
         {
             _dbConnectionFactory = dbConnectionFactory;
             _friendshipRequestRepository = friendshipRequestRepository;
             UnitOfWork = unitOfWork;
+            _friendshipRepository = friendshipRepository;
         }
 
         public void Create(User friendship)
@@ -75,8 +79,10 @@ namespace Chat.Infrastructure.Repositories
         public async Task<User> GetByIdAsync(string userId)
         {
             var friendshipRequests = await _friendshipRequestRepository.GetByUserIdAsync(userId);
+            var friendships = await _friendshipRepository.GetByUserIdAsync(userId);
 
-            var sql = $@"SELECT * FROM Users
+            var sql = $@"SELECT Users.*, Profiles.* 
+                        FROM Users
                         LEFT JOIN UserProfileMap ON UserProfileMap.UserId = Users.Id
                         LEFT JOIN Profiles ON UserProfileMap.ProfileId = Profiles.Id
                         WHERE Users.Id = @{nameof(userId)}
@@ -84,17 +90,17 @@ namespace Chat.Infrastructure.Repositories
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                var result = await connection.QueryAsync<dynamic, dynamic, Profile, (dynamic, Profile)>(
+                var result = await connection.QueryAsync<dynamic, Profile, (dynamic, Profile)>(
                     sql,
-                    (u, _, p) => (u, p),
+                    (u, p) => (u, p),
                     new
                     {
                         userId
                     },
-                    splitOn: "userId,id");
+                    splitOn: "id");
                 var (user, profile) = result.FirstOrDefault();
 
-                return user == null ? null : new User(user.Id, user.UserName, user.Email, profile, friendshipRequests);
+                return user == null ? null : new User(user.Id, user.UserName, user.Email, profile, friendshipRequests, friendships);
             }
         }
 

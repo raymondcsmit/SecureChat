@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EntityConfigurations\**" />
+    <EmbeddedResource Remove="EntityConfigurations\**" />
+    <None Remove="EntityConfigurations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="2.2.0" />
@@ -16,10 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\Chat.Domain\Chat.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="EntityConfigurations\" />
   </ItemGroup>
 
 </Project>

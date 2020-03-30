@@ -10,7 +10,6 @@ namespace SecureChat.Common.Events.EventBus
     {
         private readonly Dictionary<string, List<SubscriptionInfo>> _handlers;
         private readonly List<Type> _eventTypes;
-        private Guid guid = Guid.NewGuid();
 
         public event EventHandler<string> OnEventRemoved;
 

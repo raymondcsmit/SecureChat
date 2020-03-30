@@ -22,7 +22,7 @@ namespace Chat.API.Application.Specifications
 
             if (requesteeId != null)
             {
-                var requesterCriteria = new Criteria("RequesteeId", "FriendshipRequests", requesteeId);
+                var requesterCriteria = new Criteria("Requestee", "FriendshipRequests", requesteeId);
                 base.AddCriteria(new[] {requesterCriteria});
             }
 
@@ -39,8 +39,8 @@ namespace Chat.API.Application.Specifications
                 throw new InvalidOperationException();
             }
 
-            var requesterCriteria = new Criteria("RequesteeId", "FriendshipRequests", requesteeId);
-            var requesteeCriteria = new Criteria("RequesterId", "FriendshipRequests", requesterId);
+            var requesterCriteria = new Criteria("Requestee", "FriendshipRequests", requesteeId);
+            var requesteeCriteria = new Criteria("Requester", "FriendshipRequests", requesterId);
             base.AddCriteria(new[] { requesterCriteria, requesteeCriteria });
         }
     }

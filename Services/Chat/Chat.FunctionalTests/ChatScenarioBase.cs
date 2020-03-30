@@ -24,6 +24,7 @@ namespace Chat.FunctionalTests.Scenarios
 
         private const string UsersBaseUrl = "http://localhost/api/users";
         private const string FriendshipRequestsBaseUrl = "http://localhost/api/friendship-requests";
+        private const string FriendshipsBaseUrl = "http://localhost/api/friendships";
 
         public static class Get
         {
@@ -33,8 +34,11 @@ namespace Chat.FunctionalTests.Scenarios
             public static string FriendshipRequestById(string id)
                 => $"{FriendshipRequestsBaseUrl}/{id}";
 
-            public static string FriendshipRequestsByRequesteeId(string id)
-                => $"{UsersBaseUrl}/{id}/friendship-requests";
+            public static string FriendshipRequestsByRequesteeId(string requesteeId)
+                => $"{UsersBaseUrl}/{requesteeId}/friendship-requests";
+
+            public static string FriendshipsByUserId(string userId)
+                => $"{UserById(userId)}/friendships";
 
             public static string Users()
                 => UsersBaseUrl;
@@ -56,6 +60,9 @@ namespace Chat.FunctionalTests.Scenarios
 
             public static string UserById(string id)
                 => $"{UsersBaseUrl}/{id}";
+
+            public static string UpdateFriendshipRequestStatusById(string id)
+                => $"{FriendshipRequestsBaseUrl}/{id}";
         }
     }
 }

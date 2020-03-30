@@ -246,6 +246,205 @@ namespace Chat.FunctionalTests.Scenarios
             Assert.True(responseArr.Total == 0);
         }
 
+        [Fact]
+        public async Task GetFriendshipRequestsByRequesteeAndRequesterIds_ShouldReturnListOfFriendshipRequests_OnExistingFriendshipRequestsAndExistingRequesteeAndExistingRequester()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+
+            var friendshipRequestId = await CreateTestFriendshipRequestAsync(alice.Id, bob.Id);
+
+            var query = new
+            {
+                criteria = new { requester = alice.Id },
+                pagination = new
+                {
+                    limit = 10,
+                    offset = 0
+                }
+            };
+
+            var uri = UriHelpers.BuildUri(Get.FriendshipRequestsByRequesteeId(bob.Id), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseArr = JsonConvert.DeserializeObject<ArrayResponse<FriendshipRequestDto>>(responseStr);
+
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(responseArr.Items.Count() == 1);
+            var friendshipRequest = responseArr.Items.First();
+            Assert.True(friendshipRequest.Id == friendshipRequestId);
+            Assert.True(friendshipRequest.Requester.Id == alice.Id);
+            Assert.True(friendshipRequest.Requestee.Id == bob.Id);
+            Assert.True(responseArr.Total == 1);
+        }
+
+        [Fact]
+        public async Task GetFriendshipRequestsByRequesteeAndRequesterIds_ShouldReturnEmptyList_OnNonexistingRequester()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+
+            var friendshipRequestId = await CreateTestFriendshipRequestAsync(alice.Id, bob.Id);
+
+            var query = new
+            {
+                criteria = new { requester = "gibberish" },
+                pagination = new
+                {
+                    limit = 10,
+                    offset = 0
+                }
+            };
+
+            var uri = UriHelpers.BuildUri(Get.FriendshipRequestsByRequesteeId(alice.Id), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseArr = JsonConvert.DeserializeObject<ArrayResponse<FriendshipRequestDto>>(responseStr);
+
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(!responseArr.Items.Any());
+            Assert.True(responseArr.Total == 0);
+        }
+
+        [Fact]
+        public async Task UpdateFriendshipRequestStatusById_ShouldReturnNoContent_OnExistingId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+
+            var friendshipRequestId = await CreateTestFriendshipRequestAsync(alice.Id, bob.Id);
+
+            var update = new
+            {
+                Outcome = "accepted"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(update), Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync(Patch.UpdateFriendshipRequestStatusById(friendshipRequestId), content);
+
+            Assert.True(response.StatusCode == HttpStatusCode.NoContent);
+        }
+
+        [Theory]
+        [InlineData("accepted")]
+        [InlineData("rejected")]
+        public async Task UpdateFriendshipRequestStatusById_ShouldSetCorrectOutcomeRequest_OnExistingId(string outcome)
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+
+            var friendshipRequestId = await CreateTestFriendshipRequestAsync(alice.Id, bob.Id);
+
+            var update = new
+            {
+                Outcome = outcome
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(update), Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync(Patch.UpdateFriendshipRequestStatusById(friendshipRequestId), content);
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<IFriendshipRequestRepository>();
+                var result = await repo.GetByIdAsync(friendshipRequestId);
+                Assert.Equal(update.Outcome, result.Outcome);
+            }
+        }
+
+        [Fact]
+        public async Task UpdateFriendshipRequestStatusById_ShouldReturnNotFound_OnNonExistingId()
+        {
+            var client = CreateClient();
+
+            var update = new
+            {
+                Outcome = "accepted"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(update), Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync(Patch.UpdateFriendshipRequestStatusById("gibberish"), content);
+
+            Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task UpdateFriendshipRequestStatusById_ShouldCreateFriendship_OnAcceptAndExistingId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+
+            var friendshipRequestId = await CreateTestFriendshipRequestAsync(alice.Id, bob.Id);
+
+            var update = new
+            {
+                Outcome = "accepted"
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(update), Encoding.UTF8, "application/json");
+            var response = await client.PatchAsync(Patch.UpdateFriendshipRequestStatusById(friendshipRequestId), content);
+
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+                var user = await repo.GetByIdAsync(alice.Id);
+                Assert.Contains(user.Friendships, f => f.User2Id == bob.Id);
+            }
+        }
+
+        [Fact]
+        public async Task GetFriendshipsByUserId_ShouldReturnFriendships_OnExistingUserId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            var sam = new User("3", "sam", "sam@sam.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+            await CreateTestUserAsync(sam);
+            await CreateTestFriendshipAsync(alice.Id, bob.Id);
+            await CreateTestFriendshipAsync(bob.Id, sam.Id);
+            await CreateTestFriendshipAsync(sam.Id, alice.Id);
+
+            var query = new
+            {
+                pagination = new
+                {
+                    limit = 10,
+                    offset = 0
+                }
+            };
+
+            var uri = UriHelpers.BuildUri(Get.FriendshipsByUserId(alice.Id), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseArr = JsonConvert.DeserializeObject<ArrayResponse<FriendshipDto>>(responseStr);
+
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.True(responseArr.Items.Count() == 2);
+            Assert.True(responseArr.Total == 2);
+        }
+
         private HttpClient CreateClient()
         {
             var client = TestServerFixture.TestServer.CreateClient();
@@ -272,6 +471,18 @@ namespace Chat.FunctionalTests.Scenarios
                 repo.Create(friendshipRequest);
                 await repo.UnitOfWork.SaveChangesAsync();
                 return friendshipRequest.Id;
+            }
+        }
+
+        private async Task<string> CreateTestFriendshipAsync(string user1, string user2)
+        {
+            using (var scope = TestServerFixture.TestServer.Host.Services.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<IFriendshipRepository>();
+                var friendship = new Friendship(user1, user2);
+                repo.Create(friendship);
+                await repo.UnitOfWork.SaveChangesAsync();
+                return friendship.Id;
             }
         }
 

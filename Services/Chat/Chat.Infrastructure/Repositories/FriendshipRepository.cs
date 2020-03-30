@@ -23,9 +23,9 @@ namespace Chat.Infrastructure.Repositories
 
         public void Create(Friendship friendship)
         {
-            var sql = $@"INSERT INTO Friendships (Id, UserId1, UserId2)
-                              VALUES (@{nameof(Friendship.UserId1)},
-                                      @{nameof(Friendship.UserId2)});";
+            var sql = $@"INSERT INTO Friendships (User1Id, User2Id)
+                              VALUES (@{nameof(Friendship.User1Id)},
+                                      @{nameof(Friendship.User2Id)});";
 
             UnitOfWork.AddOperation(friendship, async connection =>
                 await connection.ExecuteAsync(sql, friendship));
@@ -38,7 +38,7 @@ namespace Chat.Infrastructure.Repositories
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                return await connection.QueryFirstAsync<Friendship>(sql, new { id });
+                return await connection.QueryFirstOrDefaultAsync<Friendship>(sql, new { id });
             }
         }
 
@@ -50,6 +50,17 @@ namespace Chat.Infrastructure.Repositories
         public void Update(Friendship entity)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IEnumerable<Friendship>> GetByUserIdAsync(string id)
+        {
+            var sql = $@"SELECT * FROM Friendships
+                                WHERE Friendships.User1Id = @{nameof(id)} OR Friendships.User2Id = @{nameof(id)};";
+
+            using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
+            {
+                return await connection.QueryAsync<Friendship>(sql, new { id });
+            }
         }
     }
 }

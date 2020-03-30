@@ -60,7 +60,7 @@ namespace Chat.Infrastructure.Repositories
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
-                return await connection.QueryFirstAsync<FriendshipRequest>(sql, new { id });
+                return await connection.QueryFirstOrDefaultAsync<FriendshipRequest>(sql, new { id });
             }
         }
 

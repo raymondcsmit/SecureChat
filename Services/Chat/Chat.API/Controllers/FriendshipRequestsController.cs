@@ -47,6 +47,11 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse(ModelState));
+            }
+
             var friendshipRequestDto = await _mediator.Send(makeFriendshipRequestCommand);
             var url = Url.Action(nameof(GetFriendshipRequestById), new { id = friendshipRequestDto.Id });
             return Created(url, friendshipRequestDto);
@@ -109,8 +114,8 @@ namespace Chat.API.Controllers
             return Ok(new ArrayResponse<FriendshipRequestDto>(friendshipRequests, count));
         }
 
-        [HttpGet("users/{requesteeId}/friendship-requests/{requesterId}", Name = nameof(GetFriendshipRequestByRequesterAndRequesteeIds))]
-        public async Task<IActionResult> GetFriendshipRequestByRequesterAndRequesteeIds(string requesterId, string requesteeId)
+        [HttpPatch("friendship-requests/{id}", Name = nameof(UpdateFriendshipRequestStatusById))]
+        public async Task<IActionResult> UpdateFriendshipRequestStatusById([FromRoute] string id, [FromBody] UpdateFriendshipRequestStatusCommand command)
         {
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()
@@ -122,9 +127,14 @@ namespace Chat.API.Controllers
                 return Unauthorized();
             }
 
-            var spec = new FriendshipRequestSpecification(requesterId, requesteeId);
-            var friendshipRequest = await _friendshipRequestQueries.GetFriendshipRequests(spec);
-            return Ok(friendshipRequest);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ErrorResponse(ModelState));
+            }
+
+            command.Id = id;
+            await _mediator.Publish(command);
+            return NoContent();
         }
     }
 }

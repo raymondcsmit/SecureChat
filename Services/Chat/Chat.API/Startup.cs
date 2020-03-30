@@ -91,6 +91,7 @@ namespace Chat.API
             
             services.AddTransient<IUserQueries, UserQueries>();
             services.AddTransient<IFriendshipRequestQueries, FriendshipRequestQueries>();
+            services.AddTransient<IFriendshipQueries, FriendshipQueries>();
 
             services.AddScoped<IUnitOfWork, SqlUnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();

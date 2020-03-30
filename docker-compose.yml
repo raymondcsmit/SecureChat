@@ -84,6 +84,3 @@ services:
     build: 
       context: ./Infrastructure/eureka/service
     restart: always
-
-  healthchecksui:
-    image: xabarilcoding/healthchecksui

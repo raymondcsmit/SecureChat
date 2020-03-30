@@ -41,20 +41,19 @@ namespace Chat.Domain.AggregateModel.UserAggregate
 
         public void Accept()
         {
-            if (Outcome != default)
+            if (Outcome == Outcomes.Accepted)
             {
-                throw new ChatDomainException($"Friendship request has already been {Outcome}");
+                throw new ChatDomainException($"Friendship request has already been accepted");
             }
 
             Outcome = Outcomes.Accepted;
-            AddDomainEvent(new FriendshipRequestAcceptedDomainEvent(this));
         }
 
         public void Reject()
         {
-            if (Outcome != null)
+            if (!IsPending)
             {
-                throw new ChatDomainException($"Friendship request has already been {Outcome}");
+                throw new ChatDomainException($"Friendship request has already been accepted or rejected");
             }
 
             Outcome = Outcomes.Rejected;
