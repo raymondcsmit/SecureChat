@@ -4,7 +4,6 @@ using Account.API.Application.IntegrationEvents.Events;
 using Account.API.Application.Queries;
 using Account.API.Infrastructure;
 using Account.API.Infrastructure.Filters;
-using Account.API.Infrastructure.HealthChecks;
 using Account.API.Models;
 using Account.API.Services;
 using Account.API.Services.Email;
@@ -19,8 +18,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +26,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
-using Steeltoe.Discovery.Client;
 
 namespace Account.API
 {
@@ -46,8 +42,6 @@ namespace Account.API
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddDiscoveryClient(Configuration);
-
             services.AddMvc(options =>
             {
                 //var policy = new AuthorizationPolicyBuilder()
@@ -110,6 +104,7 @@ namespace Account.API
                 options.UserName = Configuration["EventBusUserName"];
                 options.Password = Configuration["EventBusPassword"];
                 options.QueueName = Configuration["EventBusQueueName"];
+                options.RetryCount = 10;
             }, typeof(Startup).Assembly);
 
             services.AddScoped<AccountDbContextSeed>();
@@ -119,8 +114,10 @@ namespace Account.API
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddHealthChecks()
-                .AddCheck("self-check", () => HealthCheckResult.Healthy())
-                .AddCheck("db-check", new MySqlConnectionHealthCheck(Configuration["ConnectionString"]));
+                .AddCheck("self-check", () => HealthCheckResult.Healthy(), tags: new[] { "self" })
+                .AddMySql(Configuration["ConnectionString"], name: "db-check", tags: new[] { "db" })
+                .AddRabbitMQ($"amqp://{Configuration["EventBusUserName"]}:{Configuration["EventBusPassword"]}@{Configuration["EventBusConnection"]}", 
+                    name: "rabbitmq-check", tags: new string[] { "rabbitmq" });
 
             services.AddAutoMapper(config =>
                 {
@@ -148,13 +145,6 @@ namespace Account.API
 
             app.UseHealthChecks("/health", new HealthCheckOptions
             {
-                Predicate = r => r.Name.Contains("self-check"),
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
-            app.UseHealthChecks("/readiness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("db-check"),
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
@@ -163,8 +153,6 @@ namespace Account.API
             app.UseAuthentication();
 
             app.UseMvc();
-
-            app.UseDiscoveryClient();
 
             app.ConfigureEventBus();
         }

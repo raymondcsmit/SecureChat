@@ -102,7 +102,7 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                                      body: body);
                 });
 
-                _logger.LogTrace($"Published {@event.GetType().Name}");
+                _logger.LogInformation($"Published {@event.GetType().Name}");
             }
         }
 
@@ -235,7 +235,7 @@ namespace SecureChat.Common.Events.EventBusRabbitMQ
                         }
                     }
 
-                    _logger.LogTrace($"Consumed {eventName}");
+                    _logger.LogInformation($"Consumed {eventName}");
                 }
             }
         }

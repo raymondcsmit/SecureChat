@@ -11,7 +11,7 @@ namespace Helpers.Resilience
 {
     public class DatabaseResiliencePolicy : IDatabaseResiliencePolicy
     {
-        private const int RetryCount = 3;
+        private const int RetryCount = 10;
         private const int RetryDelay = 3000;
         private const int CircuitBreakerCount = 10;
         private const int CircuitBreakerDelay = 10000;

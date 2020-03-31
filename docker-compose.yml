@@ -9,7 +9,7 @@ services:
     restart: always
     depends_on:
       - mysql
-      - account.service
+      - rabbitmq
 
   account.service:
     container_name: account.service
@@ -19,6 +19,8 @@ services:
     restart: always
     depends_on:
       - mysql
+      - rabbitmq
+      - auth.service
 
   chat.service:
     container_name: chat.service
@@ -29,6 +31,7 @@ services:
     depends_on:
       - mysql
       - account.service
+      - rabbitmq
 
   registration.app:
     container_name: registration.app
@@ -80,7 +83,9 @@ services:
       - registration.app
       - angularspa.app
 
-  eureka:
-    build: 
-      context: ./Infrastructure/eureka/service
-    restart: always
+  healthchecksui:
+    image: xabarilcoding/healthchecksui
+    depends_on:
+        - auth.service
+        - account.service
+        - chat.service

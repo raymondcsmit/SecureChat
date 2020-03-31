@@ -12,6 +12,8 @@ services:
         PasswordResetUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:6002/password-reset
     extra_hosts:
         - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
+    healthcheck:
+        test: ["CMD", "curl --fail auth.service/health || exit"]
 
   account.service:
     environment:
@@ -29,6 +31,10 @@ services:
       BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
+    ports:
+        - "5002:80"
+    healthcheck:
+        test: ["CMD", "curl --fail account.service/health || exit"]
 
   chat.service:
     environment:
@@ -43,6 +49,10 @@ services:
       BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
+    ports:
+        - "5003:80"
+    healthcheck:
+        test: ["CMD", "curl --fail chat.service/health || exit"]
 
   registration.app:
     environment:
@@ -116,13 +126,6 @@ services:
       - "6002:6002"
     volumes:
       - './Infrastructure/nginx/config/nginx.dev.conf:/etc/nginx/nginx.conf'
-
-  eureka:
-    ports:
-      - "8761:8761"
-    volumes:
-      - ./Infrastructure/eureka/config:/tmp/config
-      - ./Infrastructure/eureka/logs:/tmp/logs
   
   mysql:
     ports:
@@ -134,9 +137,6 @@ services:
       - ./Infrastructure/mysql/data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p12345"]
-      interval: 10s
-      timeout: 60s
-      retries: 5
 
   flyway:
     entrypoint:
@@ -157,3 +157,14 @@ services:
         MYSQL_USERNAME: root
         MYSQL_ROOT_PASSWORD: "12345"
         PMA_HOST: mysql
+
+  healthchecksui:
+    environment:
+        - HealthChecksUI__HealthChecks__0__Name=Auth Service Check
+        - HealthChecksUI__HealthChecks__0__Uri=http://auth.service/health
+        - HealthChecksUI__HealthChecks__1__Name=Account Service Check
+        - HealthChecksUI__HealthChecks__1__Uri=http://account.service/health
+        - HealthChecksUI__HealthChecks__2__Name=Chat Service Check
+        - HealthChecksUI__HealthChecks__2__Uri=http://chat.service/health
+    ports:
+        - "5004:80"

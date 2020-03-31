@@ -8,7 +8,6 @@ using Chat.API.Services;
 using Chat.Domain.AggregateModel.UserAggregate;
 using Chat.Domain.SeedWork;
 using Chat.Infrastructure;
-using Chat.Infrastructure.HealthChecks;
 using Chat.Infrastructure.Repositories;
 using Chat.Infrastructure.UnitOfWork;
 using HealthChecks.UI.Client;
@@ -30,7 +29,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
-using Steeltoe.Discovery.Client;
 
 namespace Chat.API
 {
@@ -47,8 +45,6 @@ namespace Chat.API
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddDiscoveryClient(Configuration);
-
             services.AddMvc(options =>
             {
                 //var policy = new AuthorizationPolicyBuilder()
@@ -88,7 +84,7 @@ namespace Chat.API
             services.Configure<DbConnectionInfo>(Configuration);
             services.AddTransient<IDatabaseResiliencePolicy, DatabaseResiliencePolicy>();
             services.AddScoped<IDbConnectionFactory, ResilientMySqlConnectionFactory>();
-            
+
             services.AddTransient<IUserQueries, UserQueries>();
             services.AddTransient<IFriendshipRequestQueries, FriendshipRequestQueries>();
             services.AddTransient<IFriendshipQueries, FriendshipQueries>();
@@ -104,6 +100,7 @@ namespace Chat.API
                 options.UserName = Configuration["EventBusUserName"];
                 options.Password = Configuration["EventBusPassword"];
                 options.QueueName = Configuration["EventBusQueueName"];
+                options.RetryCount = 10;
             }, typeof(Startup).Assembly);
 
             services.AddScoped<DatabaseSeed>();
@@ -112,8 +109,10 @@ namespace Chat.API
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddHealthChecks()
-                .AddCheck("self-check", () => HealthCheckResult.Healthy())
-                .AddCheck("db-check", new MySqlConnectionHealthCheck(Configuration["ConnectionString"]));
+                    .AddCheck("self-check", () => HealthCheckResult.Healthy(), tags: new[] { "self" })
+                    .AddMySql(Configuration["ConnectionString"], name: "db-check", tags: new[] { "db" })
+                    .AddRabbitMQ($"amqp://{Configuration["EventBusUserName"]}:{Configuration["EventBusPassword"]}@{Configuration["EventBusConnection"]}",
+                        name: "rabbitmq-check", tags: new string[] { "rabbitmq" });
 
             services.AddAutoMapper(config =>
             {
@@ -138,13 +137,6 @@ namespace Chat.API
 
             app.UseHealthChecks("/health", new HealthCheckOptions
             {
-                Predicate = r => r.Name.Contains("self-check"),
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
-            app.UseHealthChecks("/readiness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("db-check"),
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
@@ -153,8 +145,6 @@ namespace Chat.API
             app.UseAuthentication();
 
             app.UseMvc();
-
-            app.UseDiscoveryClient();
 
             app.ConfigureEventBus();
         }

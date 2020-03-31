@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Steeltoe.Discovery.Client;
 
 namespace Auth
 {
@@ -35,8 +34,6 @@ namespace Auth
             var migrationsAssembly = typeof(Startup).Assembly.FullName;
 
             services.Configure<AuthSettings>(Configuration);
-
-            services.AddDiscoveryClient(Configuration);
 
             services.AddApplicationInsightsTelemetry(Configuration);
 
@@ -114,22 +111,16 @@ namespace Auth
                 app.UseDatabaseErrorPage();
             }
 
-            app.UseHealthChecks("/hc", new HealthCheckOptions
+            app.UseHealthChecks("/health", new HealthCheckOptions
             {
-                Predicate = r => r.Name.Contains("self"),
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
-            app.UseHealthChecks("/readiness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("db"),
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
             app.UseIdentityServer();
+
             app.UseStaticFiles();
+
             app.UseMvcWithDefaultRoute();
-            app.UseDiscoveryClient();
         }
     }
 }

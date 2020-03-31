@@ -58,44 +58,54 @@ namespace Account.API.Infrastructure
 
         public async Task SeedAsync()
         {
-            if (_roleManager.Roles.Any() || _userManager.Users.Any())
+            if (_roleManager.Roles.Any())
             {
-                _logger.LogInformation("Identity DB already seeded. Aborting.");
+                _logger.LogInformation("Account DB roles already seeded. Aborting.");
                 return;
             }
-
-            var roles = await LoadRoles();
-            foreach (var roleInfo in roles)
+            else
             {
-                var role = await _roleManager.FindByNameAsync(roleInfo.Name);
-                if (role == null)
+                var roles = await LoadRoles();
+                foreach (var roleInfo in roles)
                 {
-                    role = new IdentityRole(roleInfo.Name);
-                    await _roleManager.CreateAsync(role);
-                    var permissionClaims = roleInfo.Permissions
-                        .Select(perm => new Claim("permission", perm))
-                        .ToList();
-                    foreach (var claim in permissionClaims)
+                    var role = await _roleManager.FindByNameAsync(roleInfo.Name);
+                    if (role == null)
                     {
-                        await _roleManager.AddClaimAsync(role, claim);
+                        role = new IdentityRole(roleInfo.Name);
+                        await _roleManager.CreateAsync(role);
+                        var permissionClaims = roleInfo.Permissions
+                            .Select(perm => new Claim("permission", perm))
+                            .ToList();
+                        foreach (var claim in permissionClaims)
+                        {
+                            await _roleManager.AddClaimAsync(role, claim);
+                        }
                     }
                 }
             }
 
-            foreach (var userInfo in await LoadUsers())
+            if ( _userManager.Users.Any())
             {
-                var user = await _userManager.FindByNameAsync(userInfo.UserName);
-                if (user == null)
+                _logger.LogInformation("Account DB users already seeded. Aborting.");
+                return;
+            }
+            else
+            {
+                foreach (var userInfo in await LoadUsers())
                 {
-                    user = new User
+                    var user = await _userManager.FindByNameAsync(userInfo.UserName);
+                    if (user == null)
                     {
-                        UserName = userInfo.UserName,
-                        Email = userInfo.Email
-                    };
-                    await _userManager.CreateAsync(user, userInfo.Password);
-                    user = await _userManager.FindByNameAsync(userInfo.UserName);
-                    await _rolePermissionsService.AddRolePermissionsAsync(user, userInfo.Roles.ToArray());
-                    _eventBus.Publish(new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
+                        user = new User
+                        {
+                            UserName = userInfo.UserName,
+                            Email = userInfo.Email
+                        };
+                        await _userManager.CreateAsync(user, userInfo.Password);
+                        user = await _userManager.FindByNameAsync(userInfo.UserName);
+                        await _rolePermissionsService.AddRolePermissionsAsync(user, userInfo.Roles.ToArray());
+                        _eventBus.Publish(new UserAccountCreatedIntegrationEvent(user.Id, user.UserName, user.Email));
+                    }
                 }
             }
         }
