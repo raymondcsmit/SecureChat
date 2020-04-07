@@ -3,7 +3,7 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { mergeMap, tap, take, finalize } from 'rxjs/operators';
-import { SetGlobalBusy } from '../actions/actions';
+import { SetGlobalBusy } from '../actions/core.actions';
 
 @Injectable({
   providedIn: 'root'

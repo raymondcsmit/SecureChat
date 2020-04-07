@@ -6,7 +6,7 @@ import { AuthRoutingModule, routes } from './auth-routing.module';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { reducers } from './reducers';
-import { ChatGuardService } from '../chat/services/chat-guard.service';
+import { ChatGuardService } from '../chat-root/services/chat-guard.service';
 import { AuthEffects } from './effects/auth.effects';
 import { UserManager } from 'oidc-client';
 import { environment } from '../../environments/environment';
@@ -34,7 +34,6 @@ export class AuthModule {
     return {
       ngModule: AuthModule, 
       providers: [
-        ChatGuardService,
         LoginPageGuardService,
         { 
           provide: UserManager,
@@ -45,7 +44,7 @@ export class AuthModule {
               redirect_uri: `${window.location.origin}/auth/sign-in-callback`,
               post_logout_redirect_uri: `${window.location.origin}/auth/sign-out-callback`,
               response_type:"id_token token",
-              scope:"openid profile account chat permissions email",
+              scope:"openid profile account users permissions email",
               filterProtocolClaims: true,
               loadUserInfo: true,
               checkSessionInterval: 2000

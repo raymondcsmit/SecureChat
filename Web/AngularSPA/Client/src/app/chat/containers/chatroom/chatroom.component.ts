@@ -1,11 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { getChatById, getMessagesByChatId, getUsersById } from '../../reducers';
 import { Observable } from 'rxjs';
 import { Chatroom } from '../../models/Chatroom';
 import { map, exhaustMap } from 'rxjs/operators';
 import { Message } from '../../models/Message';
-import { User } from '../../models/User';
+import { User } from '../../../user/models/User';
+import { getChatById, getMessagesByChatId } from '../../reducers';
+import { getUsersById } from 'src/app/user/reducers';
 
 @Component({
   selector: 'app-chatroom',

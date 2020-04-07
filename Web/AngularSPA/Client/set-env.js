@@ -10,6 +10,7 @@ const envFile = `export const environment = {
   authorityUrl: "${process.env.AuthUrl}",
   clientId: "${process.env.ClientId}",
   accountApi: "${process.env.AccountApiUrl}",
+  usersApi: "${process.env.UsersApiUrl}",
   chatApi: "${process.env.ChatApiUrl}"
 }`
 

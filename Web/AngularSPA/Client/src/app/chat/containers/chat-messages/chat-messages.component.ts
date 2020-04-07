@@ -2,11 +2,12 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Message } from '../../models/Message';
 import { Observable } from 'rxjs';
-import { getUserById, getMessagesByChatId, getSelf } from '../../reducers';
 import { map } from 'rxjs/operators';
 import { SendMessage } from '../../actions/message.actions';
-import { User } from 'src/app/chat/models/User';
+import { User } from 'src/app/user/models/User';
 import * as fromAuth from '../../../auth/reducers';
+import { getMessagesByChatId } from '../../reducers';
+import { getSelf, getUserById } from 'src/app/user/reducers';
 
 @Component({
   selector: 'app-chat-messages',

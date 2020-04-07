@@ -1,4 +1,4 @@
-import { CoreActionTypes, CoreActionsUnion } from '../actions/actions';
+import { CoreActionTypes, CoreActionsUnion } from '../actions/core.actions';
 
 export interface State {
     busy: boolean[];

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { getPrivateChats, getUserById, getSelectedPrivateChatId } from '../../reducers';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SelectChat, CloseChat } from '../../actions/chat.actions';
 import { map } from 'rxjs/operators';
 import { Chat } from '../../models/Chat';
+import { getPrivateChats, getSelectedPrivateChatId } from '../../reducers';
+import { getUserById } from 'src/app/user/reducers';
 
 @Component({
   selector: 'app-chats',

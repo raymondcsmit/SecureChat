@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Message } from '../../models/Message';
-import { User } from 'src/app/chat/models/User';
+import { User } from 'src/app/user/models/User';
 
 @Component({
   selector: 'app-message',

@@ -13,12 +13,14 @@ import { FooterComponent } from './components/footer/footer.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from '../auth/auth.module';
 import { MaterialModule } from '../material/material.module';
-import { ChatGuardService } from '../chat/services/chat-guard.service';
+import { ChatGuardService } from '../chat-root/services/chat-guard.service';
 import { SetGlobalBusyInterceptorService } from './services/set-global-busy-interceptor.service';
 import { ErrorComponent } from './components/error/error.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../../environments/environment';
 import { ConnectFormDirective } from './directives/connect-form.directive';
+import { LoginPageGuardService } from '../auth/services/login-page-guard.service';
+import { ChatRootModule } from '../chat-root/chat-root.module';
 
 export const COMPONENTS = [
   AppComponent,
@@ -44,7 +46,7 @@ export const COMPONENTS = [
     }),
     EffectsModule.forRoot([]),
     AuthModule.forRoot(),
-    MaterialModule,
+    MaterialModule
   ],
   providers: [
     ChatGuardService,

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Observable, combineLatest } from 'rxjs';
-import { getChatroomsByOwnerId, getAllMessages, getFriends, getSelf } from '../../reducers';
+import { getChatroomsByOwnerId, getAllMessages } from '../../reducers';
 import { exhaustMap, take, switchMap } from 'rxjs/operators';
-import { User } from 'src/app/chat/models/User';
+import { User } from 'src/app/user/models/User';
 import { DeleteChatroom, InviteFriends } from '../../actions/chat.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
-import { InviteFriendComponent, InviteFriendDialogResult } from '../invite-friend/invite-friend.component';
+import { InviteFriendComponent, InviteFriendDialogResult } from '../../../user/containers/invite-friend/invite-friend.component';
+import { getSelf, getFriends } from 'src/app/user/reducers';
 
 interface ChatroomInfo {
   id: string;

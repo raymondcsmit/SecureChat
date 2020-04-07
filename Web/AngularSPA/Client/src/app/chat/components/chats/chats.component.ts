@@ -1,13 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Store, select } from '@ngrx/store';
-import { LoadEntities } from '../../actions/entity.actions';
-import { getChatrooms, getPrivateChats, getUserById } from '../../reducers';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { SelectChat, SelectChatroom, CloseChat } from '../../actions/chat.actions';
-import { map } from 'rxjs/operators';
-import { Message } from '../../models/Message';
-import { Chat } from '../../models/Chat';
 
 @Component({
   selector: 'app-chats',

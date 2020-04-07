@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable, of, from } from 'rxjs';
-import { User } from 'src/app/chat/models/User';
+import { User } from 'src/app/user/models/User';
 import { Store, select } from '@ngrx/store';
-import { getChatById, getUserById } from '../../reducers';
 import { map, concatMap } from 'rxjs/operators';
+import { getChatById } from '../../reducers';
+import { getUserById } from 'src/app/user/reducers';
 
 @Component({
   selector: 'app-chatroom-members',

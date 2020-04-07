@@ -22,11 +22,11 @@ services:
       - rabbitmq
       - auth.service
 
-  chat.service:
-    container_name: chat.service
+  users.service:
+    container_name: users.service
     build: 
       context: .
-      dockerfile: Services/Chat/Chat.API/Dockerfile
+      dockerfile: Services/Users/Users.API/Dockerfile
     restart: always
     depends_on:
       - mysql
@@ -53,13 +53,13 @@ services:
     depends_on:
       - account.service
 
-  chat.apigw:
-    container_name: chat.apigw
-    image: chat.apigw
+  users.apigw:
+    container_name: users.apigw
+    image: users.apigw
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
-      - chat.service
+      - users.service
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -88,4 +88,4 @@ services:
     depends_on:
         - auth.service
         - account.service
-        - chat.service
+        - users.service

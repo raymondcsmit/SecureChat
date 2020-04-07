@@ -1,5 +1,5 @@
 import { ChatActionsUnion, ChatActionTypes } from "../actions/chat.actions";
-import { EntityActionsUnion, EntityActionTypes, isEntityAction } from "../actions/entity.actions";
+import { EntityActionsUnion, EntityActionTypes, isEntityAction } from "../../core/actions/entity.actions";
 import { Chat } from "../models/Chat";
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import * as _ from "lodash";

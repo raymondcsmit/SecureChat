@@ -1,5 +1,5 @@
 import { ChatActionsUnion, ChatActionTypes } from "../actions/chat.actions";
-import { EntityActionsUnion, EntityActionTypes, isEntityAction } from "../actions/entity.actions";
+import { EntityActionsUnion, EntityActionTypes, isEntityAction } from "../../core/actions/entity.actions";
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { Message } from "../models/Message";
 import { MessageActionsUnion, MessageActionTypes } from "../actions/message.actions";

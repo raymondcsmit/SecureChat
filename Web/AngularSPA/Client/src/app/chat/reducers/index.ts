@@ -1,12 +1,10 @@
 import * as fromChats from './chat.reducer';
-import * as fromUsers from './user.reducer';
 import * as fromMessages from './message.reducer';
 import * as fromRoot from '../../core/reducers';
 import { ActionReducerMap, createFeatureSelector, createSelector } from '@ngrx/store';
 
 export interface ChatModuleState {
     chats: fromChats.State;
-    users: fromUsers.State,
     messages: fromMessages.State
 }
 
@@ -16,7 +14,6 @@ export interface State extends fromRoot.State {
 
 export const reducers: ActionReducerMap<ChatModuleState> = {
     chats: fromChats.reducer,
-    users: fromUsers.reducer,
     messages: fromMessages.reducer
 };
 
@@ -38,21 +35,6 @@ export const getNewMessageCountById = (id: string) => createSelector(getChatsSta
 export const getChatroomsByOwnerId = (id: string) => createSelector(getChatsState, fromChats.selectChatroomsByOwnerId(id));
 export const getSelectedChatroomId = createSelector(getChatsState, fromChats.selectSelectedChatroomId);
 export const getSelectedPrivateChatId = createSelector(getChatsState, fromChats.selectSelectedPrivateChatId);
-
-// users
-export const getUsersState = createSelector(
-    getChatModuleState,
-    (state: ChatModuleState) => state.users
-);
-
-export const getUserIds = createSelector(getUsersState, fromUsers.selectUserIds);
-export const getAllUsers = createSelector(getUsersState, fromUsers.selectUsers);
-export const getUserTotal = createSelector(getUsersState, fromUsers.selectUserCount);
-export const getUserById = (id: string) => createSelector(getUsersState, fromUsers.selectUserById(id));
-export const getUsersById = (ids: string[]) => createSelector(getUsersState, fromUsers.selectUsersById(ids));
-export const getFriendIds = createSelector(getUsersState, fromUsers.selectFriendIds);
-export const getFriends = createSelector(getUsersState, fromUsers.selectFriends);
-export const getSelf = createSelector(getUsersState, fromUsers.selectSelf);
 
 // messages
 export const getMessagesState = createSelector(

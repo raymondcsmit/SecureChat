@@ -15,7 +15,7 @@ namespace Auth
                     UserClaims = new[] { "permission", "sub" },
 
                 },
-                new ApiResource("chat", "Chat Service")
+                new ApiResource("users", "Users Service")
                 {
                     UserClaims = new[] { "permission", "sub" }
                 }
@@ -46,7 +46,7 @@ namespace Auth
                         IdentityServerConstants.StandardScopes.Email,
                         "permissions",
                         "account",
-                        "chat"
+                        "users"
                     }
                 }
             };
