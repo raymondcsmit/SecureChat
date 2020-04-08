@@ -58,7 +58,7 @@ namespace Users.API.Controllers
         }
 
         [HttpPost("users/{requesterId}/friendship-requests", Name = nameof(CreateFriendshipRequestsByRequesterId))]
-        public async Task<IActionResult> CreateFriendshipRequestsByRequesterId(string requesterId, [FromBody] string requesteeId)
+        public async Task<IActionResult> CreateFriendshipRequestsByRequesterId(string requesterId, [FromForm] string requesteeId)
         {
             var authHelper = new AuthHelperBuilder()
                 .AllowSystem()

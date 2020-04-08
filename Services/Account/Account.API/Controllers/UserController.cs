@@ -15,13 +15,13 @@ namespace Account.API.Controllers
 {
     [Route("api/users")]
     [Authorize]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IUserQueries _userQueries;
         private readonly IIdentityService _identityService;
 
-        public UsersController(
+        public UserController(
             IMediator mediator,
             IUserQueries userQueries,
             IIdentityService identityService)
