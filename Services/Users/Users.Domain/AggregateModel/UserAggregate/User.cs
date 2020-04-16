@@ -98,9 +98,9 @@ namespace Users.Domain.AggregateModel.UserAggregate
 
         public void MakeFriendshipRequest(User requestee)
         {
-            if (_friendshipRequests.Any(req => req.RequesterId == requestee.Id || req.RequesteeId == requestee.Id))
+            if (_friendshipRequests.Any(req => req.RequesteeId == requestee.Id))
             {
-                throw new ChatDomainException("Friendship request already exists");
+                throw new ChatDomainException("Friendship request already made");
             }
 
             var friendshipRequest = new FriendshipRequest(Id, requestee.Id);

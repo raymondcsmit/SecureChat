@@ -6,8 +6,10 @@ import { throwError } from 'rxjs';
 import { ArrayResult } from 'src/app/core/models/ArrayResult';
 import { Query } from 'src/app/core/models/Query';
 import { User } from '../models/User';
-import { friendshipRequestSchema, FriendshipRequest } from '../models/FriendshipRequest';
+import { friendshipRequestSchema, FriendshipRequest, friendshipRequestListSchema } from '../models/FriendshipRequest';
 import { normalize } from 'normalizr';
+import { FriendshipRequestEntity } from '../entities/FriendshipRequestEntity';
+import { UserEntity } from '../entities/UserEntity';
 
 @Injectable({
   providedIn: 'root'
@@ -56,12 +58,34 @@ export class UsersService {
       map(res => {
         const normalized = normalize(res.body, friendshipRequestSchema);
         return {
-          friendshipRequest: Object.values(normalized.entities.friendshipRequests)[0] as FriendshipRequest,
-          requestee: normalized.entities.users[requesteeId] as User
+          friendshipRequest: Object.values(normalized.entities.friendshipRequests)[0] as FriendshipRequestEntity,
+          requestee: normalized.entities.users[requesteeId] as UserEntity
         };
       }),
       catchError(res => throwError(this.resolveErrors(res)))
     );
+  }
+
+  getFriendshipRequests(requesteeId: string) {
+    const url = `${this.usersApi}/users/${requesteeId}/friendship-requests`;
+    return this.httpClient.get<ArrayResult<FriendshipRequest>>(url, {observe: 'response'}).pipe(
+      map(res => {
+        const normalized = normalize(res.body.items, friendshipRequestListSchema);
+        return {
+          friendshipRequests: Object.values(normalized.entities.friendshipRequests) as FriendshipRequestEntity[],
+          requesters: Object.values(normalized.entities.users).filter(u => u.id !== requesteeId) as UserEntity[]
+        };
+      }),
+      catchError(res => throwError(this.resolveErrors(res)))
+    );
+  }
+  
+  updateFriendshipRequest(id: string, status: string) {
+    const url = `${this.usersApi}/friendship-requests/${id}`;
+    return this.httpClient.patch<User>(url, {status}, {observe: 'response'}).pipe(
+      map(_ => true),
+      catchError(res => throwError(this.resolveErrors(res)))
+    )
   }
 
   private resolveErrors(res: HttpErrorResponse) {

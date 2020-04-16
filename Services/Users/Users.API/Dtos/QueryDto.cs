@@ -14,7 +14,7 @@ namespace Users.API.Dtos
     [ModelBinder(BinderType = typeof(QueryDtoBinder))]
     public class QueryDto
     {
-        public IDictionary<string, string> Criteria { get; set; }
+        public IDictionary<string, string> Criteria { get; set; } = new Dictionary<string, string>();
 
         public PaginationDto Pagination { get; set; }
     }

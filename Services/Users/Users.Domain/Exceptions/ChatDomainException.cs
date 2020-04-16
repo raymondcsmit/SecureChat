@@ -13,13 +13,13 @@ namespace Users.Domain.Exceptions
         public ChatDomainException(string message, IEnumerable<string> errors = null)
             : base(message)
         {
-            if (errors != null) Errors = errors;
+            Errors = errors ?? new[] { message };
         }
 
         public ChatDomainException(string message, Exception innerException, IEnumerable<string> errors = null)
             : base(message, innerException)
         {
-            if (errors != null) Errors = errors;
+            Errors = errors ?? new[] { message };
         }
     }
 }

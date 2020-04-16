@@ -1,9 +1,11 @@
 import { Action } from "@ngrx/store";
 import { Predicate } from "@angular/core";
+import { EntityAdapter, EntityState } from "@ngrx/entity";
 
 export enum EntityActionTypes {
     LoadEntities = '[Entity] LoadEntities',
     AddEntity = '[Entity] AddEntity',
+    AddEntities = '[Entity] AddEntities',
     UpdateEntity = '[Entity] UpdateEntity',
     UpsertEntity = '[Entity] UpsertEntity',
     UpsertEntities = '[Entity] UpsertEntities',
@@ -22,6 +24,12 @@ export class AddEntity<T> implements Action {
     readonly type = EntityActionTypes.AddEntity;
 
     constructor(public entityType: string, public payload: {entity: T}) {}
+}
+
+export class AddEntities<T> implements Action {
+    readonly type = EntityActionTypes.AddEntities;
+
+    constructor(public entityType: string, public payload: {entities: T[]}) {}
 }
 
 export class UpdateEntity<T> implements Action {
@@ -63,6 +71,7 @@ export class DeleteEntitiesByPredicate<T> implements Action {
 export type EntityActionsUnion<T> =
     LoadEntities<T>
     | AddEntity<T>
+    | AddEntities<T>
     | UpdateEntity<T>
     | UpsertEntity<T>
     | UpsertEntities<T>

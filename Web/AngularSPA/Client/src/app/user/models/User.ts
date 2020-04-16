@@ -5,7 +5,7 @@ export const userSchema = new schema.Entity('users', {});
 
 export const userListSchema = new schema.Array(userSchema);
 
-export class User {
+export interface User {
     id: string;
     userName: string;
     email?: string;

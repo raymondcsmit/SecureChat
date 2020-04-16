@@ -3,7 +3,6 @@ import { Observable, Subject, merge, of } from 'rxjs';
 import { User } from 'src/app/user/models/User';
 import { switchMap, map, debounceTime } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { AddFriend } from '../../actions/user.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
@@ -12,6 +11,7 @@ import { Query } from 'src/app/core/models/Query';
 import { PageEvent } from '@angular/material/paginator';
 import { Pagination } from 'src/app/core/models/Pagination';
 import { UsersService } from '../../services/users.service';
+import { AddFriend } from '../../actions/friendship-request.actions';
 
 @Component({
   selector: 'app-add-friend',

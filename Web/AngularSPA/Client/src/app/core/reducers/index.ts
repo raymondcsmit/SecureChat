@@ -9,6 +9,7 @@ import * as fromRouter from '@ngrx/router-store';
 import { storeFreeze } from 'ngrx-store-freeze';
 import { selectGlobalBusy } from './app.reducer';
 import * as fromCore from './app.reducer';
+export * from './entity.reducer';
 
 export interface State {
     router: fromRouter.RouterReducerState;

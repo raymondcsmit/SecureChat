@@ -9,6 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { InviteFriendComponent, InviteFriendDialogResult } from '../../../user/containers/invite-friend/invite-friend.component';
 import { getSelf, getFriends } from 'src/app/user/reducers';
+import { UserEntity } from 'src/app/user/entities/UserEntity';
 
 interface ChatroomInfo {
   id: string;
@@ -53,7 +54,7 @@ export class ChatControlPanelComponent implements OnInit {
     return dialogRef.afterClosed();
   }
 
-  openInviteFriendDialog(chatroomName: string, friends: User[]): Observable<any> {
+  openInviteFriendDialog(chatroomName: string, friends: UserEntity[]): Observable<any> {
     const dialogRef = this.dialog.open(InviteFriendComponent, {
       width: '500px',
       data: {

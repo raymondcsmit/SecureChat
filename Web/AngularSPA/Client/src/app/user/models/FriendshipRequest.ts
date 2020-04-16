@@ -8,9 +8,10 @@ export const friendshipRequestSchema = new schema.Entity('friendshipRequests', {
 
 export const friendshipRequestListSchema = new schema.Array(friendshipRequestSchema);
 
-export class FriendshipRequest {
+export type FriendshipRequestStatus = "accepted" | "rejected";
+
+export interface FriendshipRequest {
     id: string;
-    outcome: string;
     requester: User;
     requestee: User;
     createdAt: Date;

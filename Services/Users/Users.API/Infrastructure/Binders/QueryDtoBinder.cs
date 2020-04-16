@@ -24,10 +24,9 @@ namespace Users.API.Infrastructure.Binders
                 var queryDto = JsonConvert.DeserializeObject<QueryDto>(query);
                 bindingContext.Result = ModelBindingResult.Success(queryDto);
             }
-            catch (JsonException)
+            catch (Exception)
             {
-                bindingContext.Result = ModelBindingResult.Failed();
-                return Task.CompletedTask;
+                bindingContext.Result = ModelBindingResult.Success(new QueryDto());
             }
 
             return Task.CompletedTask;

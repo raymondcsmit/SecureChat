@@ -5,6 +5,7 @@ import * as fromAuth from '../../auth/reducers';
 import { Observable, of } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { LoadSelf } from '../../user/actions/user.actions';
+import { LoadFriendshipRequests } from 'src/app/user/actions/friendship-request.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class ChatGuardService implements CanActivate {
       tap(signedIn => {
         if (signedIn) {
           this.store.dispatch(new LoadSelf());
+          this.store.dispatch(new LoadFriendshipRequests())
         }
         else {
           this.router.navigate(['auth', 'login']);

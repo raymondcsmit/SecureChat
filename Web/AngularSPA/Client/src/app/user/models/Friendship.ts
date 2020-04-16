@@ -8,7 +8,7 @@ export const friendshipSchema = new schema.Entity('friendship', {
 
 export const friendshipListSchema = new schema.Array(friendshipSchema);
 
-export class Friendship {
+export interface Friendship {
     id: string;
     user1: User;
     user2: User;
