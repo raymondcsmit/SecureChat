@@ -49,7 +49,7 @@ namespace Users.Infrastructure.UnitOfWork
             try
             {
                 using (var conn = await _dbConnectionFactory.OpenConnectionAsync())
-                using (var transaction = conn.BeginTransaction())
+                using (var transaction = conn.BeginTransaction(IsolationLevel.ReadUncommitted))
                 {
                     if (!_operations.IsEmpty)
                     {

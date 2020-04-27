@@ -44,12 +44,12 @@ namespace Users.API.Application.Commands
 
             var requestee = await _userRepository.GetByIdAsync(friendshipRequest.RequesteeId);
 
+            Friendship friendship = null;
             if (command.Outcome == FriendshipRequest.Outcomes.Accepted)
             {
                 requestee.AcceptFriendshipRequest(friendshipRequest.RequesterId);
-                _friendshipRepository.Create(requestee.Friendships.First(f => f.User1Id == friendshipRequest.RequesterId));
-                var dto = await _friendshipQueries.GetFriendshipById(friendshipRequest.Id);
-                _eventBus.Publish(new FriendshipCreatedIntegrationEvent(dto));
+                friendship = requestee.Friendships.First(f => f.User1Id == friendshipRequest.RequesterId);
+                _friendshipRepository.Create(friendship);
             }
             else if (command.Outcome == FriendshipRequest.Outcomes.Rejected)
             {
@@ -62,6 +62,12 @@ namespace Users.API.Application.Commands
 
             _friendshipRequestRepository.Update(requestee.FriendshipRequests.First(req => req.Id == command.Id));
             await _friendshipRequestRepository.UnitOfWork.SaveChangesAsync();
+
+            if (command.Outcome == FriendshipRequest.Outcomes.Accepted)
+            {
+                var dto = await _friendshipQueries.GetFriendshipById(friendship.Id);
+                _eventBus.Publish(new FriendshipCreatedIntegrationEvent(dto));
+            }
         }
     }
 }

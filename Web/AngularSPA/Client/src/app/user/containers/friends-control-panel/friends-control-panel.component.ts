@@ -111,10 +111,11 @@ export class FriendsControlPanelComponent implements OnInit {
       console.log(`Friendship created between ${msg.user1.id} and ${msg.user2.id}`);
       const normalized = normalize(msg, friendshipSchema);
       const friendship = Object.values(normalized.entities.friendships)[0] as FriendshipEntity;
-      const users = normalized.entities.users as UserEntity[];
+      const users = Object.values(normalized.entities.users) as UserEntity[];
       this.store.dispatch(new AddEntity(FriendshipEntity.name, {entity: friendship}));
       this.store.dispatch(new UpsertEntities(UserEntity.name, {entities: users}));
     });
 
+    this.signalr.registerHandlers();
   }
 }

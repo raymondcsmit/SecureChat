@@ -71,20 +71,9 @@ export class SignalrService {
             });
     }
 
-    private registerHandlers() {
+    public registerHandlers() {
         for (let [method, handler] of Object.entries(this.handlers)) {
             this.hubConnection.on(method, handler);
         }
     }
-
-    // private registerHandlers() {
-    //     this.hubConnection.on('FriendshipRequestReceived', (msg: FriendshipRequest) => {
-    //         console.log(`Friendship request received from ${msg.requester.id}`);
-    //         const normalized = normalize(msg, friendshipRequestSchema);
-    //         const friendshipRequest = Object.values(normalized.entities.friendshipRequests)[0] as FriendshipRequestEntity;
-    //         const requestee = normalized.entities.users[msg.requester.id] as UserEntity;
-    //         this.store.dispatch(new AddEntity(FriendshipRequestEntity.name, {entity: friendshipRequest}));
-    //         this.store.dispatch(new UpsertEntity(UserEntity.name, {entity: requestee}));
-    //     });
-    // }
 }

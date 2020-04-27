@@ -133,7 +133,8 @@ namespace Messaging
         public void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            eventBus.Subscribe<FriendshipRequestCreatedIntegrationEvent, FriendshipRequestMadeIntegrationEventHandler>();
+            eventBus.Subscribe<FriendshipRequestCreatedIntegrationEvent, FriendshipRequestCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<FriendshipCreatedIntegrationEvent, FriendshipCreatedIntegrationEventHandler>();
         }
     }
 }

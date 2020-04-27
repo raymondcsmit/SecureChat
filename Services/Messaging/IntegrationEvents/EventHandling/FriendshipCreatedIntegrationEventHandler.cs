@@ -26,6 +26,11 @@ namespace Messaging.IntegrationEvents.EventHandling
 
         public async Task Handle(FriendshipCreatedIntegrationEvent @event, bool redelivered)
         {
+            if (@event.Friendship == null)
+            {
+                return;
+            }
+
             _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
 
             await _hubContext.Clients

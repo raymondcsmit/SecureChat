@@ -11,15 +11,15 @@ using System.Threading.Tasks;
 
 namespace Messaging.IntegrationEvents.EventHandling
 {
-    public class FriendshipRequestMadeIntegrationEventHandler :
+    public class FriendshipRequestCreatedIntegrationEventHandler :
         IIntegrationEventHandler<FriendshipRequestCreatedIntegrationEvent>
     {
         private readonly IHubContext<MessagingHub, IChatClient> _hubContext;
-        private readonly ILogger<FriendshipRequestMadeIntegrationEventHandler> _logger;
+        private readonly ILogger<FriendshipRequestCreatedIntegrationEventHandler> _logger;
 
-        public FriendshipRequestMadeIntegrationEventHandler(
+        public FriendshipRequestCreatedIntegrationEventHandler(
             IHubContext<MessagingHub, IChatClient> hubContext,
-            ILogger<FriendshipRequestMadeIntegrationEventHandler> logger)
+            ILogger<FriendshipRequestCreatedIntegrationEventHandler> logger)
         {
             _hubContext = hubContext;
             _logger = logger;
