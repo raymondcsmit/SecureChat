@@ -1,11 +1,10 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { EffectsModule } from '@ngrx/effects';
 import { reducers, metaReducers } from './reducers';
-import { StoreModule } from '@ngrx/store';
+import { StoreModule, Store } from '@ngrx/store';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { NotFoundPageComponent } from './components/not-found-page/not-found-page.component';
 import { AppComponent } from './containers/app/app.component';
@@ -18,19 +17,20 @@ import { SetGlobalBusyInterceptorService } from './services/set-global-busy-inte
 import { ErrorComponent } from './components/error/error.component';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../../environments/environment';
-import { ConnectFormDirective } from './directives/connect-form.directive';
-import { LoginPageGuardService } from '../auth/services/login-page-guard.service';
-import { ChatRootModule } from '../chat-root/chat-root.module';
+import { ConfigurationService } from './services/configuration.service';
+import { SignalrService } from './services/signalr.service';
 
-export const COMPONENTS = [
-  AppComponent,
-  FooterComponent,
-  NotFoundPageComponent,
-  ErrorComponent
-]
+export function initializeApp(configService: ConfigurationService) {
+  return () => configService.load().toPromise();
+}
 
 @NgModule({
-  declarations: COMPONENTS,
+  declarations: [
+    AppComponent,
+    FooterComponent,
+    NotFoundPageComponent,
+    ErrorComponent
+  ],
   imports: [
     AppRoutingModule,
     CommonModule,
@@ -50,11 +50,19 @@ export const COMPONENTS = [
   ],
   providers: [
     ChatGuardService,
+    ConfigurationService,
+    SignalrService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SetGlobalBusyInterceptorService,
       multi: true
     },
+    { 
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp, 
+      deps: [ConfigurationService, HttpClient, Store], 
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })

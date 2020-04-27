@@ -1,7 +1,7 @@
 import { User, userSchema } from "./User";
 import { schema } from "normalizr";
 
-export const friendshipSchema = new schema.Entity('friendship', {
+export const friendshipSchema = new schema.Entity('friendships', {
     user1: userSchema,
     user2: userSchema
 });

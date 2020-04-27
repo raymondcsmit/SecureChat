@@ -10,6 +10,8 @@ using Users.API.Infrastructure.Exceptions;
 using Users.Domain.AggregateModel.UserAggregate;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SecureChat.Common.Events.EventBus.Abstractions;
+using Users.API.Application.IntegrationEvents.Events;
 
 namespace Users.API.Application.Commands
 {
@@ -20,19 +22,22 @@ namespace Users.API.Application.Commands
         private readonly IUserRepository _userRepository;
         private readonly IFriendshipRequestRepository _friendshipRequestRepository;
         private readonly IFriendshipRequestQueries _friendshipRequestQueries;
+        private readonly IEventBus _eventBus;
 
         public CreateFriendshipRequestCommandHandler(
             ILogger<UpdateUserCommandHandler> logger,
             IMapper mapper,
             IUserRepository userRepository,
             IFriendshipRequestRepository friendshipRequestRepository,
-            IFriendshipRequestQueries friendshipRequestQueries)
+            IFriendshipRequestQueries friendshipRequestQueries,
+            IEventBus eventBus)
         {
             _logger = logger;
             _mapper = mapper;
             _userRepository = userRepository;
             _friendshipRequestRepository = friendshipRequestRepository;
             _friendshipRequestQueries = friendshipRequestQueries;
+            _eventBus = eventBus;
         }
 
         public async Task<FriendshipRequestDto> Handle(CreateFriendshipRequestCommand command, CancellationToken cancellationToken)
@@ -51,7 +56,11 @@ namespace Users.API.Application.Commands
 
             _logger.LogInformation($"User {requester.Id} successfully created friendship request with {requestee.Id}");
 
-            return await _friendshipRequestQueries.GetFriendshipRequestById(request.Id);
+
+            var dto = await _friendshipRequestQueries.GetFriendshipRequestById(request.Id);
+            _eventBus.Publish(new FriendshipRequestCreatedIntegrationEvent(dto));
+
+            return dto;
         }
     }
 }

@@ -20,7 +20,6 @@ export class ChatGuardService implements CanActivate {
       tap(signedIn => {
         if (signedIn) {
           this.store.dispatch(new LoadSelf());
-          this.store.dispatch(new LoadFriendshipRequests())
         }
         else {
           this.router.navigate(['auth', 'login']);

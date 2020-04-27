@@ -15,7 +15,7 @@ namespace Users.API.Application.Specifications
             base.AddCriteria(criteria);
         }
 
-        public FriendshipRequestSpecification(QueryDto query, string requesteeId = null)
+        public FriendshipRequestSpecification(QueryDto query, string requesteeId = null, bool pendingOnly = false)
         {
             var criteria = query.Criteria?.Select(kvp => new Criteria(kvp.Key, "FriendshipRequests", kvp.Value));
             base.AddCriteria(criteria);
@@ -24,6 +24,14 @@ namespace Users.API.Application.Specifications
             {
                 var requesterCriteria = new Criteria("Requestee", "FriendshipRequests", requesteeId);
                 base.AddCriteria(new[] {requesterCriteria});
+            }
+
+            if (pendingOnly)
+            {
+                base.AddCriteriaNot(new[] {
+                    new Criteria("Outcome", "FriendshipRequests", "accepted"),
+                    new Criteria("Outcome", "FriendshipRequests", "rejected")
+                });
             }
 
             if (query.Pagination != null)

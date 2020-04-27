@@ -4,5 +4,5 @@ export const environment = {
   clientId: "AngularSpaClient",
   accountApi: "http://localhost:5102/api",
   usersApi: "http://localhost:5103/api",
-  chatApi: "undefined"
+  messagingUrl: "http://localhost:5104"
 }

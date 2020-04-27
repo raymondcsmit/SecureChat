@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { getGlobalBusy } from '../../reducers';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ export class AppComponent implements OnInit{
 
   ngOnInit() {
     this.isBusy$ = this.store.pipe(
-      select(getGlobalBusy)
+      select(getGlobalBusy),
+      delay(0) // prevents ExpressionChangedAfterItHasBeenCheckedError
     );
   }
 

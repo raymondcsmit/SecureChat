@@ -4,4 +4,5 @@ export class FriendshipRequestEntity {
     requestee: string;
     createdAt: Date;
     modifiedAt: Date;
+    outcome: string;
 }

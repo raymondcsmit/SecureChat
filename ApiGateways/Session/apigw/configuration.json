@@ -1,0 +1,16 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/sessions",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "session.service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/sessions",
+      "UpstreamHttpMethod": [ "POST" ]
+    }
+  ] 
+}

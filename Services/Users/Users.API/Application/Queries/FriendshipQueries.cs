@@ -6,6 +6,8 @@ using Users.Infrastructure;
 using Dapper;
 using Helpers.Specifications;
 using Helpers.Specifications.Extensions;
+using Users.API.Application.Specifications;
+using System.Linq;
 
 namespace Users.API.Application.Queries
 {
@@ -20,6 +22,12 @@ namespace Users.API.Application.Queries
         {
             _dbConnectionFactory = dbConnectionFactory;
             _mapper = mapper;
+        }
+
+        public async Task<FriendshipDto> GetFriendshipById(string id)
+        {
+            var spec = new FriendshipSpecification(id);
+            return (await GetFriendships(spec)).Item1.FirstOrDefault();
         }
 
         public async Task<(IEnumerable<FriendshipDto>, int)> GetFriendships(ISpecification<FriendshipDto> spec)

@@ -39,6 +39,11 @@ export const selectCoreState = createSelector(
 );
 
 export const getGlobalBusy = createSelector(
-    selectCoreState,
-    selectGlobalBusy
+  selectCoreState,
+  fromCore.selectGlobalBusy
+);
+
+export const getAppSettings = createSelector(
+  selectCoreState,
+  fromCore.selectAppSettings
 );

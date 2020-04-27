@@ -33,6 +33,25 @@ services:
       - account.service
       - rabbitmq
 
+  messaging.service:
+    container_name: messaging.service
+    build: 
+      context: .
+      dockerfile: Services/Messaging/Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+    
+  session.service:
+    container_name: session.service
+    build: 
+      context: .
+      dockerfile: Services/Session/Session.API/Dockerfile
+    restart: always
+    depends_on:
+      - rabbitmq
+      - mysql
+
   registration.app:
     container_name: registration.app
     build: 
@@ -61,6 +80,14 @@ services:
     depends_on:
       - users.service
 
+  session.apigw:
+    container_name: session.apigw
+    image: session.apigw
+    build:
+      context: ./ApiGateways/OcelotApiGw
+    depends_on:
+      - session.service
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
@@ -80,6 +107,9 @@ services:
     depends_on:
       - auth.service
       - account.apigw
+      - users.apigw
+      - session.apigw
+      - messaging.service
       - registration.app
       - angularspa.app
 

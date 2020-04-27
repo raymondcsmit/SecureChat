@@ -13,8 +13,7 @@ import { getSelf } from 'src/app/user/reducers';
     class: 'd-flex flex-grow-1'
   }
 })
-export class ChatRootComponent implements OnInit {
-
+export class ChatRootComponent  {
   user$: Observable<User>;
   
   constructor(private store: Store<any>) { }
@@ -23,9 +22,5 @@ export class ChatRootComponent implements OnInit {
     this.user$ = this.store.pipe(
       select(getSelf)
     );
-  }
-
-  signOut() {
-    this.store.dispatch(new authActions.SignOut());
   }
 }

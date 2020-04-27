@@ -5,19 +5,24 @@ using System.Threading.Tasks;
 using Users.Domain.AggregateModel.UserAggregate;
 using Users.Domain.SeedWork;
 using Dapper;
+using AutoMapper;
 
 namespace Users.Infrastructure.Repositories
 {
     public class FriendshipRepository : IFriendshipRepository
     {
         private readonly IDbConnectionFactory _dbConnectionFactory;
+        private readonly IMapper _mapper;
+
         public IUnitOfWork UnitOfWork { get; }
 
         public FriendshipRepository(
             IUnitOfWork unitOfWork,
-            IDbConnectionFactory dbConnectionFactory)
+            IDbConnectionFactory dbConnectionFactory,
+            IMapper mapper)
         {
             _dbConnectionFactory = dbConnectionFactory;
+            _mapper = mapper;
             UnitOfWork = unitOfWork;
         }
 
@@ -25,10 +30,16 @@ namespace Users.Infrastructure.Repositories
         {
             var sql = $@"INSERT INTO Friendships (User1Id, User2Id)
                               VALUES (@{nameof(Friendship.User1Id)},
-                                      @{nameof(Friendship.User2Id)});";
+                                      @{nameof(Friendship.User2Id)});
+                         SELECT * 
+                         FROM Friendships f
+                         WHERE f.Id = LAST_INSERT_ID();";
 
             UnitOfWork.AddOperation(friendship, async connection =>
-                await connection.ExecuteAsync(sql, friendship));
+            {
+                var createdFriendship = await connection.QueryFirstAsync<Friendship>(sql, friendship);
+                _mapper.Map(createdFriendship, friendship);
+            });
         }
 
         public async Task<Friendship> GetByIdAsync(string id)

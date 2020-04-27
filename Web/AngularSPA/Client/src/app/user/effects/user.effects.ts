@@ -82,7 +82,7 @@ export class UserEffects {
         this.actions$.pipe(ofType<LoadFriendshipRequests>(FriendshipRequestActionTypes.LoadFriendshipRequests)),
         this.store.select(getSelf)).pipe(
             filter(([, self]) => self != null),
-            switchMap(([action, self]) => this.userService.getFriendshipRequests(self.id).pipe(
+            mergeMap(([action, self]) => this.userService.getFriendshipRequests(self.id).pipe(
                 mergeMap(res => [ 
                     new AddEntities(FriendshipRequestEntity.name, {entities: res.friendshipRequests}),
                     new UpsertEntities(UserEntity.name, {entities: res.requesters}),

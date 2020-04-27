@@ -70,6 +70,12 @@ export class UsersService {
     const url = `${this.usersApi}/users/${requesteeId}/friendship-requests`;
     return this.httpClient.get<ArrayResult<FriendshipRequest>>(url, {observe: 'response'}).pipe(
       map(res => {
+        if (res.body.items.length == 0) {
+          return {
+            friendshipRequests: [],
+            requesters: []
+          };
+        }
         const normalized = normalize(res.body.items, friendshipRequestListSchema);
         return {
           friendshipRequests: Object.values(normalized.entities.friendshipRequests) as FriendshipRequestEntity[],
@@ -82,7 +88,7 @@ export class UsersService {
   
   updateFriendshipRequest(id: string, status: string) {
     const url = `${this.usersApi}/friendship-requests/${id}`;
-    return this.httpClient.patch<User>(url, {status}, {observe: 'response'}).pipe(
+    return this.httpClient.patch<User>(url, {outcome: status}, {observe: 'response'}).pipe(
       map(_ => true),
       catchError(res => throwError(this.resolveErrors(res)))
     )

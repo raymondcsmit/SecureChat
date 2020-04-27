@@ -16,4 +16,5 @@ export interface FriendshipRequest {
     requestee: User;
     createdAt: Date;
     modifiedAt: Date;
+    outcome: string;
 }

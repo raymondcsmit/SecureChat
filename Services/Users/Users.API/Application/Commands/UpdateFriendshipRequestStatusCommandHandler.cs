@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using SecureChat.Common.Events.EventBus.Abstractions;
+using Users.API.Application.IntegrationEvents.Events;
+using Users.API.Application.Queries;
 
 namespace Users.API.Application.Commands
 {
@@ -14,15 +17,21 @@ namespace Users.API.Application.Commands
         private readonly IFriendshipRequestRepository _friendshipRequestRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFriendshipRepository _friendshipRepository;
+        private readonly IEventBus _eventBus;
+        private readonly IFriendshipQueries _friendshipQueries;
 
         public UpdateFriendshipRequestStatusCommandHandler(
             IFriendshipRequestRepository friendshipRequestRepository,
             IUserRepository userRepository,
-            IFriendshipRepository friendshipRepository)
+            IFriendshipRepository friendshipRepository,
+            IEventBus eventBus,
+            IFriendshipQueries friendshipQueries)
         {
             _friendshipRequestRepository = friendshipRequestRepository;
             _userRepository = userRepository;
             _friendshipRepository = friendshipRepository;
+            _eventBus = eventBus;
+            _friendshipQueries = friendshipQueries;
         }
 
         public async Task Handle(UpdateFriendshipRequestStatusCommand command, CancellationToken cancellationToken)
@@ -39,6 +48,8 @@ namespace Users.API.Application.Commands
             {
                 requestee.AcceptFriendshipRequest(friendshipRequest.RequesterId);
                 _friendshipRepository.Create(requestee.Friendships.First(f => f.User1Id == friendshipRequest.RequesterId));
+                var dto = await _friendshipQueries.GetFriendshipById(friendshipRequest.Id);
+                _eventBus.Publish(new FriendshipCreatedIntegrationEvent(dto));
             }
             else if (command.Outcome == FriendshipRequest.Outcomes.Rejected)
             {

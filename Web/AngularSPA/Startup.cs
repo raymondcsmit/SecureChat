@@ -22,6 +22,7 @@ namespace AngularSPA
                 configuration.RootPath = "/Client/dist";
             });
 
+            services.Configure<AppSettings>(Configuration);
 
             services.AddMvc();
         }

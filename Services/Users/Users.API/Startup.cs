@@ -120,6 +120,7 @@ namespace Users.API
                 config.CreateMap(typeof(JsonPatchDocument<>), typeof(JsonPatchDocument<>));
                 config.CreateMap(typeof(Operation<>), typeof(Operation<>));
                 config.CreateMap<FriendshipRequest, FriendshipRequest>();
+                config.CreateMap<Friendship, Friendship>();
                 config.ShouldMapProperty = p => p.GetMethod.IsPublic || p.GetMethod.IsAssembly;
             }, typeof(Startup).Assembly);
 
