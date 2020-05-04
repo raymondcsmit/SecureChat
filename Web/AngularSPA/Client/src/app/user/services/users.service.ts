@@ -10,6 +10,8 @@ import { friendshipRequestSchema, FriendshipRequest, friendshipRequestListSchema
 import { normalize } from 'normalizr';
 import { FriendshipRequestEntity } from '../entities/FriendshipRequestEntity';
 import { UserEntity } from '../entities/UserEntity';
+import { Friendship, friendshipListSchema } from '../models/Friendship';
+import { FriendshipEntity } from '../entities/FriendshipEntity';
 
 @Injectable({
   providedIn: 'root'
@@ -92,6 +94,26 @@ export class UsersService {
       map(_ => true),
       catchError(res => throwError(this.resolveErrors(res)))
     )
+  }
+
+  getFriendships(userId: string) {
+    const url = `${this.usersApi}/users/${userId}/friendships`;
+    return this.httpClient.get<ArrayResult<Friendship>>(url, {observe: 'response'}).pipe(
+      map(res => {
+        if (res.body.items.length == 0) {
+          return {
+            friendships: [],
+            friends: []
+          };
+        }
+        const normalized = normalize(res.body.items, friendshipListSchema);
+        return {
+          friendships: Object.values(normalized.entities.friendships) as FriendshipEntity[],
+          friends: Object.values(normalized.entities.users).filter(u => u.id !== userId) as UserEntity[]
+        };
+      }),
+      catchError(res => throwError(this.resolveErrors(res)))
+    );
   }
 
   private resolveErrors(res: HttpErrorResponse) {

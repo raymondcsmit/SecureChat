@@ -22,6 +22,10 @@ namespace Auth
                 new ApiResource("messaging", "Messaging Service")
                 {
                     UserClaims = new[] { "permission", "sub" }
+                },
+                new ApiResource("session", "Session Service")
+                {
+                    UserClaims = new[] { "permission", "sub" }
                 }
             };
         }
@@ -51,7 +55,8 @@ namespace Auth
                         "permissions",
                         "account",
                         "users",
-                        "messaging"
+                        "messaging",
+                        "session"
                     }
                 }
             };

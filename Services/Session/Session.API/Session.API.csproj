@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Repositories\" />
     <Folder Include="IntegrationEvents\" />
   </ItemGroup>
 

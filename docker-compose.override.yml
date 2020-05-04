@@ -43,7 +43,7 @@ services:
       EventBusConnection: rabbitmq
       EventBusUserName: rabbitmq
       EventBusPassword: "12345"
-      EventBusQueueName: account.service
+      EventBusQueueName: users.service
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
       BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
       BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
@@ -99,6 +99,7 @@ services:
         AngularSpaDevClient: http://angularspa.development.app:4200
         AccountApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
         UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+        SessionApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5105/api
         AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
         MessagingUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5104
         ClientId: AngularSpaClient
@@ -117,6 +118,7 @@ services:
     environment:
       AccountApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5102/api
       UsersApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103/api
+      SessionApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5105/api
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
       MessagingUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5104
       ClientId: AngularSpaClient

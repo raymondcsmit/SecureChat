@@ -3,13 +3,15 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Session.API.Infrastructure.Migrations
 {
     [DbContext(typeof(SessionContext))]
-    partial class SessionContextModelSnapshot : ModelSnapshot
+    [Migration("20200503165902_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

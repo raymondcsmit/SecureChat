@@ -5,7 +5,8 @@ export enum UserActionTypes {
     LoadSelf = "[User] LoadSelf",
     AddSelf = "[User] AddSelf",
     ConfirmEmail = "[User] ConfirmEmail",
-    UpdateUser = "[User] UpdateUser"
+    UpdateUser = "[User] UpdateUser",
+    UpdateUserStatus = "[User] UpdateUserStatus"
 }
 
 export class LoadSelf implements Action {
@@ -28,8 +29,15 @@ export class UpdateUser implements Action {
     constructor(public payload: {id: string, user: Partial<UserEntity>}) {}
 }
 
+export class UpdateUserStatus implements Action {
+    readonly type = UserActionTypes.UpdateUserStatus;
+
+    constructor(public payload: {id: string, status: "online"|"offline"|"idle"}) {}
+}
+
 export type UserActionsUnion =
     LoadSelf
     | AddSelf
     | ConfirmEmail
-    | UpdateUser;
+    | UpdateUser
+    | UpdateUserStatus;

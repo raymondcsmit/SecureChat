@@ -48,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Users", "Users", "{4C38EDFD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{8F8BBB9F-738A-44B6-A191-65E3182F70FE}"
 	ProjectSection(SolutionItems) = preProject
-		ApiGateways\Chat\apigw\configuration.json = ApiGateways\Chat\apigw\configuration.json
+		ApiGateways\Users\apigw\configuration.json = ApiGateways\Users\apigw\configuration.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.Tests", "Common\Events\EventBus.Tests\EventBus.Tests.csproj", "{3BB0EFE3-F601-431E-9231-404D99B0A0CC}"

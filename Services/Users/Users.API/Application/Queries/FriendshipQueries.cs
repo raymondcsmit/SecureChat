@@ -62,7 +62,7 @@ namespace Users.API.Application.Queries
             }
         }
 
-        public async Task<(IEnumerable<FriendshipDto>, int)> GetFriendshipsByUserId(string userId, QueryDto query)
+        public async Task<(IEnumerable<FriendshipDto>, int)> GetFriendshipsByUserId(string userId, PaginationDto pagination = null)
         {
             var totalSql = $@"SELECT COUNT(*) FROM Friendships
                                 WHERE Friendships.User1Id = @{nameof(userId)} OR Friendships.User2Id = @{nameof(userId)}";
@@ -75,8 +75,10 @@ namespace Users.API.Application.Queries
                         JOIN Users user2 ON Friendships.User2Id = user2.Id
                             LEFT JOIN UserProfileMap up2 ON up2.UserId = user2.Id
                                 LEFT JOIN Profiles p2 ON p2.Id = up2.ProfileId
-                        WHERE user1.Id = @{nameof(userId)} OR user2.Id = @{nameof(userId)}
-                        LIMIT @{nameof(query.Pagination.Limit)} OFFSET @{nameof(query.Pagination.Offset)};";
+                        WHERE user1.Id = @{nameof(userId)} OR user2.Id = @{nameof(userId)}";
+            querySql += pagination != null
+                ? $"\nLIMIT @{nameof(pagination.Limit)} OFFSET @{nameof(pagination.Offset)};"
+                : ";";
 
             using (var connection = await _dbConnectionFactory.OpenConnectionAsync())
             {
@@ -90,7 +92,7 @@ namespace Users.API.Application.Queries
                         f.User2 = u2;
                         return f;
                     },
-                    new { userId, query.Pagination.Limit, query.Pagination.Offset },
+                    new { userId, pagination?.Limit, pagination?.Offset },
                     splitOn: "Id,Id,Id,Id");
                 return (results, count);
             }

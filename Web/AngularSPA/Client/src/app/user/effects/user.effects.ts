@@ -15,6 +15,8 @@ import { UsersService } from "../services/users.service";
 import { FriendshipRequestEntity } from "../entities/FriendshipRequestEntity";
 import { UserEntity } from "../entities/UserEntity";
 import { FriendshipRequestActionTypes, AddFriend, LoadFriendshipRequests, UpdateFriendshipRequest } from "../actions/friendship-request.actions";
+import { LoadFriendships, FriendshipActionTypes } from "../actions/friendship.actions";
+import { FriendshipEntity } from "../entities/FriendshipEntity";
 
 @Injectable()
 export class UserEffects {
@@ -101,6 +103,21 @@ export class UserEffects {
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
     );
+
+    @Effect()
+    LoadFriendships$ = combineLatest(
+        this.actions$.pipe(ofType<LoadFriendships>(FriendshipActionTypes.LoadFriendships)),
+        this.store.select(getSelf)).pipe(
+            filter(([, self]) => self != null),
+            mergeMap(([action, self]) => this.userService.getFriendships(self.id).pipe(
+                mergeMap(res => [ 
+                    new AddEntities(FriendshipEntity.name, {entities: res.friendships}),
+                    new UpsertEntities(UserEntity.name, {entities: res.friends}),
+                    new Success({action: action})
+                ]),
+                catchError(errors => of(new Failure({action: action, errors: errors})))
+            ))
+        );
 
     constructor(
         private actions$: Actions,

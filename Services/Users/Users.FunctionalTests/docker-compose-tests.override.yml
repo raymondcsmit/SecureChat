@@ -13,7 +13,7 @@ services:
       - "3306:3306"
     environment:
         MYSQL_ROOT_PASSWORD: "12345"
-        MYSQL_DATABASE: "chat_db"
+        MYSQL_DATABASE: "users_db"
 
   phpmyadmin:
     ports:
@@ -28,6 +28,6 @@ services:
       - /bin/sh
       - -c
       - |
-          /flyway/flyway -url=jdbc:mysql://mysql/chat_db -locations=filesystem:/flyway/sql/chat_db -user=root -password=12345 -connectRetries=60 migrate
+          /flyway/flyway -url=jdbc:mysql://mysql/users_db -locations=filesystem:/flyway/sql/users_db -user=root -password=12345 -connectRetries=60 migrate
     volumes:
       - ../../../Infrastructure/mysql/migrations:/flyway/sql

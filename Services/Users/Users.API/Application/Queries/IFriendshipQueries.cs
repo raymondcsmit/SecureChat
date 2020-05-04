@@ -11,7 +11,7 @@ namespace Users.API.Application.Queries
     {
         Task<(IEnumerable<FriendshipDto>, int)> GetFriendships(ISpecification<FriendshipDto> spec);
 
-        Task<(IEnumerable<FriendshipDto>, int)> GetFriendshipsByUserId(string userId, QueryDto query);
+        Task<(IEnumerable<FriendshipDto>, int)> GetFriendshipsByUserId(string userId, PaginationDto pagination = null);
 
         Task<FriendshipDto> GetFriendshipById(string id);
     }

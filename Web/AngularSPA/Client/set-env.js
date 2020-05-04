@@ -11,6 +11,7 @@ const envFile = `export const environment = {
   clientId: "${process.env.ClientId}",
   accountApi: "${process.env.AccountApiUrl}",
   usersApi: "${process.env.UsersApiUrl}",
+  sessionApi: "${process.env.SessionApiUrl}",
   messagingUrl: "${process.env.MessagingUrl}"
 }`
 

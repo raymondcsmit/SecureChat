@@ -8,6 +8,6 @@ export const userListSchema = new schema.Array(userSchema);
 export interface User {
     id: string;
     userName: string;
-    email?: string;
+    email: string;
     profile: Profile;
 }

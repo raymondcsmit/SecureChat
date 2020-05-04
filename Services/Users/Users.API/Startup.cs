@@ -157,6 +157,8 @@ namespace Users.API
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<UserAccountCreatedIntegrationEvent, UserAccountCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<UserConnectedIntegrationEvent, UserConnectedIntegrationEventHandler>();
+            eventBus.Subscribe<UserDisconnectedIntegrationEvent, UserDisconnectedIntegrationEventHandler>();
 
             return app;
         }

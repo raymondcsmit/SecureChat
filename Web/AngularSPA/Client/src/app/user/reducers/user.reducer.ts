@@ -9,12 +9,16 @@ import { UserEntity } from "../entities/UserEntity";
 
 export interface State extends EntityState<UserEntity> {
     selfId: string;
+    userStatus: {
+        [id: string]: "online"|"offline"|"idle";
+    }
 }
 
 const userAdapter: EntityAdapter<UserEntity> = createEntityAdapter<UserEntity>();
 
 const initialState: State = userAdapter.getInitialState({
-    selfId: null
+    selfId: null,
+    userStatus: {}
 });
 
 export function reducer(state = initialState, action: UserActionsUnion | EntityActionsUnion<UserEntity>): State {
@@ -32,6 +36,16 @@ export function reducer(state = initialState, action: UserActionsUnion | EntityA
             }
         }
 
+        case UserActionTypes.UpdateUserStatus: {
+            let newState = {
+                ...state,
+                userStatus: {
+                    ...state.userStatus,
+                }};
+            newState.userStatus[action.payload.id] = action.payload.status;
+            return newState;
+        }
+
         default: {
           return state;
         }
@@ -43,3 +57,5 @@ export const entitySelectors = userAdapter.getSelectors();
 export const selectUserById = (id: string) => (state: State) => entitySelectors.selectEntities(state)[id];
 export const selectUsersById = (ids: string[]) => (state: State) => entitySelectors.selectAll(state).filter(user => ids.includes(user.id));
 export const selectSelf = (state: State) => selectUserById(state.selfId)(state);
+export const selectUserStatusById = (id: string) => (state: State) => state.userStatus[id];
+export const selectUserStatus = (state: State) => state.userStatus;

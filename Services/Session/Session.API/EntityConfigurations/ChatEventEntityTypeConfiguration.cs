@@ -8,25 +8,22 @@ using System.Threading.Tasks;
 
 namespace Session.API.EntityConfigurations
 {
-    public class ChatSessonEntityTypeConfiguration : IEntityTypeConfiguration<ChatSession>
+    public class ChatEventEntityTypeConfiguration : IEntityTypeConfiguration<ChatEvent>
     {
-        public void Configure(EntityTypeBuilder<ChatSession> builder)
+        public void Configure(EntityTypeBuilder<ChatEvent> builder)
         {
-            builder.ToTable("ChatSession");
+            builder.ToTable("Event");
 
             builder.HasKey(m => m.Id);
 
-            builder.Property(m => m.Id)
-                .IsRequired();
-
-            builder.Property(m => m.UserId)
+            builder.Property(m => m.EventType)
+                .HasColumnType("int")
                 .IsRequired();
 
             builder.Property(m => m.CreatedAt)
                 .IsRequired();
 
             builder.Property(m => m.ModifiedAt)
-                .HasColumnName("LastActivity")
                 .IsRequired();
         }
     }

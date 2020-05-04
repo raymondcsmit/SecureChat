@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, combineLatest } from 'rxjs';
 import { User } from 'src/app/user/models/User';
 import { Store, select } from '@ngrx/store';
 import { CreatePrivateChat } from '../../../chat/actions/chat.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
-import { getFriends, getFriendshipRequests, getUsersById, getSelf } from '../../reducers';
-import { RemoveFriend } from '../../actions/friendship.actions';
+import { getFriends, getFriendshipRequests, getUsersById, getSelf, getUserStatus } from '../../reducers';
+import { RemoveFriend, LoadFriendships } from '../../actions/friendship.actions';
 import { withLatestFrom, mergeMap, first, map, switchMap, filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { FriendshipRequestEntity } from '../../entities/FriendshipRequestEntity';
@@ -19,6 +19,11 @@ import { normalize } from 'normalizr';
 import { AddEntity, UpsertEntity, UpsertEntities } from 'src/app/core/actions/entity.actions';
 import { Friendship, friendshipSchema } from '../../models/Friendship';
 import { FriendshipEntity } from '../../entities/FriendshipEntity';
+import { UpdateUserStatus } from '../../actions/user.actions';
+
+interface UserWithStatus extends User {
+  status: 'online'|'offline'|'idle';
+}
 
 @Component({
   selector: 'app-friends-control-panel',
@@ -27,14 +32,18 @@ import { FriendshipEntity } from '../../entities/FriendshipEntity';
 })
 export class FriendsControlPanelComponent implements OnInit {
 
-  friends$: Observable<User[]>;
+  friends$: Observable<UserWithStatus[]>;
   friendshipRequests$: Observable<{ f: FriendshipRequestEntity; u: UserEntity; }[]>;
 
   constructor(private store: Store<any>, private dialog: MatDialog, private router: Router, private signalr: SignalrService) { }
 
   ngOnInit() {
-    this.friends$ = this.store.select(getFriends);
-
+    this.friends$ = combineLatest(
+      this.store.select(getFriends), this.store.select(getUserStatus)
+    ).pipe(
+      map(([users, userStatus]) => users.map(user => { return {...user, status: userStatus[user.id]} }))
+    );
+    
     this.friendshipRequests$ = this.store.pipe(
       select(getFriendshipRequests),
       withLatestFrom(this.store.select(getSelf)),
@@ -49,6 +58,7 @@ export class FriendsControlPanelComponent implements OnInit {
     );
 
     this.store.dispatch(new LoadFriendshipRequests());
+    this.store.dispatch(new LoadFriendships());
 
     this.addSignalrHandlers();
   }
@@ -114,6 +124,18 @@ export class FriendsControlPanelComponent implements OnInit {
       const users = Object.values(normalized.entities.users) as UserEntity[];
       this.store.dispatch(new AddEntity(FriendshipEntity.name, {entity: friendship}));
       this.store.dispatch(new UpsertEntities(UserEntity.name, {entities: users}));
+    });
+
+    this.signalr.addHandler('UserConnected', (msg: any) => {
+      let obj = JSON.parse(msg);
+      console.log(`User ${obj.userId} is online`);
+      this.store.dispatch(new UpdateUserStatus({id: obj.userId, status: "online"}));
+    });
+
+    this.signalr.addHandler('UserDisconnected', (msg: any) => {
+      let obj = JSON.parse(msg);
+      console.log(`User ${obj.userId} is offline`);
+      this.store.dispatch(new UpdateUserStatus({id: obj.userId, status: "offline"}));
     });
 
     this.signalr.registerHandlers();

@@ -60,7 +60,7 @@ namespace Users.API.Controllers
                 return Unauthorized();
             }
 
-            var (friendships, count) = await _friendshipQueries.GetFriendshipsByUserId(userId, queryDto);
+            var (friendships, count) = await _friendshipQueries.GetFriendshipsByUserId(userId, queryDto.Pagination);
             return Ok(new ArrayResponse<FriendshipDto>(friendships, count));
         }
     }

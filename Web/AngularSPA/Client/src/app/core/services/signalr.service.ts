@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, LogLevel, HubConnectionState, HttpTransportType } from '@microsoft/signalr';
 import { Store, select } from '@ngrx/store';
 import { getSignedIn, getOidcUser } from 'src/app/auth/reducers';
 import { getAppSettings } from '../reducers';

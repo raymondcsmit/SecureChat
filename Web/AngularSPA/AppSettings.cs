@@ -9,6 +9,7 @@ namespace AngularSPA
     {
         public string AccountApiUrl { get; set; }
         public string UsersApiUrl { get; set; }
+        public string SessionApiUrl { get; set; }
         public string AuthUrl { get; set; }
         public string MessagingUrl { get; set; }
         public string ClientId { get; set; }

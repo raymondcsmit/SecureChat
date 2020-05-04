@@ -11,5 +11,7 @@ namespace Messaging.Clients
         Task FriendshipRequestReceived(FriendshipRequestDto friendshipRequest);
 
         Task FriendshipCreated(FriendshipDto friendship);
+
+        Task ReceiveNotification(object data);
     }
 }

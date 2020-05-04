@@ -5,13 +5,13 @@
         <mat-icon class="mr-2">person_add</mat-icon>
         <span>Add a friend</span>
     </div>
-    <!-- <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
+    <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
     <mat-accordion displayMode="flat" class="scrollable flex-grow-1 w-100">
-        <mat-expansion-panel *ngFor="let user of (friends | async)">
+        <mat-expansion-panel *ngFor="let friend of (friends$ | async)">
             <mat-expansion-panel-header>
                 <mat-panel-title class="d-flex align-items-center">
-                    <span [style.color]="user.isOnline ? 'black' : 'gray'">{{user.userName}}</span>
-                    <span *ngIf="user.isOnline" class="dot ml-2"></span>
+                    <span [style.color]="friend.status == 'online' ? 'black' : 'gray'">{{friend.userName}}</span>
+                    <span *ngIf="friend.status == 'online'" class="dot ml-2"></span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="d-flex align-items-center justify-content-center clickable" (click)="onCreatePrivateChat(user.id)">
@@ -24,7 +24,7 @@
                 <span>Remove</span>
             </div>
         </mat-expansion-panel>
-    </mat-accordion> -->
+    </mat-accordion>
     <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
     <span><strong>Friendship Requests</strong></span>
     <mat-divider class="w-100 mt-2 mb-2"></mat-divider>

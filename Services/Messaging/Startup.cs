@@ -135,6 +135,7 @@ namespace Messaging
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
             eventBus.Subscribe<FriendshipRequestCreatedIntegrationEvent, FriendshipRequestCreatedIntegrationEventHandler>();
             eventBus.Subscribe<FriendshipCreatedIntegrationEvent, FriendshipCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<NotifyUsersIntegrationEvent, NotifyUsersIntegrationEventHandler>();
         }
     }
 }

@@ -7,6 +7,9 @@ namespace Session.API.Infrastructure.Exceptions
 {
     public class SessionApiException : Exception
     {
+        public static SessionApiException NotFound =>
+            throw new SessionApiException("", Enumerable.Empty<string>(), 404); 
+
         public IEnumerable<string> Errors { get; } = new List<string>();
 
         public int ErrorCode { get; }
