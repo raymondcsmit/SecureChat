@@ -13,7 +13,10 @@ using Microsoft.Extensions.Hosting;
 using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
 using Session.API.Infrastructure;
+using Session.API.IntegrationEvents.EventHandling;
+using Session.API.IntegrationEvents.Events;
 using Session.API.Services;
+using Users.API.Client.Extensions;
 
 namespace Session.API
 {
@@ -59,6 +62,8 @@ namespace Session.API
 
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<ISessionService, SessionService>();
+
+            services.AddUsersApiClient(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,7 +127,8 @@ namespace Session.API
         public void ConfigureEventBus(IApplicationBuilder app)
         {
             var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-            //eventBus.Subscribe<FriendshipRequestMadeIntegrationEvent, FriendshipRequestMadeIntegrationEventHandler>();
+            eventBus.Subscribe<UserConnectedIntegrationEvent, UserConnectedIntegrationEventHandler>();
+            eventBus.Subscribe<UserDisconnectedIntegrationEvent, UserDisconnectedIntegrationEventHandler>();
         }
     }
 }

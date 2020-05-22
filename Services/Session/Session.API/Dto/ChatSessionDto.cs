@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Session.API.Dto
 {
-    public class SessionDto
+    public class ChatSessionDto
     {
         public DateTimeOffset StartTime { get; set; }
 
         public TimeSpan IdleTime { get; set; }
 
-        public DateTimeOffset PreviousEndTime { get; set; }
+        public DateTimeOffset EndTime { get; set; }
     }
 }

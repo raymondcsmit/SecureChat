@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -6,14 +9,15 @@ using Session.API.Services;
 
 namespace Session.API.Controllers
 {
-    [Route("api/session")]
+    [Route("api/sessions")]
     [Authorize]
     public class SessionController: ControllerBase
     {
         private readonly ISessionService _sessionService;
         private readonly IIdentityService _identityService;
 
-        public SessionController(ISessionService sessionService, IIdentityService identityService)
+        public SessionController(
+            ISessionService sessionService, IIdentityService identityService)
         {
             _sessionService = sessionService;
             _identityService = identityService;
@@ -27,16 +31,7 @@ namespace Session.API.Controllers
             var session = await _sessionService.CreateSessionAsync(userId);
             return new ObjectResult(session) {StatusCode = StatusCodes.Status201Created};
         }
-        
-        [HttpGet("", Name = nameof(GetSessionAsync))]
-        public async Task<IActionResult> GetSessionAsync()
-        {
-            var userId = _identityService.GetUserIdentity();
 
-            var session = await _sessionService.GetSessionAsync(userId);
-            return Ok(session);
-        }
-        
         [HttpDelete("", Name = nameof(EndSessionAsync))]
         public async Task<IActionResult> EndSessionAsync()
         {
@@ -55,6 +50,13 @@ namespace Session.API.Controllers
             return Ok();
         }
 
+        [HttpGet("", Name = nameof(GetFriendSessions))]
+        public async Task<IActionResult> GetFriendSessions()
+        {
+            var userId = _identityService.GetUserIdentity();
 
+            var sessions = await _sessionService.GetChatSessionsForFriendsById(userId);
+            return Ok(sessions);
+        }
     }
 }

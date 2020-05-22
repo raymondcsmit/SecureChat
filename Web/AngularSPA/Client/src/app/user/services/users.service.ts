@@ -12,6 +12,7 @@ import { FriendshipRequestEntity } from '../entities/FriendshipRequestEntity';
 import { UserEntity } from '../entities/UserEntity';
 import { Friendship, friendshipListSchema } from '../models/Friendship';
 import { FriendshipEntity } from '../entities/FriendshipEntity';
+import { Session } from '../models/Session';
 
 @Injectable({
   providedIn: 'root'

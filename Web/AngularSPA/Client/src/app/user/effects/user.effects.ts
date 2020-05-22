@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { Actions, Effect, ofType } from "@ngrx/effects";
 import { map, withLatestFrom, switchMap, filter, catchError, throttleTime, mergeMap, take } from 'rxjs/operators';
 import { of, combineLatest } from 'rxjs';
-import { Store, select } from "@ngrx/store";
-import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser } from "../actions/user.actions";
+import { Store, select, Action } from "@ngrx/store";
+import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser, LoadOnlineStatus, UpdateUserStatus } from "../actions/user.actions";
 import { State } from "../reducers/user.reducer";
 import { AccountService } from "../services/account.service";
 import { AddEntity, UpsertEntity, AddEntities, UpsertEntities } from "../../core/actions/entity.actions";
@@ -17,6 +17,7 @@ import { UserEntity } from "../entities/UserEntity";
 import { FriendshipRequestActionTypes, AddFriend, LoadFriendshipRequests, UpdateFriendshipRequest } from "../actions/friendship-request.actions";
 import { LoadFriendships, FriendshipActionTypes } from "../actions/friendship.actions";
 import { FriendshipEntity } from "../entities/FriendshipEntity";
+import { SessionService } from "../services/session.service";
 
 @Injectable()
 export class UserEffects {
@@ -118,12 +119,26 @@ export class UserEffects {
                 catchError(errors => of(new Failure({action: action, errors: errors})))
             ))
         );
+    
+    // @Effect()
+    // LoadOnlineStatus$ = combineLatest(
+    //     this.actions$.pipe(ofType<LoadOnlineStatus>(UserActionTypes.LoadOnlineStatus)),
+    //     this.store.select(getSelf)).pipe(
+    //         filter(([, self]) => self != null),
+    //         mergeMap(([action,]) => this.sessionService.getFriendSessions().pipe(
+    //             mergeMap(res => Object.entries(res)
+    //                                 .filter(([id, session]) => session.startTime > session.endTime)
+    //                                 .map(([id, session]) => new UpdateUserStatus({id: id, status: 'online'}) as Action)
+    //                                 .concat([new Success({action: action})])),
+    //             catchError(errors => of(new Failure({action: action, errors: errors})))
+    //         )));
 
     constructor(
         private actions$: Actions,
         private store: Store<State>,
         private accountService: AccountService,
         private userService: UsersService,
+        private sessionService: SessionService,
         private router: Router
     ) {
     }

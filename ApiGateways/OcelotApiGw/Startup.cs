@@ -46,7 +46,7 @@ namespace OcelotApiGw
                     x.RequireHttpsMetadata = false;
                     x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
                     {
-                        ValidAudiences = new[] { "account" }
+                        ValidAudiences = new[] { "account, users, session" }
                     };
                 });
 
@@ -62,15 +62,10 @@ namespace OcelotApiGw
 
             app.RemoveHeader(_cfg["BypassAuthenticationHeader"]);
 
-            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            app.UseHealthChecks("/health", new HealthCheckOptions()
             {
                 Predicate = _ => true,
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
-            app.UseHealthChecks("/liveness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
             });
 
             app.UseCors("CorsPolicy");

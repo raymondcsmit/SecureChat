@@ -16,11 +16,9 @@ namespace Session.API.EntityConfigurations
 
             builder.HasKey(m => new { m.UserId, m.EventId });
 
-            builder.Property(m => m.UserId)
-                   .IsRequired();
-            
-            builder.Property(m => m.EventId)
-                   .IsRequired();
+            builder.Property(m => m.UserId);
+
+            builder.Property(m => m.EventId);
 
             builder.HasOne(m => m.User)
                    .WithMany(m => m.EventsLink)

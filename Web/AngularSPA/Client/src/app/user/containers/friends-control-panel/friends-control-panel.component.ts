@@ -19,7 +19,7 @@ import { normalize } from 'normalizr';
 import { AddEntity, UpsertEntity, UpsertEntities } from 'src/app/core/actions/entity.actions';
 import { Friendship, friendshipSchema } from '../../models/Friendship';
 import { FriendshipEntity } from '../../entities/FriendshipEntity';
-import { UpdateUserStatus } from '../../actions/user.actions';
+import { UpdateUserStatus, LoadOnlineStatus } from '../../actions/user.actions';
 
 interface UserWithStatus extends User {
   status: 'online'|'offline'|'idle';
@@ -59,6 +59,7 @@ export class FriendsControlPanelComponent implements OnInit {
 
     this.store.dispatch(new LoadFriendshipRequests());
     this.store.dispatch(new LoadFriendships());
+    this.store.dispatch(new LoadOnlineStatus());
 
     this.addSignalrHandlers();
   }

@@ -76,6 +76,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{323D3D88
 		ApiGateways\Session\apigw\configuration.json = ApiGateways\Session\apigw\configuration.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Users.API.Client", "Services\Users\Users.API.Client\Users.API.Client.csproj", "{BB995BBA-8B98-4DFD-95C6-F1CE513F152E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -154,6 +156,10 @@ Global
 		{040A2A1E-F772-4186-AADC-7AFA3D4FD415}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{040A2A1E-F772-4186-AADC-7AFA3D4FD415}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{040A2A1E-F772-4186-AADC-7AFA3D4FD415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB995BBA-8B98-4DFD-95C6-F1CE513F152E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB995BBA-8B98-4DFD-95C6-F1CE513F152E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB995BBA-8B98-4DFD-95C6-F1CE513F152E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB995BBA-8B98-4DFD-95C6-F1CE513F152E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -186,6 +192,7 @@ Global
 		{040A2A1E-F772-4186-AADC-7AFA3D4FD415} = {E465077E-1318-4096-92C1-1CE56D597B1A}
 		{A0B8F056-9D19-4DD1-91D9-BD3AF762F7E4} = {A86F1E38-3B9D-441A-984F-F0FB56463590}
 		{323D3D88-7408-4D3B-9195-AC0825FE3AB1} = {A0B8F056-9D19-4DD1-91D9-BD3AF762F7E4}
+		{BB995BBA-8B98-4DFD-95C6-F1CE513F152E} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {576D061A-08BD-48E3-B064-23BEF5036C89}

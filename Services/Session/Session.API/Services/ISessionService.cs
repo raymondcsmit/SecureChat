@@ -8,10 +8,10 @@ namespace Session.API.Services
 {
     public interface ISessionService
     {
-        Task<SessionDto> CreateSessionAsync(string userId);
-        Task<SessionDto> GetSessionAsync(string userId);
+        Task<ChatSessionDto> CreateSessionAsync(string userId);
+        Task<ChatSessionDto> GetSessionAsync(string userId);
         Task RefreshSessionAsync(string userId);
-
         Task EndSessionAsync(string userId);
+        Task<IDictionary<string, ChatSessionDto>> GetChatSessionsForFriendsById(string userId);
     }
 }

@@ -15,6 +15,8 @@ import { PersonalInfoComponent } from './components/personal-info/personal-info.
 import { ConnectFormDirective } from '../core/directives/connect-form.directive';
 import { UsersService } from './services/users.service';
 import { RouterModule } from '@angular/router';
+import { AccountService } from './services/account.service';
+import { SessionService } from './services/session.service';
 
 @NgModule({
   imports: [
@@ -50,7 +52,9 @@ import { RouterModule } from '@angular/router';
     StoreModule
   ],
   providers: [
-    UsersService
+    UsersService,
+    AccountService,
+    SessionService
   ]
 })
 export class UserModule { }
