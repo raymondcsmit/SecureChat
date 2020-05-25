@@ -46,7 +46,7 @@ namespace Session.API.Services
             return new ChatSessionDto
             {
                 StartTime = chatEvent.CreatedAt,
-                IdleTime = TimeSpan.Zero,
+                IdleSeconds = (int) TimeSpan.Zero.TotalSeconds,
                 EndTime = DateTimeOffset.MinValue
             };
         }
@@ -84,7 +84,7 @@ namespace Session.API.Services
             return new ChatSessionDto
             {
                 StartTime = startTime,
-                IdleTime = idleTime,
+                IdleSeconds = (int) idleTime.TotalSeconds,
                 EndTime = endTime
             };
         }

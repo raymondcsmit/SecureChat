@@ -9,7 +9,7 @@ namespace Session.API.Dto
     {
         public DateTimeOffset StartTime { get; set; }
 
-        public TimeSpan IdleTime { get; set; }
+        public int IdleSeconds { get; set; }
 
         public DateTimeOffset EndTime { get; set; }
     }

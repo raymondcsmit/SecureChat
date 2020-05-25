@@ -10,8 +10,9 @@
         <mat-expansion-panel *ngFor="let friend of (friends$ | async)">
             <mat-expansion-panel-header>
                 <mat-panel-title class="d-flex align-items-center">
-                    <span [style.color]="friend.status == 'online' ? 'black' : 'gray'">{{friend.userName}}</span>
-                    <span *ngIf="friend.status == 'online'" class="dot ml-2"></span>
+                    <span>{{friend.userName}}</span>
+                    <span *ngIf="friend.status == 'online'" class="online-dot ml-2"></span>
+                    <span *ngIf="friend.status == 'idle'" class="idle-dot ml-2"></span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="d-flex align-items-center justify-content-center clickable" (click)="onCreatePrivateChat(user.id)">

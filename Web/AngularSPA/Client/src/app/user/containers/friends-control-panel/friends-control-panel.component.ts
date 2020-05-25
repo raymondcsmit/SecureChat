@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, of, combineLatest } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, of, combineLatest, interval, Subscription } from 'rxjs';
 import { User } from 'src/app/user/models/User';
 import { Store, select } from '@ngrx/store';
 import { CreatePrivateChat } from '../../../chat/actions/chat.actions';
@@ -8,7 +8,7 @@ import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/c
 import { Router } from '@angular/router';
 import { getFriends, getFriendshipRequests, getUsersById, getSelf, getUserStatus } from '../../reducers';
 import { RemoveFriend, LoadFriendships } from '../../actions/friendship.actions';
-import { withLatestFrom, mergeMap, first, map, switchMap, filter } from 'rxjs/operators';
+import { withLatestFrom, mergeMap, first, map, switchMap, filter, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { FriendshipRequestEntity } from '../../entities/FriendshipRequestEntity';
 import { UserEntity } from '../../entities/UserEntity';
@@ -20,6 +20,7 @@ import { AddEntity, UpsertEntity, UpsertEntities } from 'src/app/core/actions/en
 import { Friendship, friendshipSchema } from '../../models/Friendship';
 import { FriendshipEntity } from '../../entities/FriendshipEntity';
 import { UpdateUserStatus, LoadOnlineStatus } from '../../actions/user.actions';
+import { appConfig } from 'src/app.config';
 
 interface UserWithStatus extends User {
   status: 'online'|'offline'|'idle';
@@ -30,10 +31,11 @@ interface UserWithStatus extends User {
   templateUrl: './friends-control-panel.component.html',
   styleUrls: ['./friends-control-panel.component.css']
 })
-export class FriendsControlPanelComponent implements OnInit {
+export class FriendsControlPanelComponent implements OnInit, OnDestroy {
 
   friends$: Observable<UserWithStatus[]>;
   friendshipRequests$: Observable<{ f: FriendshipRequestEntity; u: UserEntity; }[]>;
+  subscription: Subscription;
 
   constructor(private store: Store<any>, private dialog: MatDialog, private router: Router, private signalr: SignalrService) { }
 
@@ -59,9 +61,17 @@ export class FriendsControlPanelComponent implements OnInit {
 
     this.store.dispatch(new LoadFriendshipRequests());
     this.store.dispatch(new LoadFriendships());
+    
     this.store.dispatch(new LoadOnlineStatus());
+    this.subscription = interval(appConfig.refreshMilliseconds).pipe(
+      tap(() => this.store.dispatch(new LoadOnlineStatus()))
+    ).subscribe();
 
     this.addSignalrHandlers();
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
   
   onCreatePrivateChat(peerId: string) {

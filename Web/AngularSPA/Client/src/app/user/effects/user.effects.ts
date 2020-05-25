@@ -18,6 +18,7 @@ import { FriendshipRequestActionTypes, AddFriend, LoadFriendshipRequests, Update
 import { LoadFriendships, FriendshipActionTypes } from "../actions/friendship.actions";
 import { FriendshipEntity } from "../entities/FriendshipEntity";
 import { SessionService } from "../services/session.service";
+import { appConfig } from "src/app.config";
 
 @Injectable()
 export class UserEffects {
@@ -120,18 +121,21 @@ export class UserEffects {
             ))
         );
     
-    // @Effect()
-    // LoadOnlineStatus$ = combineLatest(
-    //     this.actions$.pipe(ofType<LoadOnlineStatus>(UserActionTypes.LoadOnlineStatus)),
-    //     this.store.select(getSelf)).pipe(
-    //         filter(([, self]) => self != null),
-    //         mergeMap(([action,]) => this.sessionService.getFriendSessions().pipe(
-    //             mergeMap(res => Object.entries(res)
-    //                                 .filter(([id, session]) => session.startTime > session.endTime)
-    //                                 .map(([id, session]) => new UpdateUserStatus({id: id, status: 'online'}) as Action)
-    //                                 .concat([new Success({action: action})])),
-    //             catchError(errors => of(new Failure({action: action, errors: errors})))
-    //         )));
+    @Effect()
+    LoadOnlineStatus$ = combineLatest(
+        this.actions$.pipe(ofType<LoadOnlineStatus>(UserActionTypes.LoadOnlineStatus)),
+        this.store.select(getSelf)).pipe(
+            filter(([, self]) => self != null),
+            mergeMap(([action,]) => this.sessionService.getFriendSessions().pipe(
+                mergeMap(res => Object.entries(res)
+                                    .filter(([id, session]) => session.startTime > session.endTime)
+                                    .map(([id, session]) => {
+                                        const status = session.idleTime > appConfig.idleSeconds ? 'idle' : 'online';
+                                        return new UpdateUserStatus({id: id, status: 'online'}) as Action;
+                                    })
+                                    .concat([new Success({action: action})])),
+                catchError(errors => of(new Failure({action: action, errors: errors})))
+            )));
 
     constructor(
         private actions$: Actions,

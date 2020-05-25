@@ -1,7 +1,15 @@
-.dot {
+.online-dot {
     height: 10px;
     width: 10px;
     background-color: green;
     border-radius: 50%;
     display: inline-block;
   }
+
+.idle-dot {
+  height: 10px;
+  width: 10px;
+  background-color: yellow;
+  border-radius: 50%;
+  display: inline-block;
+}

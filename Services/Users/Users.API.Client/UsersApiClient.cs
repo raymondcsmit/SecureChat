@@ -18,7 +18,7 @@ namespace Users.API.Client
 
         public async Task<IEnumerable<FriendshipDto>> GetFriendshipsByUserId(string id)
         {
-            var uri = $"users/{id}/friendships";
+            var uri = $"api/users/{id}/friendships";
 
             var responseString = await _httpClient.GetStringAsync(uri);
             var friendships = JsonConvert.DeserializeObject<ArrayResponse<FriendshipDto>>(responseString);

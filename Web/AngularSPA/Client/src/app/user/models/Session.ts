@@ -1,5 +1,5 @@
 export interface Session {
     startTime: Date,
-    idleTime: Date,
+    idleTime: number,
     endTime: Date
 }

@@ -12,20 +12,19 @@ namespace Auth
             {
                 new ApiResource("account", "Account Service")
                 {
-                    UserClaims = new[] { "permission", "sub" },
-
+                    UserClaims = { "permission", "sub" }
                 },
                 new ApiResource("users", "Users Service")
                 {
-                    UserClaims = new[] { "permission", "sub" }
+                    UserClaims = { "permission", "sub" }
                 },
                 new ApiResource("messaging", "Messaging Service")
                 {
-                    UserClaims = new[] { "permission", "sub" }
+                    UserClaims = { "permission", "sub" }
                 },
                 new ApiResource("session", "Session Service")
                 {
-                    UserClaims = new[] { "permission", "sub" }
+                    UserClaims = { "permission", "sub" }
                 }
             };
         }
@@ -42,7 +41,7 @@ namespace Auth
                     AllowAccessTokensViaBrowser = true,
                     AllowRememberConsent = false,
 
-                    RedirectUris =           { $"{clientUrls["AngularSpaClientUrl"]}/auth/sign-in-callback" },
+                    RedirectUris =           { $"{clientUrls["AngularSpaClientUrl"]}/auth/sign-in-callback", $"{clientUrls["AngularSpaClientUrl"]}/auth/sign-in-silent-callback" },
                     PostLogoutRedirectUris = { $"{clientUrls["AngularSpaClientUrl"]}/auth/sign-out-callback" },
                     AllowedCorsOrigins =     { clientUrls["AngularSpaClientUrl"] },
 

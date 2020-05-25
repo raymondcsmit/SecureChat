@@ -23,7 +23,7 @@ namespace Session.API.Controllers
             _identityService = identityService;
         }
 
-        [HttpPost("", Name = nameof(CreateSessionAsync))]
+        [HttpPost(Name = nameof(CreateSessionAsync))]
         public async Task<IActionResult> CreateSessionAsync()
         {
             var userId = _identityService.GetUserIdentity();
@@ -32,7 +32,7 @@ namespace Session.API.Controllers
             return new ObjectResult(session) {StatusCode = StatusCodes.Status201Created};
         }
 
-        [HttpDelete("", Name = nameof(EndSessionAsync))]
+        [HttpDelete(Name = nameof(EndSessionAsync))]
         public async Task<IActionResult> EndSessionAsync()
         {
             var userId = _identityService.GetUserIdentity();
@@ -41,7 +41,7 @@ namespace Session.API.Controllers
             return Ok();
         }
         
-        [HttpPatch("", Name = nameof(RefreshSessionAsync))]
+        [HttpPatch(Name = nameof(RefreshSessionAsync))]
         public async Task<IActionResult> RefreshSessionAsync()
         {
             var userId = _identityService.GetUserIdentity();
@@ -50,7 +50,7 @@ namespace Session.API.Controllers
             return Ok();
         }
 
-        [HttpGet("", Name = nameof(GetFriendSessions))]
+        [HttpGet(Name = nameof(GetFriendSessions))]
         public async Task<IActionResult> GetFriendSessions()
         {
             var userId = _identityService.GetUserIdentity();

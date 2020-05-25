@@ -20,7 +20,10 @@ export class AuthEffects {
     @Effect({dispatch: false})
     signInSuccess$ = this.actions$.pipe(
         ofType<fromActions.SignInSuccess>(fromActions.AuthActionTypes.SignInSuccess),
-        tap(() => this.router.navigate(['chat'])),
+        tap(action => {
+            if (!action.payload.silent)
+                this.router.navigate(['chat']);
+        }),
         tap(() => this.userManager.events.addUserSignedOut(() => 
             this.store.dispatch(new fromActions.SignOutSuccess({ fromCallback: false })
         )))
@@ -30,7 +33,14 @@ export class AuthEffects {
     completeSignIn$ = this.actions$.pipe(
         ofType<fromActions.CompleteSignIn>(fromActions.AuthActionTypes.CompleteSignIn),
         exhaustMap(() => from(this.userManager.signinRedirectCallback())),
-        map(user => new fromActions.SignInSuccess({user: user}))
+        map(user => new fromActions.SignInSuccess({user: user, silent: false}))
+    );
+
+    @Effect()
+    completeSignInSilent$ = this.actions$.pipe(
+        ofType<fromActions.CompleteSignInSilent>(fromActions.AuthActionTypes.CompleteSignInSilent),
+        exhaustMap(() => from(this.userManager.signinSilentCallback())),
+        map(user => new fromActions.SignInSuccess({user: user, silent: true}))
     );
 
     @Effect({dispatch: false})
@@ -70,14 +80,19 @@ export class AuthEffects {
         private store: Store<fromAuth.State>,
     ) {
         this.initUserIfLoggedIn();
+        this.addSilentRenew();
     }
 
     initUserIfLoggedIn() {
         this.userManager.getUser()
             .then(user => {
                 if (user && !user.expired) {
-                    this.store.dispatch(new fromActions.SignInSuccess({user: user}));
+                    this.store.dispatch(new fromActions.SignInSuccess({user: user, silent: false}));
                 }
             })
+    }
+
+    addSilentRenew() {
+        this.userManager.events.addAccessTokenExpiring(() => this.userManager.signinSilent())
     }
 }

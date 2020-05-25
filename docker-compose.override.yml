@@ -76,11 +76,13 @@ services:
       EventBusPassword: "12345"
       EventBusQueueName: session.service
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
-      UsersServiceUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5103
+      UsersServiceUrl: http://users.service
       BypassAuthenticationHeader: ${BYPASS_AUTHENTICATION_HEADER}
       BypassAuthenticationSecret: ${BYPASS_AUTHENTICATION_SECRET}
     extra_hosts:
       - ${EXTERNAL_DNS_NAME_OR_IP}:172.17.0.1
+    ports:
+      - "5005:80"
     healthcheck:
         test: ["CMD", "curl --fail session.service/health || exit"]
 

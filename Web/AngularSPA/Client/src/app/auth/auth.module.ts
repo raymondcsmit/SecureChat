@@ -17,6 +17,7 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AccessTokenInterceptorService } from './services/access-token-interceptor.service';
 import { AuthorizationErrorResponseInterceptorService } from './services/authorization-error-response-interceptor.service';
 import { MaterialModule } from '../material/material.module';
+import { SignInSilentCallbackComponent } from './containers/sign-in-silent-callback/sign-in-silent-callback.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,7 @@ import { MaterialModule } from '../material/material.module';
     EffectsModule.forFeature([AuthEffects]),
     MaterialModule
   ],
-  declarations: [SignInCallbackComponent, LoginPageComponent, SignOutCallbackComponent]
+  declarations: [SignInCallbackComponent, LoginPageComponent, SignOutCallbackComponent, SignInSilentCallbackComponent]
 })
 export class AuthModule {
   public static forRoot(): ModuleWithProviders {
@@ -43,6 +44,8 @@ export class AuthModule {
               client_id: environment.clientId,
               redirect_uri: `${window.location.origin}/auth/sign-in-callback`,
               post_logout_redirect_uri: `${window.location.origin}/auth/sign-out-callback`,
+              automaticSilentRenew: false,
+              silent_redirect_uri: `${window.location.origin}/auth/sign-in-silent-callback`,
               response_type:"id_token token",
               scope:"openid profile account users messaging session permissions email",
               filterProtocolClaims: true,
