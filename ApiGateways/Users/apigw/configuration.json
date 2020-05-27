@@ -142,7 +142,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/users/{userId}/friendships",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamHttpMethod": [ "GET", "DELETE" ]
     }
   ] 
 }

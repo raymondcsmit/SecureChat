@@ -16,11 +16,12 @@ import { UpdateFriendshipRequest, LoadFriendshipRequests } from '../../actions/f
 import { SignalrService } from 'src/app/core/services/signalr.service';
 import { FriendshipRequest, friendshipRequestSchema } from '../../models/FriendshipRequest';
 import { normalize } from 'normalizr';
-import { AddEntity, UpsertEntity, UpsertEntities } from 'src/app/core/actions/entity.actions';
+import { AddEntity, UpsertEntity, UpsertEntities, DeleteEntity } from 'src/app/core/actions/entity.actions';
 import { Friendship, friendshipSchema } from '../../models/Friendship';
 import { FriendshipEntity } from '../../entities/FriendshipEntity';
 import { UpdateUserStatus, LoadOnlineStatus } from '../../actions/user.actions';
 import { appConfig } from 'src/app.config';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface UserWithStatus extends User {
   status: 'online'|'offline'|'idle';
@@ -37,7 +38,12 @@ export class FriendsControlPanelComponent implements OnInit, OnDestroy {
   friendshipRequests$: Observable<{ f: FriendshipRequestEntity; u: UserEntity; }[]>;
   subscription: Subscription;
 
-  constructor(private store: Store<any>, private dialog: MatDialog, private router: Router, private signalr: SignalrService) { }
+  constructor(
+    private store: Store<any>, 
+    private dialog: MatDialog, 
+    private router: Router, 
+    private signalr: SignalrService,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.friends$ = combineLatest(
@@ -149,6 +155,17 @@ export class FriendsControlPanelComponent implements OnInit, OnDestroy {
       this.store.dispatch(new UpdateUserStatus({id: obj.userId, status: "offline"}));
     });
 
+    this.signalr.addHandler('FriendshipDeleted', (msg: any) => {
+      const friendship = JSON.parse(msg).friendship;
+      console.log(`Friendship between ${friendship.User1} and ${friendship.User2} has been deleted`);
+      this.store.dispatch(new DeleteEntity(FriendshipEntity.name, {id: friendship.Id}));
+      this.showSnackbarMessage(`Friendship between ${friendship.User1} and ${friendship.User2} has been deleted`);
+    });
+
     this.signalr.registerHandlers();
+  }
+
+  private showSnackbarMessage(message: string) {
+    this.snackBar.open(message, 'Dismiss', {duration: 5000});
   }
 }

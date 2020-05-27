@@ -77,30 +77,22 @@ namespace Users.Domain.AggregateModel.UserAggregate
             }
         }
 
-        //public void EndSession()
-        //{
-        //    Session = null;
-        //    AddDomainEvent(new SessionEndedDomainEvent(Id));
-        //}
-
-        //public void RefreshSession()
-        //{
-        //    if (Session == null)
-        //    {
-        //        throw new ChatDomainException("Could not refresh session",
-        //            new[] { "No session exists" });
-        //    }
-
-        //    Session.Refresh();
-        //}
-
         public bool HasProfile => Profile != null;
 
         public void MakeFriendshipRequest(User requestee)
         {
-            if (_friendshipRequests.Any(req => req.RequesteeId == requestee.Id))
+            var pendingFriendshipRequestExists =
+                _friendshipRequests.Any(req => req.RequesteeId == requestee.Id && req.IsPending);
+            var friendshipExists = _friendships.Any(fr => fr.IsFor(Id, requestee.Id));
+
+            if (pendingFriendshipRequestExists)
             {
-                throw new ChatDomainException("Friendship request already made");
+                throw new ChatDomainException("Pending friendship request already exists");
+            }
+
+            if (friendshipExists)
+            {
+                throw new ChatDomainException("Friendship already exists");
             }
 
             var friendshipRequest = new FriendshipRequest(Id, requestee.Id);

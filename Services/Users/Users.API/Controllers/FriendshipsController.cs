@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Users.API.Application.Commands;
 
 namespace Users.API.Controllers
 {
@@ -62,6 +63,23 @@ namespace Users.API.Controllers
 
             var (friendships, count) = await _friendshipQueries.GetFriendshipsByUserId(userId, queryDto.Pagination);
             return Ok(new ArrayResponse<FriendshipDto>(friendships, count));
+        }
+
+        [HttpDelete("users/{userId}/friendships", Name = nameof(DeleteFriendshipByFriendId))]
+        public async Task<IActionResult> DeleteFriendshipByFriendId(string userId, [FromQuery] string friendId)
+        {
+            var authHelper = new AuthHelperBuilder()
+                .AllowSystem()
+                .RequirePermissions("users.view_others")
+                .Build();
+
+            if (!authHelper.Authorize(_identityService))
+            {
+                return Unauthorized();
+            }
+
+            await _mediator.Publish(new DeleteFriendshipByFriendIdCommand(userId, friendId));
+            return NoContent();
         }
     }
 }

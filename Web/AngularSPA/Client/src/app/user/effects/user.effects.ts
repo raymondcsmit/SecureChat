@@ -6,7 +6,7 @@ import { Store, select, Action } from "@ngrx/store";
 import { LoadSelf, UserActionTypes, AddSelf, ConfirmEmail, UpdateUser, LoadOnlineStatus, UpdateUserStatus } from "../actions/user.actions";
 import { State } from "../reducers/user.reducer";
 import { AccountService } from "../services/account.service";
-import { AddEntity, UpsertEntity, AddEntities, UpsertEntities } from "../../core/actions/entity.actions";
+import { AddEntity, UpsertEntity, AddEntities, UpsertEntities, DeleteEntity } from "../../core/actions/entity.actions";
 import { Router } from "@angular/router";
 import { Success, NoOp, Failure } from "src/app/core/actions/core.actions";
 import * as jsonpatch from 'fast-json-patch';
@@ -15,7 +15,7 @@ import { UsersService } from "../services/users.service";
 import { FriendshipRequestEntity } from "../entities/FriendshipRequestEntity";
 import { UserEntity } from "../entities/UserEntity";
 import { FriendshipRequestActionTypes, AddFriend, LoadFriendshipRequests, UpdateFriendshipRequest } from "../actions/friendship-request.actions";
-import { LoadFriendships, FriendshipActionTypes } from "../actions/friendship.actions";
+import { LoadFriendships, FriendshipActionTypes, RemoveFriend } from "../actions/friendship.actions";
 import { FriendshipEntity } from "../entities/FriendshipEntity";
 import { SessionService } from "../services/session.service";
 import { appConfig } from "src/app.config";
@@ -101,7 +101,23 @@ export class UserEffects {
         ofType<UpdateFriendshipRequest>(FriendshipRequestActionTypes.UpdateFriendshipRequest),
         throttleTime(5000),
         switchMap(action => this.userService.updateFriendshipRequest(action.payload.id, action.payload.status).pipe(
-            map(_ => new Success({action: action})),
+            mergeMap(_ => [
+                new DeleteEntity(FriendshipRequestEntity.name, {id: action.payload.id}),
+                new Success({action: action})
+            ]),
+            catchError(errors => of(new Failure({action: action, errors: errors})))
+        ))
+    );
+
+    @Effect()
+    RemoveFriend$ = this.actions$.pipe(
+        ofType<RemoveFriend>(FriendshipActionTypes.RemoveFriend),
+        throttleTime(5000),
+        withLatestFrom(this.store.select(getSelf)),
+        switchMap(([action, self]) => this.userService.deleteFriendship(self.id, action.payload.id).pipe(
+            mergeMap(res => [ 
+                new Success({action: action})
+            ]),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
     );

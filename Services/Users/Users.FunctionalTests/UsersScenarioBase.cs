@@ -64,5 +64,13 @@ namespace Users.FunctionalTests.Scenarios
             public static string UpdateFriendshipRequestStatusById(string id)
                 => $"{FriendshipRequestsBaseUrl}/{id}";
         }
+
+        public static class Delete
+        {
+            public static string Users = UsersBaseUrl;
+
+            public static string DeleteByUserId(string user)
+                => $"{UsersBaseUrl}/{user}/friendships";
+        }
     }
 }

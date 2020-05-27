@@ -15,12 +15,12 @@
                     <span *ngIf="friend.status == 'idle'" class="idle-dot ml-2"></span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="d-flex align-items-center justify-content-center clickable" (click)="onCreatePrivateChat(user.id)">
+            <div class="d-flex align-items-center justify-content-center clickable" (click)="onCreatePrivateChat(friend.id)">
                 <mat-icon class="mr-2">message</mat-icon>
                 <span>Start chat</span>
             </div>
             <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
-            <div class="d-flex align-items-center clickable justify-content-center" (click)="onRemoveFriend(user.id, user.userName)">
+            <div class="d-flex align-items-center clickable justify-content-center" (click)="onRemoveFriend(friend.id, friend.userName)">
                 <mat-icon class="mr-2">clear</mat-icon>
                 <span>Remove</span>
             </div>

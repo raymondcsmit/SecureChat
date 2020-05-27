@@ -28,5 +28,8 @@ namespace Users.Domain.AggregateModel.UserAggregate
             User1Id = user1Id;
             User2Id = user2Id;
         }
+
+        public bool IsFor(string user1Id, string user2Id) 
+            => User1Id == user1Id && User2Id == user2Id || User1Id == user2Id && User2Id == user1Id;
     }
 }

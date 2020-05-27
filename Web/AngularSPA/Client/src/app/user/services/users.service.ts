@@ -117,6 +117,18 @@ export class UsersService {
     );
   }
 
+  deleteFriendship(userId, friendId) {
+    const url = `${this.usersApi}/users/${userId}/friendships`;
+    let queryParams = {
+      friendId: friendId
+    };
+
+    return this.httpClient.delete(url, {observe: 'response', params: queryParams}).pipe(
+      map(res => true),
+      catchError(res => throwError(this.resolveErrors(res)))
+    );
+  }
+
   private resolveErrors(res: HttpErrorResponse) {
     return (res.error && res.error.errors) ? res.error.errors : ["An error has occured"];
   }

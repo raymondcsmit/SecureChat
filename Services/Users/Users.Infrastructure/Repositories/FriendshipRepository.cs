@@ -55,7 +55,10 @@ namespace Users.Infrastructure.Repositories
 
         public void DeleteById(string id)
         {
-            throw new NotImplementedException();
+            var sql = $@"DELETE FROM Friendships
+                                WHERE Friendships.Id = @{nameof(id)};";
+
+            UnitOfWork.AddOperation(new object(), async connection => await connection.ExecuteAsync(sql, new {id}));
         }
 
         public void Update(Friendship entity)

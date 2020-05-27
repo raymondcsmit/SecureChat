@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
+using Users.API.Application.IntegrationEvents.Events;
 
 namespace Users.FunctionalTests.Scenarios
 {
@@ -443,6 +444,103 @@ namespace Users.FunctionalTests.Scenarios
             Assert.True(response.StatusCode == HttpStatusCode.OK);
             Assert.True(responseArr.Items.Count() == 2);
             Assert.True(responseArr.Total == 2);
+        }
+
+        [Fact]
+        public async Task DeleteFriendshipByUserId_ShouldReturnNoContent_OnExistingUserId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+            await CreateTestFriendshipAsync(alice.Id, bob.Id);
+
+            var query = new
+            {
+                friendId = bob.Id
+            };
+
+            var uri = UriHelpers.BuildUri(Delete.DeleteByUserId(alice.Id), new { query = JsonConvert.SerializeObject(query) });
+            var response = await client.DeleteAsync(uri);
+
+            Assert.True(response.StatusCode == HttpStatusCode.NoContent);
+        }
+        
+        [Fact]
+        public async Task DeleteFriendshipByUserId_ShouldReturnNotFound_OnNonexistingUserId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+            await CreateTestFriendshipAsync(alice.Id, bob.Id);
+
+            var uri = UriHelpers.BuildUri(Delete.DeleteByUserId(alice.Id), new { friendId = "gibberish" });
+            var response = await client.DeleteAsync(uri);
+
+            Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+        }
+        
+        [Fact]
+        public async Task DeleteFriendshipByUserId_ShouldDeleteFriendship_OnExistingUserId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+            await CreateTestFriendshipAsync(alice.Id, bob.Id);
+
+            var query = new
+            {
+                friendId = bob.Id
+            };
+
+            var uri = UriHelpers.BuildUri(Delete.DeleteByUserId(alice.Id), new { query = JsonConvert.SerializeObject(query) });
+            await client.DeleteAsync(uri);
+
+            var response = await client.GetAsync(uri);
+            var responseStr = await response.Content.ReadAsStringAsync();
+            var responseArr = JsonConvert.DeserializeObject<ArrayResponse<FriendshipDto>>(responseStr);
+
+            Assert.True(!responseArr.Items.Any());
+        }
+
+        [Fact]
+        public async Task DeleteFriendshipByUserId_ShouldDispatchNotificationEvent_OnExistingUserId()
+        {
+            var client = CreateClient();
+
+            var alice = new User("1", "alice", "alice@alice.com");
+            var bob = new User("2", "bob", "bob@bob.com");
+            await CreateTestUserAsync(alice);
+            await CreateTestUserAsync(bob);
+            await CreateTestFriendshipAsync(alice.Id, bob.Id);
+
+            string eventName = null;
+            string eventMessage = null;
+            TestEventBusFixture.EventBus.Subscribe(nameof(NotifyUsersIntegrationEvent), (e, m) =>
+            {
+                eventName = e;
+                eventMessage = m;
+            });
+            await Task.Delay(1000);
+
+            var uri = UriHelpers.BuildUri(Delete.DeleteByUserId(alice.Id), new { friendId = bob.Id });
+            await client.DeleteAsync(uri);
+            await Task.Delay(1000);
+
+            var message = JsonConvert.DeserializeObject<NotifyUsersIntegrationEvent>(eventMessage);
+            Assert.Equal(nameof(NotifyUsersIntegrationEvent), eventName);
+            Assert.Equal("FriendshipDeleted", message.ClientMethod);
+            Assert.True(message.UserIds.Contains(alice.Id) && message.UserIds.Contains(bob.Id));
+
+            await Task.Delay(1000);
         }
 
         private HttpClient CreateClient()
