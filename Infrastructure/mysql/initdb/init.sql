@@ -13,3 +13,7 @@ GRANT ALL PRIVILEGES ON users_db.* TO 'users'@'%';
 CREATE DATABASE IF NOT EXISTS session_db;
 CREATE USER 'session'@'%' IDENTIFIED BY '12345';
 GRANT ALL PRIVILEGES ON session_db.* TO 'session'@'%';
+
+CREATE DATABASE IF NOT EXISTS chats_db;
+CREATE USER 'chats'@'%' IDENTIFIED BY '12345';
+GRANT ALL PRIVILEGES ON chats_db.* TO 'chats'@'%';

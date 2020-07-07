@@ -33,6 +33,16 @@ services:
       - account.service
       - rabbitmq
 
+  chats.service:
+    container_name: chats.service
+    build: 
+      context: .
+      dockerfile: Services/Chats/Chats.API/Dockerfile
+    restart: always
+    depends_on:
+      - mysql
+      - rabbitmq
+
   messaging.service:
     container_name: messaging.service
     build: 
@@ -70,6 +80,7 @@ services:
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
+      - auth.service
       - account.service
 
   users.apigw:
@@ -78,7 +89,17 @@ services:
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
+      - auth.service
       - users.service
+
+  chats.apigw:
+    container_name: chats.apigw
+    image: chats.apigw
+    build:
+      context: ./ApiGateways/OcelotApiGw
+    depends_on:
+      - auth.service
+      - chats.service
 
   session.apigw:
     container_name: session.apigw
@@ -86,6 +107,7 @@ services:
     build:
       context: ./ApiGateways/OcelotApiGw
     depends_on:
+      - auth.service
       - session.service
 
   rabbitmq:
@@ -118,4 +140,6 @@ services:
     depends_on:
         - auth.service
         - account.service
+        - users.service
+        - messaging.service
         - users.service
