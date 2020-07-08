@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Chats.Domain.AggregateModel;
 
 namespace Chats.Domain.SeedWork
 {
@@ -7,12 +8,12 @@ namespace Chats.Domain.SeedWork
     {
         IUnitOfWork UnitOfWork { get; }
 
-        void Create(T friendship);
+        Chat Add(T chat);
 
-        Task<T> GetByIdAsync(string id);
+        Task<T> GetAsync(string id);
 
-        void DeleteById(string id);
+        Task Delete(string id);
 
-        void Update(T entity);
+        Chat Update(T chat);
     }
 }

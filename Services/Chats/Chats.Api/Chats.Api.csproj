@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Events\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
+    <ProjectReference Include="..\..\..\Common\Helpers\Helpers.csproj" />
     <ProjectReference Include="..\Chats.Infrastructure\Chats.Infrastructure.csproj" />
   </ItemGroup>
 

@@ -103,8 +103,6 @@ namespace Users.API
                 options.RetryCount = 10;
             }, typeof(Startup).Assembly);
 
-            services.AddScoped<DatabaseSeed>();
-
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IIdentityService, IdentityService>();
 

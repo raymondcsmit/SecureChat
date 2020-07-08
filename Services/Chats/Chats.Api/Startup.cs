@@ -1,6 +1,9 @@
 using System;
+using Chats.Api.Infrastructure.Filters;
 using Chats.Api.Services;
+using Chats.Domain.AggregateModel;
 using Chats.Infrastructure;
+using Chats.Infrastructure.Repositories;
 using HealthChecks.UI.Client;
 using Helpers.Auth;
 using Helpers.Extensions;
@@ -32,11 +35,15 @@ namespace Chats.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            });
+            services.AddControllers(options =>
+                {
+                    options.Filters.Add(typeof(GlobalExceptionFilter));
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                });
 
             AddHealthChecks(services);
 
@@ -66,6 +73,8 @@ namespace Chats.Api
 
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddScoped<IChatRepository, ChatRepository>();
 
             services.AddMediatR(typeof(Startup).Assembly);
         }

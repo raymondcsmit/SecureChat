@@ -37,7 +37,7 @@ services:
     container_name: chats.service
     build: 
       context: .
-      dockerfile: Services/Chats/Chats.API/Dockerfile
+      dockerfile: Services/Chats/Chats.Api/Dockerfile
     restart: always
     depends_on:
       - mysql
@@ -142,4 +142,4 @@ services:
         - account.service
         - users.service
         - messaging.service
-        - users.service
+        - chats.service
