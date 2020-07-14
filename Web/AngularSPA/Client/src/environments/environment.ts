@@ -5,5 +5,6 @@ export const environment = {
   accountApi: "http://localhost:5102/api",
   usersApi: "http://localhost:5103/api",
   sessionApi: "http://localhost:5105/api",
-  messagingUrl: "http://localhost:5104"
+  messagingUrl: "http://localhost:5104",
+  chatsApi: "http://localhost:5106/api"
 }

@@ -2,33 +2,33 @@
     <mat-icon>chat</mat-icon>
     <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
     <div class="d-flex align-items-center justify-content-center clickable" routerLink="./create-chatroom">
-        <!-- <mat-icon class="mr-2">add</mat-icon> -->
+        <mat-icon class="mr-2">add</mat-icon>
         <span>Create a chatroom</span>
     </div>
     <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
     <mat-accordion displayMode="flat" class="scrollable flex-grow-1 w-100">
-        <mat-expansion-panel *ngFor="let chatroom of (myChatrooms$ | async)">
+        <mat-expansion-panel *ngFor="let cd of (myChatrooms$ | async)">
             <mat-expansion-panel-header>
                 <mat-panel-title class="d-flex align-items-center">
-                    <span>{{chatroom.name}}</span>
+                    <span>{{cd.chat.name}}</span>
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="d-flex align-items-center justify-content-between">
                 <span>Number of members: &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span class="font-weight-bold">{{chatroom.numMembers}}</span>
+                <span class="font-weight-bold">{{cd.chat.memberCount}}</span>
             </div>
             <mat-divider class="w-100 mt-2 mb-2 w-100"></mat-divider>
             <div class="d-flex align-items-center justify-content-between">
                 <span>Number of messages: &nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <span class="font-weight-bold">{{chatroom.numMessages}}</span>
+                <span class="font-weight-bold">{{cd.chat.messageCount}}</span>
             </div>
             <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
-            <div class="d-flex align-items-center justify-content-center clickable" (click)="onInviteFriend(chatroom.id, chatroom.name)">
+            <div class="d-flex align-items-center justify-content-center clickable" (click)="onInviteFriend(cd.chat.id, cd.chat.name)">
                 <mat-icon class="mr-2">person</mat-icon>
                 <span>Invite a friend</span>
             </div>
             <mat-divider class="w-100 mt-2 mb-2"></mat-divider>
-            <div class="d-flex align-items-center justify-content-center clickable" (click)="onDeleteChatroom(chatroom.id, chatroom.name)">
+            <div class="d-flex align-items-center justify-content-center clickable" (click)="onDeleteChatroom(cd.chat.id, cd.chat.name)">
                 <mat-icon class="mr-2">clear</mat-icon>
                 <span>Delete</span>
             </div>

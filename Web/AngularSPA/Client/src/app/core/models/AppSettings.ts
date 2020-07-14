@@ -1,7 +1,9 @@
 export interface AppSettings {
     accountApiUrl: string;
-    usersApiUrl: string;
     authUrl: string;
-    messagingUrl: string;
     clientId: string;
+    messagingUrl: string;
+    sessionApiUrl: string;
+    usersApiUrl: string;
+    chatsApiUrl: string;
 }

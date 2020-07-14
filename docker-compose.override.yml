@@ -142,6 +142,7 @@ services:
       SessionApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5105/api
       AuthUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5101
       MessagingUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5104
+      ChatsApiUrl: http://${EXTERNAL_DNS_NAME_OR_IP}:5106
       ClientId: AngularSpaClient
 
   account.apigw:

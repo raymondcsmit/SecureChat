@@ -13,7 +13,7 @@ import { User } from 'oidc-client';
 export class AccessTokenInterceptorService implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (req.url.match(/api|hub/).length > 0) {
+    if (req.url.match(/api|hub/) != null) {
       return this.store.pipe(
         select(fromAuth.getOidcUser),
         take(1),

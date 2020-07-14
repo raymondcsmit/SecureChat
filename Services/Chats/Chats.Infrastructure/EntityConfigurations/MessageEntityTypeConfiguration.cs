@@ -22,6 +22,9 @@ namespace Chats.Infrastructure.EntityConfigurations
                 .WithMany(c => c.Messages)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Property(m => m.ChatId)
+                .IsRequired();
+
             builder.Property(m => m.Content)
                 .IsRequired();
 

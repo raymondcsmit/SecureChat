@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { CreateChatroom } from '../../actions/chat.actions';
+import { CreateChat } from '../../actions/chat.actions';
 import { Router } from '@angular/router';
+import { validateInteger } from 'src/app/core/validators/validateInteger';
 
 @Component({
   selector: 'app-create-chatroom',
@@ -20,12 +21,14 @@ export class CreateChatroomComponent implements OnInit {
 
   ngOnInit() {
     this.createChatroomForm = new FormGroup({
-      name: new FormControl('', [Validators.required])
+      name: new FormControl('', [Validators.required]),
+      capacity: new FormControl('', [Validators.required, validateInteger(3, 1000)])
     });
   }
 
   onCreateChatroom() {
-    this.store.dispatch(new CreateChatroom(this.createChatroomForm.value));
+    const formValue = this.createChatroomForm.value;
+    this.store.dispatch(new CreateChat({name: formValue.name, capacity: parseInt(formValue.capacity)}));
     this.router.navigate(['./']);
   }
 

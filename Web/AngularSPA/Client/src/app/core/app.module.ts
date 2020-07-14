@@ -21,7 +21,7 @@ import { ConfigurationService } from './services/configuration.service';
 import { SignalrService } from './services/signalr.service';
 
 export function initializeApp(configService: ConfigurationService) {
-  return () => configService.load().toPromise();
+  return () => configService.loadSettings().toPromise();
 }
 
 @NgModule({

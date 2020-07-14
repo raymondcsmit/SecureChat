@@ -1,9 +1,13 @@
 import { EntityActionsUnion, EntityActionTypes } from "../actions/entity.actions";
 import { EntityAdapter, EntityState } from "@ngrx/entity";
+import { state } from "@angular/animations";
 
 export function entityReducer<T, U extends EntityState<T>>(action: EntityActionsUnion<T>, entityAdapter: EntityAdapter<T>, entityState: U): U {
     switch (action.type) {
         case EntityActionTypes.AddEntity: {
+            if (action.payload.entity == null) {
+                return entityState;
+            }
             return entityAdapter.addOne(action.payload.entity, entityState);
         }
 
@@ -16,6 +20,9 @@ export function entityReducer<T, U extends EntityState<T>>(action: EntityActions
         }
 
         case EntityActionTypes.UpsertEntity: {
+            if (action.payload.entity == null) {
+                return entityState;
+            }
             return entityAdapter.upsertOne(action.payload.entity, entityState);
         }
 
@@ -24,6 +31,9 @@ export function entityReducer<T, U extends EntityState<T>>(action: EntityActions
         }
 
         case EntityActionTypes.DeleteEntity: {
+            if (action.payload.id == null) {
+                return entityState;
+            }
             return entityAdapter.removeOne(action.payload.id, entityState);
         }
 

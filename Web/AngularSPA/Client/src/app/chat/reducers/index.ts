@@ -25,16 +25,10 @@ export const getChatsState = createSelector(
     (state: ChatModuleState) => state.chats
 );
 
-export const getAllChats = createSelector(getChatsState, fromChats.selectChats);
 export const getChatrooms = createSelector(getChatsState, fromChats.selectChatrooms);
 export const getPrivateChats = createSelector(getChatsState, fromChats.selectPrivateChats);
-export const getChatroomTotal = createSelector(getChatsState, fromChats.selectChatroomTotal);
-export const getPrivateChatTotal = createSelector(getChatsState, fromChats.selectPrivateChatTotal);
 export const getChatById = (id: string) => createSelector(getChatsState, fromChats.selectChatById(id));
-export const getNewMessageCountById = (id: string) => createSelector(getChatsState, fromChats.selectNewMessageCountById(id));
-export const getChatroomsByOwnerId = (id: string) => createSelector(getChatsState, fromChats.selectChatroomsByOwnerId(id));
-export const getSelectedChatroomId = createSelector(getChatsState, fromChats.selectSelectedChatroomId);
-export const getSelectedPrivateChatId = createSelector(getChatsState, fromChats.selectSelectedPrivateChatId);
+export const getChatroomsByOwnerId = (id: string) => createSelector(getChatrooms, chatrooms => chatrooms.filter(c => c.owner == id));
 
 // messages
 export const getMessagesState = createSelector(
@@ -42,7 +36,6 @@ export const getMessagesState = createSelector(
     (state: ChatModuleState) => state.messages
 );
 
-export const getMessageIds = createSelector(getMessagesState, fromMessages.selectMessageIds);
-export const getAllMessages = createSelector(getMessagesState, fromMessages.selectMessages);
+export const getMessages = createSelector(getMessagesState, fromMessages.messageEntitySelectors.selectAll);
 export const getMessageById = (id: string) => createSelector(getMessagesState, fromMessages.selectMessageById(id));
 export const getMessagesByChatId = (id: string) => createSelector(getMessagesState, fromMessages.selectMessagesByChatId(id));

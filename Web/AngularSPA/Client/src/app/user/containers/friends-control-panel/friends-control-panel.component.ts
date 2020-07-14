@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, of, combineLatest, interval, Subscription } from 'rxjs';
 import { User } from 'src/app/user/models/User';
 import { Store, select } from '@ngrx/store';
-import { CreatePrivateChat } from '../../../chat/actions/chat.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent, ConfirmationDialogResult } from 'src/app/core/components/confirmation-dialog/confirmation-dialog.component';
 import { Router } from '@angular/router';
@@ -41,7 +40,6 @@ export class FriendsControlPanelComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<any>, 
     private dialog: MatDialog, 
-    private router: Router, 
     private signalr: SignalrService,
     private snackBar: MatSnackBar) { }
 
@@ -80,13 +78,13 @@ export class FriendsControlPanelComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
   
-  onCreatePrivateChat(peerId: string) {
-    this.store.dispatch(new CreatePrivateChat({ peerId: peerId }));
-    let x = {
-      e: 1,
-      s: 2
-    }
-  }
+  // onCreatePrivateChat(peerId: string) {
+  //   this.store.dispatch(new CreatePrivateChat({ peerId: peerId }));
+  //   let x = {
+  //     e: 1,
+  //     s: 2
+  //   }
+  // }
 
   openConfirmationDialog(message: string): Observable<any> {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {

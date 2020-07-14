@@ -1,15 +1,24 @@
-<div class="w-100 d-flex flex-column align-items-center">
-    <h1 class="mb-4">Create Chatroom</h1>
-    <form class="d-flex flex-column justify-content-center align-items-center w-50" [formGroup]="createChatroomForm">
-      <mat-form-field class="w-100">
-        <input matInput placeholder="Chatroom Name" formControlName="name">
-          <mat-error *ngIf="hasError('name')">
-            Chatroom name is invalid
-          </mat-error>
-      </mat-form-field>
-      <div class="d-flex flex-row justify-content-center mt-4 w-100">
-        <button mat-raised-button type="button" [disabled]="createChatroomForm.invalid" class="w-50" (click)="onCreateChatroom()">Create</button>
-        <button mat-raised-button class="w-50 ml-2" routerLink="../">Return to chat</button>
-      </div>
-    </form>
+<div class="d-flex flex-column align-items-center justify-content-center flex-grow-1">
+  <mat-card class="w-50">
+      <mat-card-content class="d-flex flex-column align-items-center justify-content-center">
+        <form class="d-flex flex-column justify-content-center align-items-center" [formGroup]="createChatroomForm">
+          <mat-form-field class="w-100">
+            <input matInput placeholder="Chatroom Name" formControlName="name">
+              <mat-error *ngIf="hasError('name')">
+                Chatroom name is invalid
+              </mat-error>
+          </mat-form-field>
+          <mat-form-field class="w-100">
+            <input matInput placeholder="Capacity" formControlName="capacity">
+              <mat-error *ngIf="hasError('capacity')">
+                Capacity is invalid
+              </mat-error>
+          </mat-form-field>
+          <div class="d-flex flex-row justify-content-center mt-4 w-100">
+            <button mat-raised-button type="button" [disabled]="createChatroomForm.invalid" (click)="onCreateChatroom()">Create</button>
+            <button mat-raised-button class="ml-2" routerLink="../">Return to chat</button>
+          </div>
+        </form>
+      </mat-card-content>
+  </mat-card>
 </div>

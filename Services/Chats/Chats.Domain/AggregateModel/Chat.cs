@@ -13,6 +13,8 @@ namespace Chats.Domain.AggregateModel
 
         public string OwnerId { get; private set; }
 
+        public int Capacity { get; private set; }
+
         private readonly HashSet<ChatModerator> _chatModerators = new HashSet<ChatModerator>(new ChatModeratorEqualityComparer());
         public IReadOnlyCollection<ChatModerator> ChatModerators => _chatModerators;
 
@@ -22,14 +24,25 @@ namespace Chats.Domain.AggregateModel
         private readonly List<Message> _messages = new List<Message>();
         public IReadOnlyCollection<Message> Messages => _messages;
 
-        public Chat(string name, string ownerId)
+        public Chat(string name, string ownerId, int capacity)
         {
             Name = name;
             OwnerId = ownerId;
+
+            if (capacity < 2)
+            {
+                throw new ChatDomainException($"The minimum chat capacity is 2");
+            }
+            Capacity = capacity;
         }
 
         public void AddModerator(string userId)
         {
+            if (IsPrivate())
+            {
+                throw new ChatDomainException($"Chat {this.Id} is a private chat");
+            }
+
             var chatModerator = new ChatModerator(userId) {ChatId = this.Id};
             if (_chatModerators.Contains(chatModerator))
             {
@@ -41,6 +54,11 @@ namespace Chats.Domain.AggregateModel
 
         public void AddMember(string userId)
         {
+            if (_chatMemberships.Count == Capacity)
+            {
+                throw new ChatDomainException($"Chat {this.Id} is full");
+            }
+
             var chatMembership = new ChatMembership(userId) {ChatId = this.Id};
             if (_chatMemberships.Contains(chatMembership))
             {
@@ -53,6 +71,11 @@ namespace Chats.Domain.AggregateModel
         public void AddMessage(string content, string authorId)
         {
             _messages.Add(new Message(content, authorId));
+        }
+
+        public bool IsPrivate()
+        {
+            return Capacity == 2;
         }
 
         private class ChatMembershipEqualityComparer : IEqualityComparer<ChatMembership>

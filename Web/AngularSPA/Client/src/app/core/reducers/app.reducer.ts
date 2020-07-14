@@ -14,7 +14,9 @@ export const initialState: State = {
         usersApiUrl: environment.usersApi,
         authUrl: environment.authorityUrl,
         messagingUrl: environment.messagingUrl,
-        clientId: environment.clientId
+        clientId: environment.clientId,
+        sessionApiUrl: environment.sessionApi,
+        chatsApiUrl: environment.chatsApi
     }
 }
 
@@ -35,7 +37,10 @@ export function reducer(state = initialState, action: CoreActionsUnion): State {
         case CoreActionTypes.SetAppConfiguration:
             return {
                 ...state,
-                appSettings: action.payload.appSettings
+                appSettings: {
+                    ...state.appSettings,
+                    ...action.payload.appSettings
+                }
             };
         default:
             return state;

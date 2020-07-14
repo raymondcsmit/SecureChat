@@ -1,54 +1,54 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Store, select } from '@ngrx/store';
-import { Message } from '../../models/Message';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { SendMessage } from '../../actions/message.actions';
-import { User } from 'src/app/user/models/User';
-import * as fromAuth from '../../../auth/reducers';
-import { getMessagesByChatId } from '../../reducers';
-import { getSelf, getUserById } from 'src/app/user/reducers';
+// import { Component, OnInit, Input } from '@angular/core';
+// import { Store, select } from '@ngrx/store';
+// import { Message } from '../../models/Message';
+// import { Observable } from 'rxjs';
+// import { map } from 'rxjs/operators';
+// import { SendMessage } from '../../actions/message.actions';
+// import { User } from 'src/app/user/models/User';
+// import * as fromAuth from '../../../auth/reducers';
+// import { getMessagesByChatId } from '../../reducers';
+// import { getSelf, getUserById } from 'src/app/user/reducers';
 
-@Component({
-  selector: 'app-chat-messages',
-  templateUrl: './chat-messages.component.html',
-  styleUrls: ['./chat-messages.component.css']
-})
-export class ChatMessagesComponent implements OnInit {
+// @Component({
+//   selector: 'app-chat-messages',
+//   templateUrl: './chat-messages.component.html',
+//   styleUrls: ['./chat-messages.component.css']
+// })
+// export class ChatMessagesComponent implements OnInit {
 
-  @Input()
-  chatId: string;
+//   @Input()
+//   chatId: string;
 
-  messages$: Observable<Message[]>;
-  authUser$: Observable<User>;
+//   messages$: Observable<Message[]>;
+//   authUser$: Observable<User>;
 
-  constructor(private store: Store<any>) { }
+//   constructor(private store: Store<any>) { }
 
-  ngOnInit() {
-    this.messages$ = this.store.pipe(
-      select(getMessagesByChatId(this.chatId))
-    );
+//   ngOnInit() {
+//     this.messages$ = this.store.pipe(
+//       select(getMessagesByChatId(this.chatId))
+//     );
     
-    this.authUser$ = this.store.pipe(
-      select(getSelf)
-    );
-  }
+//     this.authUser$ = this.store.pipe(
+//       select(getSelf)
+//     );
+//   }
 
-  getAuthor(msg: Message) {
-    return this.store.pipe(
-      select(getUserById(msg.authorId))
-    );
-  }
+//   getAuthor(msg: Message) {
+//     return this.store.pipe(
+//       select(getUserById(msg.authorId))
+//     );
+//   }
 
-  trackByMessages(msg: Message) {
-    return msg.id;
-  }
+//   trackByMessages(msg: Message) {
+//     return msg.id;
+//   }
 
-  onMessageSubmitted(content: string) {
-    this.store.dispatch(new SendMessage({
-      chatId: this.chatId,
-      content: content
-    }));
-  }
+//   onMessageSubmitted(content: string) {
+//     this.store.dispatch(new SendMessage({
+//       chatId: this.chatId,
+//       content: content
+//     }));
+//   }
 
-}
+// }

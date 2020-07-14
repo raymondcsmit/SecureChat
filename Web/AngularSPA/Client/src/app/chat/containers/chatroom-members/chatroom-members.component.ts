@@ -23,7 +23,7 @@ export class ChatroomMembersComponent implements OnInit {
   ngOnInit() {
     this.memberIds$ = this.store.pipe(
       select(getChatById(this.chatId)),
-      map(chat => chat.memberIds)
+      map(chat => chat.members)
     );
   }
 

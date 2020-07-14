@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Chats.Domain.AggregateModel
+namespace Chats.Domain.SeedWork
 {
     public abstract class ValueObject : ICloneable
     {

@@ -1,4 +1,5 @@
 using System;
+using Chats.Api.Extensions;
 using Chats.Api.Infrastructure.Filters;
 using Chats.Api.Services;
 using Chats.Domain.AggregateModel;
@@ -6,7 +7,6 @@ using Chats.Infrastructure;
 using Chats.Infrastructure.Repositories;
 using HealthChecks.UI.Client;
 using Helpers.Auth;
-using Helpers.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

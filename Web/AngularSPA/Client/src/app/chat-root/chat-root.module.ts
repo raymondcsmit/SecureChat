@@ -6,10 +6,6 @@ import { ChatRootComponent } from './containers/chat-root/chat-root.component';
 import { ChatRootRoutingModule } from './chat-root-routing.module';
 import { HeaderComponent } from './containers/header/header.component';
 import { MaterialModule } from '../material/material.module';
-import { Observable } from 'rxjs';
-import { User } from '../user/models/User';
-import { Store, select } from '@ngrx/store';
-import { getSelf } from '../user/reducers';
 
 @NgModule({
   declarations: [

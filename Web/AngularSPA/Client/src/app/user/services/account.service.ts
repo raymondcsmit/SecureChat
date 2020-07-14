@@ -39,6 +39,6 @@ export class AccountService {
   }
 
   private resolveErrors(res: HttpErrorResponse) {
-    return (res.error && res.error.errors) ? res.error.errors : ["An error has occured"];
+    return (res.error && res.error.errors) ? res.error.errors : [res.message];
   }
 }

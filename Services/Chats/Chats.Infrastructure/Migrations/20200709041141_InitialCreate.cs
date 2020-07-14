@@ -41,7 +41,7 @@ namespace Chats.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChatModerator",
+                name: "ChatModerators",
                 columns: table => new
                 {
                     ChatId = table.Column<string>(nullable: false),
@@ -49,9 +49,9 @@ namespace Chats.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChatModerator", x => new { x.ChatId, x.UserId });
+                    table.PrimaryKey("PK_ChatModerators", x => new { x.ChatId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_ChatModerator_Chats_ChatId",
+                        name: "FK_ChatModerators_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
                         principalColumn: "Id",
@@ -67,7 +67,7 @@ namespace Chats.Infrastructure.Migrations
                     ModifiedAt = table.Column<DateTimeOffset>(nullable: false),
                     Content = table.Column<string>(nullable: false),
                     UserId = table.Column<string>(nullable: false),
-                    ChatId = table.Column<string>(nullable: true)
+                    ChatId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,7 +92,7 @@ namespace Chats.Infrastructure.Migrations
                 name: "ChatMemberships");
 
             migrationBuilder.DropTable(
-                name: "ChatModerator");
+                name: "ChatModerators");
 
             migrationBuilder.DropTable(
                 name: "Message");

@@ -5,11 +5,13 @@ import { EffectsModule } from '@ngrx/effects';
 import { ChatEffects } from './effects/chat.effects';
 import { MaterialModule } from '../material/material.module';
 import { ChatControlPanelComponent } from './containers/chat-control-panel/chat-control-panel.component';
-import { CreateChatroomComponent } from './containers/create-chatroom/create-chatroom.component';
 import { InviteFriendComponent } from '../user/containers/invite-friend/invite-friend.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserModule } from '../user/user.module';
+import { CreateChatroomComponent } from './containers/create-chatroom/create-chatroom.component';
+import { RouterModule } from '@angular/router';
+import { ChatsService } from './services/chats.service';
 
 @NgModule({
   imports: [
@@ -19,7 +21,8 @@ import { UserModule } from '../user/user.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    UserModule
+    UserModule,
+    RouterModule
   ],
   entryComponents: [
     InviteFriendComponent
@@ -33,15 +36,17 @@ import { UserModule } from '../user/user.module';
     //ChatTabComponent, 
     ChatControlPanelComponent, 
     //ChatsComponent, 
-    //CreateChatroomComponent, 
+    CreateChatroomComponent,
     //ChatroomsComponent,
     //PrivateChatsComponent,
   ],
   exports: [
     StoreModule,
-    ChatControlPanelComponent
+    ChatControlPanelComponent,
+    CreateChatroomComponent
   ],
   providers: [
+    ChatsService
   ]
 })
 export class ChatModule {}

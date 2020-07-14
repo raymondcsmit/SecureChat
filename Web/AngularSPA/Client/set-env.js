@@ -12,7 +12,8 @@ const envFile = `export const environment = {
   accountApi: "${process.env.AccountApiUrl}",
   usersApi: "${process.env.UsersApiUrl}",
   sessionApi: "${process.env.SessionApiUrl}",
-  messagingUrl: "${process.env.MessagingUrl}"
+  messagingUrl: "${process.env.MessagingUrl}",
+  chatsApi: "${process.env.ChatsApiUrl}"
 }`
 
 fs.writeFileSync(targetPath, envFile);

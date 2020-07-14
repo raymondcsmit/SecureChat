@@ -11,7 +11,7 @@ namespace Chats.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ChatModerator> builder)
         {
-            builder.ToTable("ChatModerator");
+            builder.ToTable("ChatModerators");
 
             builder.HasKey(c => new {c.ChatId, c.UserId});
 

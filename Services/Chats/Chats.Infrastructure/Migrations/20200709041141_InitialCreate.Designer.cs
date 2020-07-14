@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chats.Infrastructure.Migrations
 {
     [DbContext(typeof(ChatsContext))]
-    [Migration("20200707060408_InitialCreate")]
+    [Migration("20200709041141_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,7 +66,7 @@ namespace Chats.Infrastructure.Migrations
 
                     b.HasKey("ChatId", "UserId");
 
-                    b.ToTable("ChatModerator");
+                    b.ToTable("ChatModerators");
                 });
 
             modelBuilder.Entity("Chats.Domain.AggregateModel.Message", b =>
@@ -75,6 +75,7 @@ namespace Chats.Infrastructure.Migrations
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("ChatId")
+                        .IsRequired()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Content")
@@ -121,7 +122,8 @@ namespace Chats.Infrastructure.Migrations
                     b.HasOne("Chats.Domain.AggregateModel.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

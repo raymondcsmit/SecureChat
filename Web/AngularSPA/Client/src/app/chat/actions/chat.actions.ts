@@ -1,70 +1,29 @@
 import { Action } from "@ngrx/store";
+import { ChatEntity } from "../entities/ChatEntity";
 
 export enum ChatActionTypes {
+    LoadChats = '[Chat] LoadChats',
     SelectChat = '[Chat] SelectChat',
-    SelectChatroom = '[Chat] SelectChatroom',
-    CloseChat = '[Chat] CloseChat',
-    StartChat = '[Chat] StartChat',
-    CreateChatroom = '[Chat] CreateChatroom',
-    DeleteChatroom = '[Chat] DeleteChatroom',
-    JoinChatroom = '[Chat] JoinChatroom',
-    InviteFriends = '[Chat] InviteFriends'
+    CreateChat = '[Chat] CreateChat'
+}
+
+export class LoadChats implements Action {
+    readonly type = ChatActionTypes.LoadChats;
 }
 
 export class SelectChat implements Action {
     readonly type = ChatActionTypes.SelectChat;
-  
-    constructor(public payload: { id: string }) {}
+
+    constructor(public payload: {id: string}) {}
 }
 
-export class SelectChatroom implements Action {
-    readonly type = ChatActionTypes.SelectChatroom;
-  
-    constructor(public payload: { id: string }) {}
-}
+export class CreateChat implements Action {
+    readonly type = ChatActionTypes.CreateChat;
 
-export class CloseChat implements Action {
-    readonly type = ChatActionTypes.CloseChat;
-  
-    constructor(public payload: { id: string }) {}
-}
-
-export class CreateChatroom implements Action {
-    readonly type = ChatActionTypes.CreateChatroom;
-  
-    constructor(public payload: { name: string }) {}
-}
-
-export class CreatePrivateChat implements Action {
-    readonly type = ChatActionTypes.StartChat;
-  
-    constructor(public payload: { peerId: string }) {}
-}
-
-export class DeleteChatroom implements Action {
-    readonly type = ChatActionTypes.DeleteChatroom;
-  
-    constructor(public payload: { id: string }) {}
-}
-
-export class JoinChatroom implements Action {
-    readonly type = ChatActionTypes.JoinChatroom;
-  
-    constructor(public payload: { id: string }) {}
-}
-
-export class InviteFriends implements Action {
-    readonly type = ChatActionTypes.InviteFriends;
-  
-    constructor(public payload: { chatroomId: string, friendIds: string[] }) {}
+    constructor(public payload: {name: string, capacity: number}) {}
 }
 
 export type ChatActionsUnion =
-    SelectChat
-    | SelectChatroom
-    | CloseChat
-    | CreatePrivateChat
-    | CreateChatroom
-    | JoinChatroom
-    | DeleteChatroom
-    | InviteFriends;
+    LoadChats
+    | SelectChat
+    | CreateChat;
