@@ -1,11 +1,11 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/users/{id}",
+      "DownstreamPathTemplate": "/api/chats/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "users.service",
+          "Host": "chats.service",
           "Port": 80
         }
       ],
@@ -13,136 +13,28 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/users/me",
+      "DownstreamPathTemplate": "/api/chats",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "users.service",
+          "Host": "chats.service",
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/users/me",
+      "UpstreamPathTemplate": "/api/chats",
       "UpstreamHttpMethod": [ "GET" ]
     },
-    {
-      "DownstreamPathTemplate": "/api/users/{id}",
+	  {
+      "DownstreamPathTemplate": "/api/chats",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "users.service",
+          "Host": "chats.service",
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/users/{id}",
-      "UpstreamHttpMethod": [ "PATCH" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/users",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/users",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/friendship-requests",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/friendship-requests",
+      "UpstreamPathTemplate": "/api/chats",
       "UpstreamHttpMethod": [ "POST" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/users/{requesterId}/friendship-requests",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/users/{requesterId}/friendship-requests",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/friendship-requests/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/friendship-requests/{id}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/friendship-requests",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/friendship-requests",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/users/{requesteeId}/friendship-requests",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/users/{requesteeId}/friendship-requests",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/friendship-requests/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/friendship-requests/{id}",
-      "UpstreamHttpMethod": [ "PATCH" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/friendships",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/friendships",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-	{
-      "DownstreamPathTemplate": "/api/users/{userId}/friendships",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "users.service",
-          "Port": 80
-        }
-      ],
-      "UpstreamPathTemplate": "/api/users/{userId}/friendships",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ]
     }
   ] 
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Users.API.Dtos;
-using Helpers.Specifications;
 
 namespace Users.API.Application.Specifications
 {
@@ -15,7 +14,7 @@ namespace Users.API.Application.Specifications
             var criteriaNot = exclude?.Select(id => new Criteria("id", "Users", id));
             if (exclude != null)
             {
-                base.AddCriteriaNot(criteriaNot);
+                base.AddExcludeCriteria(criteriaNot);
             }
 
             if (query.Pagination != null)

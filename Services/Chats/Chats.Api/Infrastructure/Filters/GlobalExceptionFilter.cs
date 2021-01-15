@@ -1,5 +1,5 @@
-﻿using Chats.Api.Infrastructure.Exceptions;
-using Chats.Api.Models;
+﻿using Chats.Api.Dtos;
+using Chats.Api.Infrastructure.Exceptions;
 using Chats.Domain.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

@@ -1,5 +1,5 @@
-﻿using Helpers.Specifications.Attributes;
-using System;
+﻿using System;
+using Users.API.Application.Specifications.Attributes;
 
 namespace Users.API.Dtos
 {

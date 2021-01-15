@@ -10,5 +10,6 @@ namespace Users.API.Client
     public interface IUsersApiClient
     {
         Task<IEnumerable<FriendshipDto>> GetFriendshipsByUserId(string id);
+        Task<UserDto> GetUserById(string id);
     }
 }

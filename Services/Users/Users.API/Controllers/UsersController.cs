@@ -1,16 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Users.API.Application;
+﻿using System.Threading.Tasks;
 using Users.API.Application.Commands;
 using Users.API.Application.Queries;
 using Users.API.Application.Specifications;
 using Users.API.Dtos;
 using Users.API.Models;
-using Users.API.Services;
 using Helpers.Auth;
 using Helpers.Auth.AuthHelper;
-using Helpers.Specifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;

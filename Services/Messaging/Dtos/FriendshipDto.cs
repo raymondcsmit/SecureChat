@@ -1,5 +1,4 @@
-﻿using Helpers.Specifications.Attributes;
-using System;
+﻿using System;
 
 namespace Messaging.Dtos
 {

@@ -8,12 +8,12 @@ namespace Chats.Domain.SeedWork
     {
         IUnitOfWork UnitOfWork { get; }
 
-        Chat Add(T chat);
+        T Create(T entity);
 
         Task<T> GetAsync(string id);
 
-        Task Delete(string id);
+        Task DeleteAsync(string id);
 
-        Chat Update(T chat);
+        T Update(T entity);
     }
 }

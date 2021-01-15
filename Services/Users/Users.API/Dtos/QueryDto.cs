@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Collections.Generic;
 using Users.API.Infrastructure.Binders;
-using Helpers.Mapping;
-using Helpers.Specifications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Users.API.Dtos

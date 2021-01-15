@@ -18,12 +18,11 @@ export class ChatsService {
     private httpClient: HttpClient, 
     private configurationService: ConfigurationService) { }
 
-  getChats(userId: string) {
+  getChats() {
     const chatsApi = this.configurationService.getAppSettings().chatsApiUrl;
     const url = `${chatsApi}/chats`;
-    const params = {userId};
 
-    return this.httpClient.get<ArrayResult<Chat>>(url, {observe: 'response', params: params}).pipe(
+    return this.httpClient.get<ArrayResult<Chat>>(url, {observe: 'response'}).pipe(
       map(res => {
         if (res.body.items.length == 0) {
           return {
@@ -45,7 +44,7 @@ export class ChatsService {
     const chatsApi = this.configurationService.getAppSettings().chatsApiUrl;
     const url = `${chatsApi}/chats`;
 
-    const data = {owner: userId, name: chatName, capacity: chatCapacity};
+    const data = {ownerId: userId, name: chatName, capacity: chatCapacity};
     return this.httpClient.post<Chat>(url, data, {observe: 'response'}).pipe(
       map(res => {
         const normalized = normalize(res.body, chatSchema);

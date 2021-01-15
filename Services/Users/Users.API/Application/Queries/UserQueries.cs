@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Users.API.Dtos;
 using Users.API.Infrastructure.Exceptions;
-using Users.API.Models;
 using Users.Infrastructure;
 using Dapper;
-using Helpers.Specifications;
-using Microsoft.Extensions.Options;
-using Helpers.Specifications.Extensions;
+using Users.API.Application.Specifications;
+using Users.API.Application.Specifications.Extensions;
 
 namespace Users.API.Application.Queries
 {

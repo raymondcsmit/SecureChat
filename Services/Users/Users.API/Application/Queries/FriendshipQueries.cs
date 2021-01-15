@@ -4,10 +4,9 @@ using AutoMapper;
 using Users.API.Dtos;
 using Users.Infrastructure;
 using Dapper;
-using Helpers.Specifications;
-using Helpers.Specifications.Extensions;
 using Users.API.Application.Specifications;
 using System.Linq;
+using Users.API.Application.Specifications.Extensions;
 
 namespace Users.API.Application.Queries
 {

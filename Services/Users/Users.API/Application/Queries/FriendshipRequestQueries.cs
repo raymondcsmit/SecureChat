@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Users.API.Application.Specifications;
 using Users.API.Dtos;
 using Users.Infrastructure;
 using Dapper;
-using Helpers.Specifications;
-using Helpers.Specifications.Extensions;
+using Users.API.Application.Specifications.Extensions;
 
 namespace Users.API.Application.Queries
 {

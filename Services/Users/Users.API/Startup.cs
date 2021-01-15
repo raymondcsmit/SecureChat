@@ -2,7 +2,6 @@
 using Users.API.Application.IntegrationEvents.EventHandling;
 using Users.API.Application.IntegrationEvents.Events;
 using Users.API.Application.Queries;
-using Users.API.Infrastructure;
 using Users.API.Infrastructure.Filters;
 using Users.API.Services;
 using Users.Domain.AggregateModel.UserAggregate;

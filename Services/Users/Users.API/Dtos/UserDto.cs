@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Users.Domain.AggregateModel.UserAggregate;
 using Helpers.Mapping;
-using Helpers.Specifications.Attributes;
+using Users.API.Application.Specifications.Attributes;
 
 namespace Users.API.Dtos
 {

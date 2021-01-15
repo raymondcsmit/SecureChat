@@ -40,8 +40,7 @@ export class FriendsControlPanelComponent implements OnInit, OnDestroy {
   constructor(
     private store: Store<any>, 
     private dialog: MatDialog, 
-    private signalr: SignalrService,
-    private snackBar: MatSnackBar) { }
+    private signalr: SignalrService) { }
 
   ngOnInit() {
     this.friends$ = combineLatest(

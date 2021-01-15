@@ -23,8 +23,9 @@ namespace Chats.Infrastructure.EntityConfigurations
                 .WithMany(c => c.ChatModerators)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(c => c.UserId)
-                .IsRequired();
+            builder.HasOne(c => c.User)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -24,5 +24,14 @@ namespace Users.API.Client
             var friendships = JsonConvert.DeserializeObject<ArrayResponse<FriendshipDto>>(responseString);
             return friendships.Items;
         }
+
+        public async Task<UserDto> GetUserById(string id)
+        {
+            var uri = $"api/users/{id}";
+
+            var responseString = await _httpClient.GetStringAsync(uri);
+            var user = JsonConvert.DeserializeObject<UserDto>(responseString);
+            return user;
+        }
     }
 }

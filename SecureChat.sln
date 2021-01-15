@@ -80,11 +80,22 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.API.Client", "Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chats", "Chats", "{418720A6-8A7E-4008-878B-FDE5E4C878C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chats.Api", "Services\Chats\Chats.Api\Chats.Api.csproj", "{71B18212-B4D4-446C-84C7-EE53CB06461C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chats.Api", "Services\Chats\Chats.Api\Chats.Api.csproj", "{71B18212-B4D4-446C-84C7-EE53CB06461C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chats.Domain", "Services\Chats\Chats.Domain\Chats.Domain.csproj", "{2FF23CE9-585B-4DEB-BA87-29E3337C2A3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chats.Domain", "Services\Chats\Chats.Domain\Chats.Domain.csproj", "{2FF23CE9-585B-4DEB-BA87-29E3337C2A3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chats.Infrastructure", "Services\Chats\Chats.Infrastructure\Chats.Infrastructure.csproj", "{0C4C5CDD-3713-433D-9083-FE0283583986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chats.Infrastructure", "Services\Chats\Chats.Infrastructure\Chats.Infrastructure.csproj", "{0C4C5CDD-3713-433D-9083-FE0283583986}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chats.FunctionalTests", "Services\Chats\Chats.FunctionalTests\Chats.FunctionalTests.csproj", "{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Users.UnitTests", "Services\Users\Users.UnitTests\Users.UnitTests.csproj", "{ABD9BDFE-AC61-4CCE-9806-98D6D575299C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chats", "Chats", "{23F87918-8304-437D-ACE7-4B3FDE02978B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apigw", "apigw", "{78595EDE-CBA3-41F1-A69F-FC45FCE107B5}"
+	ProjectSection(SolutionItems) = preProject
+		ApiGateways\Users\apigw\configuration.json = ApiGateways\Users\apigw\configuration.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -180,6 +191,14 @@ Global
 		{0C4C5CDD-3713-433D-9083-FE0283583986}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C4C5CDD-3713-433D-9083-FE0283583986}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C4C5CDD-3713-433D-9083-FE0283583986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABD9BDFE-AC61-4CCE-9806-98D6D575299C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABD9BDFE-AC61-4CCE-9806-98D6D575299C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABD9BDFE-AC61-4CCE-9806-98D6D575299C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABD9BDFE-AC61-4CCE-9806-98D6D575299C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +236,10 @@ Global
 		{71B18212-B4D4-446C-84C7-EE53CB06461C} = {418720A6-8A7E-4008-878B-FDE5E4C878C2}
 		{2FF23CE9-585B-4DEB-BA87-29E3337C2A3E} = {418720A6-8A7E-4008-878B-FDE5E4C878C2}
 		{0C4C5CDD-3713-433D-9083-FE0283583986} = {418720A6-8A7E-4008-878B-FDE5E4C878C2}
+		{3D6EC3F9-1CD4-4341-AFB2-61041E9842DD} = {418720A6-8A7E-4008-878B-FDE5E4C878C2}
+		{ABD9BDFE-AC61-4CCE-9806-98D6D575299C} = {6C24E1FD-EF6B-48DC-BA20-9BFDB5341D3B}
+		{23F87918-8304-437D-ACE7-4B3FDE02978B} = {A86F1E38-3B9D-441A-984F-F0FB56463590}
+		{78595EDE-CBA3-41F1-A69F-FC45FCE107B5} = {23F87918-8304-437D-ACE7-4B3FDE02978B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {576D061A-08BD-48E3-B064-23BEF5036C89}

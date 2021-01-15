@@ -20,7 +20,11 @@ namespace Chats.Infrastructure.Migrations
             modelBuilder.Entity("Chats.Domain.AggregateModel.Chat", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -28,9 +32,11 @@ namespace Chats.Infrastructure.Migrations
 
                     b.Property<string>("OwnerId")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Chats");
                 });
@@ -51,6 +57,8 @@ namespace Chats.Infrastructure.Migrations
 
                     b.HasKey("ChatId", "UserId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("ChatMemberships");
                 });
 
@@ -64,12 +72,15 @@ namespace Chats.Infrastructure.Migrations
 
                     b.HasKey("ChatId", "UserId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("ChatModerators");
                 });
 
             modelBuilder.Entity("Chats.Domain.AggregateModel.Message", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("ChatId")
@@ -88,13 +99,38 @@ namespace Chats.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ChatId");
 
-                    b.ToTable("Message");
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Chats.Domain.AggregateModel.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Chats.Domain.AggregateModel.Chat", b =>
+                {
+                    b.HasOne("Chats.Domain.AggregateModel.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Chats.Domain.AggregateModel.ChatMembership", b =>
@@ -102,6 +138,12 @@ namespace Chats.Infrastructure.Migrations
                     b.HasOne("Chats.Domain.AggregateModel.Chat", "Chat")
                         .WithMany("ChatMemberships")
                         .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chats.Domain.AggregateModel.User", "User")
+                        .WithMany("ChatMemberships")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -113,6 +155,12 @@ namespace Chats.Infrastructure.Migrations
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Chats.Domain.AggregateModel.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Chats.Domain.AggregateModel.Message", b =>
@@ -120,6 +168,12 @@ namespace Chats.Infrastructure.Migrations
                     b.HasOne("Chats.Domain.AggregateModel.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chats.Domain.AggregateModel.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

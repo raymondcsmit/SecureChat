@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Users.API.Application.Commands;
 using Users.API.Application.Queries;
 using Users.API.Application.Specifications;

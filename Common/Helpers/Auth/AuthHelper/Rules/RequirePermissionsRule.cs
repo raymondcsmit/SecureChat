@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,15 +21,7 @@ namespace Helpers.Auth.AuthHelper.Rules
         {
             var permissions = identityService.GetPermissions();
             var hasPermissions = !_requiredPermissions.Except(permissions).Any();
-            if (hasPermissions)
-            {
-                if (Next == null)
-                {
-                    return true;
-                }
-                return await Next.ApplyAsync(identityService);
-            }
-            return false;
+            return hasPermissions;
         }
     }
 }

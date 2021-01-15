@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Users.API.Application.Queries;
@@ -9,7 +8,6 @@ using Users.Domain.AggregateModel.UserAggregate;
 using Helpers.Extensions;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Profile = Users.Domain.AggregateModel.UserAggregate.Profile;
 
 namespace Users.API.Application.Commands
 {

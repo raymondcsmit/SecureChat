@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Users.API.Dtos
+﻿namespace Users.API.Dtos
 {
     public class PaginationDto
     {

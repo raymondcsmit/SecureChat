@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Chats.Domain.AggregateModel;
 using Chats.Domain.SeedWork;
-using Chats.Infrastructure;
 using Chats.Infrastructure.EntityConfigurations;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +24,7 @@ namespace Chats.Infrastructure
         public DbSet<ChatMembership> ChatMemberships { get; set; }
         public DbSet<ChatModerator> ChatModerators { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public ChatsContext(DbContextOptions<ChatsContext> options, IMediator mediator) : base(options)
         {
@@ -37,6 +37,7 @@ namespace Chats.Infrastructure
             builder.ApplyConfiguration(new ChatMembershipEntityTypeConfiguration());
             builder.ApplyConfiguration(new ChatModeratorEntityTypeConfiguration());
             builder.ApplyConfiguration(new MessageEntityTypeConfiguration());
+            builder.ApplyConfiguration(new UserEntityTypeConfiguration());
         }
 
         public override int SaveChanges()
@@ -97,39 +98,39 @@ namespace Chats.Infrastructure
             }
         }
     }
-}
 
-public class ChatsContextDesignFactory : IDesignTimeDbContextFactory<ChatsContext>
-{
-    public ChatsContext CreateDbContext(string[] args)
+    public class ChatsContextDesignFactory : IDesignTimeDbContextFactory<ChatsContext>
     {
-        var optionsBuilder = new DbContextOptionsBuilder<ChatsContext>()
-            .UseMySql("Server=mysql; Database=chats_db; Uid=foo; Pwd=bar");
-
-        return new ChatsContext(optionsBuilder.Options, new NoMediator());
-    }
-
-    class NoMediator : IMediator
-    {
-        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default(CancellationToken)) where TNotification : INotification
+        public ChatsContext CreateDbContext(string[] args)
         {
-            return Task.CompletedTask;
+            var optionsBuilder = new DbContextOptionsBuilder<ChatsContext>()
+                .UseMySql("Server=mysql; Database=chats_db; Uid=foo; Pwd=bar");
+
+            return new ChatsContext(optionsBuilder.Options, new NoMediator());
         }
 
-        public async Task<object> Send(object request, CancellationToken cancellationToken = new CancellationToken())
+        class NoMediator : IMediator
         {
-            return Task.CompletedTask;
-        }
+            public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default(CancellationToken)) where TNotification : INotification
+            {
+                return Task.CompletedTask;
+            }
 
-        public Task Publish(object notification, CancellationToken cancellationToken = default)
-        {
-            return Task.CompletedTask;
-        }
+            public async Task<object> Send(object request, CancellationToken cancellationToken = new CancellationToken())
+            {
+                return Task.CompletedTask;
+            }
 
-        public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return Task.FromResult<TResponse>(default(TResponse));
-        }
+            public Task Publish(object notification, CancellationToken cancellationToken = default)
+            {
+                return Task.CompletedTask;
+            }
 
+            public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                return Task.FromResult<TResponse>(default(TResponse));
+            }
+
+        }
     }
 }

@@ -2,13 +2,8 @@
 {
     public class PaginationDto
     {
-        public int Limit { get; }
-        public int Offset { get; }
+        public int Limit { get; set; }
+        public int Offset { get; set; }
 
-        public PaginationDto(int limit, int offset)
-        {
-            Limit = limit;
-            Offset = offset;
-        }
     }
 }

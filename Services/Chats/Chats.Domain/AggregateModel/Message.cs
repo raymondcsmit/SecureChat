@@ -10,12 +10,15 @@ namespace Chats.Domain.AggregateModel
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset ModifiedAt { get; set; }
 
-        public string Content { get; }
+        public string Content { get; private set; }
 
-        public string UserId { get; }
+        public string UserId { get; private set; }
+        public User User { get; private set; }
 
-        public string ChatId { get; set; }
-        public Chat Chat { get; set; }
+        public string ChatId { get; private set; }
+        public Chat Chat { get; private set; }
+
+        private Message() { }
 
         public Message(string content, string userId)
         {

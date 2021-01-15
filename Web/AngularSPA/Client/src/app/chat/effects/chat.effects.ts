@@ -19,8 +19,7 @@ export class ChatEffects {
     @Effect()
     LoadChats$ = this.actions$.pipe(
         ofType<LoadChats>(ChatActionTypes.LoadChats),
-        withLatestFrom(this.store.select(getSelf)),
-        switchMap(([action, self]) => this.chatsService.getChats(self.id).pipe(
+        switchMap((action => this.chatsService.getChats().pipe(
             mergeMap(res => [ 
                 new AddEntities(ChatEntity.name, {entities: res.chats}),
                 new UpsertEntities(UserEntity.name, {entities: res.users}),
@@ -28,7 +27,7 @@ export class ChatEffects {
             ]),
             catchError(errors => of(new Failure({action: action, errors: errors})))
         ))
-    );
+    ));
 
     @Effect()
     CreateChat$ = this.actions$.pipe(

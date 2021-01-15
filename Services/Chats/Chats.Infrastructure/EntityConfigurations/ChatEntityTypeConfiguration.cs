@@ -18,6 +18,11 @@ namespace Chats.Infrastructure.EntityConfigurations
             builder.Ignore(c => c.DomainEvents)
                 .Ignore(c => c.IsTransient);
 
+            builder.HasOne(c => c.Owner)
+                .WithMany()
+                .HasForeignKey(c => c.OwnerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.HasMany(c => c.Messages)
                 .WithOne(m => m.Chat)
                 .HasForeignKey(m => m.ChatId)
@@ -31,6 +36,9 @@ namespace Chats.Infrastructure.EntityConfigurations
 
             builder.Metadata.FindNavigation(nameof(Chat.Messages))
                 .SetPropertyAccessMode(PropertyAccessMode.Field);
+                
+            builder.Property(c => c.Id)
+                .ValueGeneratedOnAdd();
 
             builder.Property(c => c.Name)
                 .IsRequired();
@@ -38,7 +46,8 @@ namespace Chats.Infrastructure.EntityConfigurations
             builder.Property(c => c.OwnerId)
                 .IsRequired();
 
-
+            builder.Property(c => c.Capacity)
+                .IsRequired();
         }
     }
 }

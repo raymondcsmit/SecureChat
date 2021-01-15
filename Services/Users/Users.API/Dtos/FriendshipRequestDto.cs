@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Users.Domain.AggregateModel.UserAggregate;
-using Helpers.Mapping;
-using Helpers.Specifications.Attributes;
+using Users.API.Application.Specifications.Attributes;
 
 namespace Users.API.Dtos
 {

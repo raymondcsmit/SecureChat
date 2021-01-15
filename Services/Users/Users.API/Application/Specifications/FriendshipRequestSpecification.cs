@@ -1,9 +1,6 @@
 ﻿using Users.API.Dtos;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Helpers.Specifications;
 
 namespace Users.API.Application.Specifications
 {
@@ -28,7 +25,7 @@ namespace Users.API.Application.Specifications
 
             if (pendingOnly)
             {
-                base.AddCriteriaNot(new[] {
+                base.AddExcludeCriteria(new[] {
                     new Criteria("Outcome", "FriendshipRequests", "accepted"),
                     new Criteria("Outcome", "FriendshipRequests", "rejected")
                 });

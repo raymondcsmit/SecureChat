@@ -9,6 +9,6 @@
 	},
 	{
 		"name": "moderator",
-		"permissions": [ "messages.delete", "users.manage", "chats.delete" ]
+		"permissions": [ "messages.delete", "users.manage", "chats.delete", "chats.manage" ]
 	}
 ]

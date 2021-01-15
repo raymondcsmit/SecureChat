@@ -21,6 +21,18 @@ namespace Helpers.Auth.AuthHelper
             return this;
         }
 
+        public AuthHelperBuilder AllowPermissions(params string[] permissions)
+        {
+            _authHelper.AddRule(new AllowPermissionsRule(permissions));
+            return this;
+        }
+        
+        public AuthHelperBuilder RequireId(string id)
+        {
+            _authHelper.AddRule(new RequireIdRule(id));
+            return this;
+        }
+
         public AuthHelperBuilder RequirePermissions(params string[] permissions)
         {
             _authHelper.AddRule(new RequirePermissionsRule(permissions));

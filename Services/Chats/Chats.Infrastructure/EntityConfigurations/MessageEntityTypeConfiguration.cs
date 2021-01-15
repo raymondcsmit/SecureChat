@@ -11,16 +11,15 @@ namespace Chats.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Message> builder)
         {
-            builder.ToTable("Message");
+            builder.ToTable("Messages");
 
             builder.HasKey(m => m.Id);
 
             builder.Ignore(m => m.DomainEvents)
                 .Ignore(m => m.IsTransient);
 
-            builder.HasOne(m => m.Chat)
-                .WithMany(c => c.Messages)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(m => m.Id)
+                .ValueGeneratedOnAdd();
 
             builder.Property(m => m.ChatId)
                 .IsRequired();

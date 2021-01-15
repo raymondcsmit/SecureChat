@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Users.Domain.Events;
-using Helpers.Mapping;
-using SecureChat.Common.Events.EventBus.Events;
+﻿using SecureChat.Common.Events.EventBus.Events;
 
 namespace Users.API.Application.IntegrationEvents.Events
 {

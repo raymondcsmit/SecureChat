@@ -1,12 +1,18 @@
 using System;
+using AutoMapper;
+using Chats.Api.Application.Queries;
 using Chats.Api.Extensions;
 using Chats.Api.Infrastructure.Filters;
+using Chats.Api.Mapping;
 using Chats.Api.Services;
 using Chats.Domain.AggregateModel;
+using Chats.Domain.SeedWork;
 using Chats.Infrastructure;
 using Chats.Infrastructure.Repositories;
 using HealthChecks.UI.Client;
 using Helpers.Auth;
+using Helpers.Mapping;
+using Helpers.Resilience;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,6 +26,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SecureChat.Common.Events.EventBus.Abstractions;
 using SecureChat.Common.Events.EventBusRabbitMQ.Extensions;
+using Users.API.Client.Extensions;
 
 namespace Chats.Api
 {
@@ -33,7 +40,7 @@ namespace Chats.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options =>
                 {
@@ -57,7 +64,7 @@ namespace Chats.Api
                     opt =>
                     {
                         opt.MigrationsAssembly(typeof(ChatsContext).Assembly.FullName);
-                        opt.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: Array.Empty<int>());
+                        //opt.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: Array.Empty<int>());
                     });
             });
 
@@ -75,8 +82,18 @@ namespace Chats.Api
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IGenericRepository<Chat>, GenericRepository<Chat>>();
+
+            services.AddScoped<IChatQueries, ChatQueries>();
+
+            services.AddUsersApiClient(Configuration);
 
             services.AddMediatR(typeof(Startup).Assembly);
+            services.AddAutoMapper(config =>
+            {
+                config.AddProfile(new AutoMapperConfig(new[] { typeof(Startup).Assembly }));
+                config.AddProfile(new ChatMappingProfile());
+            }, typeof(Startup).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

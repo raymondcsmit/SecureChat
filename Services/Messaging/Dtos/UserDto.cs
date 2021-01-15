@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Helpers.Mapping;
-using Helpers.Specifications.Attributes;
-
-namespace Messaging.Dtos
+﻿namespace Messaging.Dtos
 {
     public class UserDto
     {

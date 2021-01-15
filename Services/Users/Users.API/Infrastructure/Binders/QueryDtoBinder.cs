@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Threading.Tasks;
 using Users.API.Dtos;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
